@@ -1,0 +1,34 @@
+body {
+  padding-top: 115px;
+}
+
+.thumbnail img {
+  width: 100%;
+}
+
+.ratings {
+  color: #d17581;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.thumbnail {
+  padding: 0;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+  color: #333;
+}
+
+footer {
+  margin: 50px 0;
+}
+
+.nav {
+	margin-top: 28px; /* this is a faux center fix for the nav options - adjust this if you wish to change the logo height or the font of the menu items */
+}
+
+.text-justify{
+    text-align: justify;
+}

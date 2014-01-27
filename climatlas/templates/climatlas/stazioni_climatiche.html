@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
+     <script src="{% static 'leaflet/leaflet.js' %}"></script>
+     <style>
+        #map { height: 600px; }
+     </style>
+     <link href="{% static "datatables/css/dt_bootstrap.css" %}" rel="stylesheet">
+     <style>
+        table { table-layout: fixed; }
+        table th, table td { overflow: hidden; }
+     </style>
+     <script src={% static 'datatables/js/jquery.dataTables.js' %}></script>
+     <script src={% static 'datatables/js/bootstrap3_dt.js' %}></script>
+     <script type="text/javascript" charset="utf-8">
+
+            /* Table initialisation */
+            $(document).ready(function() {
+                var x = $('#cstations').dataTable( {
+                    "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
+                    "sPaginationType": "bootstrap",
+                    "oLanguage": {
+                        "sLengthMenu": "_MENU_ records per page"
+                    },
+
+                    "aoColumnDefs": [
+                        { 'bSortable': false, 'aTargets': [ 5 ] }
+                    ]
+                } );
+
+            } );
+            jQuery(document).ready(function() {
+            $('.sublink').tooltip({'placement':'bottom'}); /*enable tooltip bootstrap to all navbar-link class tags*/
+            $("select").addClass('form-control');
+            $("input").addClass('form-control');
+            });
+	 </script>
+{% endblock extra_head %}
+{% block page_name %}Home Page{% endblock %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li class="active">Stazioni Climatiche</li>
+{% endblock breadcumb_items %}
+{% block main %}
+
+
+            <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
+                <div class="page-header">
+              <h1>Anagrafica Stazioni Climatiche <small></small></h1>
+            </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                  <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
+                  <li><a href="#mappa" data-toggle="tab" id="mpl">Mappa</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                  <div class="tab-pane fade in active" id="lista">
+                      <div class="table-responsive">
+                            <table class="table table-striped" id="cstations">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Table heading</th>
+                                  <th>Table heading</th>
+                                  <th>Table heading</th>
+                                  <th>Table heading</th>
+                                  <th>Table heading</th>
+                                  <th>Table heading</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>1</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                </tr>
+                                <tr>
+                                  <td>2</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                </tr>
+                                <tr>
+                                  <td>3</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                  <td>Table cell</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                  </div>
+                  <div class="tab-pane fade" id="mappa">
+                      <div id="map" style="width: 100%; height: 600px"></div>
+
+                  </div>
+                </div>
+            </div>
+
+            <script>
+                var map = L.map('map')
+
+
+
+                L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+                }).addTo(map);
+
+                L.marker([51.5, -0.09]).addTo(map)
+                    .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+
+                L.circle([51.508, -0.11], 500, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5
+                }).addTo(map).bindPopup("I am a circle.");
+                    L.polygon([
+                    [51.509, -0.08],
+                    [51.503, -0.06],
+                    [51.51, -0.047]
+                ]).addTo(map).bindPopup("I am a polygon.");
+                var popup = L.popup();
+
+                function onMapClick(e) {
+                    popup
+                        .setLatLng(e.latlng)
+                        .setContent("You clicked the map at " + e.latlng.toString())
+                        .openOn(map);
+                }
+                map.on('click', onMapClick);
+                $('#mpl').click(function(){
+                    setTimeout(function(){
+                        map.setView([51.505, -0.09], 13);
+                    },500);
+
+                })
+            </script>
+    <!-- /.container -->
+{% endblock main %}
