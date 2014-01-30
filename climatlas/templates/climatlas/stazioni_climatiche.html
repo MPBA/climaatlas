@@ -25,7 +25,7 @@
                     },
 
                     "aoColumnDefs": [
-                        { 'bSortable': false, 'aTargets': [ 5 ] }
+                        { 'bSortable': false, 'aTargets': [ 2,4,5,6 ] }
                     ]
                 } );
 
@@ -42,6 +42,21 @@
     <li><a href="/">Home</a></li>
     <li class="active">Stazioni Climatiche</li>
 {% endblock breadcumb_items %}
+{% block page_legend %}
+    <div class="well well-sm">
+        <ul style="list-style: none">
+            <li>
+                <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazioni
+            </li>
+            <li>
+                <i class="wi-temp_min" style="font-size: 20px!important"></i> Temperatura Minima
+            </li>
+            <li>
+                <i class="wi-temp_max" style="font-size: 20px!important"></i> Temperatura Massima
+            </li>
+        </ul>
+    </div>
+{% endblock page_legend %}
 {% block main %}
 
 
@@ -62,43 +77,37 @@
                             <table class="table table-striped" id="cstations">
                               <thead>
                                 <tr>
-                                  <th>#</th>
-                                  <th>Table heading</th>
-                                  <th>Table heading</th>
-                                  <th>Table heading</th>
-                                  <th>Table heading</th>
-                                  <th>Table heading</th>
-                                  <th>Table heading</th>
+                                  <th style="width: 10%">Codice</th>
+                                  <th style="width: 28%">Nome</th>
+                                  <th style="width: 10%">Dataset</th>
+                                  <th style="width: 16%">Data Attivazione</th>
+                                  <th style="width: 23%">Coordinate</th>
+                                  <th style="width: 6%">Stato</th>
+                                  <th></th>
                                 </tr>
                               </thead>
                               <tbody>
+
+                                {% for station in meteo_stations %}
                                 <tr>
-                                  <td>1</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
+                                  <td>{{ station.code }}</td>
+                                  <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
+                                  <td>
+                                      <i class="wi-{{ station.datasets.0 }}" style="font-size: 20px!important"></i>
+                                      <i class="wi-{{ station.datasets.1 }}" style="font-size: 20px!important"></i>
+                                      <i class="wi-{{ station.datasets.2 }}" style="font-size: 20px!important"></i>
+                                  </td>
+                                  <td>{{ station.commence|date:"d/m/Y" }}</td>
+                                  <td>{{ station.latitude }}, {{ station.longitude }}</td>
+                                  <td style="text-align: center">{% if station.cease %}
+                                        <i class="fa fa-circle" style="color: #cb4437"></i>
+                                      {% else %}
+                                        <i class="fa fa-circle" style="color: #79a038"></i>
+                                      {% endif %}
+                                  </td>
+                                  <td><a href="{% url 'stazione_detail' station.id %}"><i class="fa fa-folder-open pull-right" style="color: #428bca; font-size: 21px"></i></a></td>
                                 </tr>
-                                <tr>
-                                  <td>2</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                </tr>
-                                <tr>
-                                  <td>3</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                  <td>Table cell</td>
-                                </tr>
+                                {% endfor %}
                               </tbody>
                             </table>
                           </div>
@@ -113,38 +122,19 @@
             <script>
                 var map = L.map('map')
 
-
-
                 L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
                 maxZoom: 18,
-                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+                attribution: ''
                 }).addTo(map);
 
-                L.marker([51.5, -0.09]).addTo(map)
-                    .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+                {% for station in meteo_stations %}
+                L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
+                    .bindPopup("<b>{{ station.code }}</b><br />{{ station.stname }}</b><br /><i style='font-size: 20px!important' class='wi-{{ station.datasets.0 }}'></i> <i style='font-size: 20px!important' class='wi-{{ station.datasets.1 }}'></i><i style='font-size: 20px!important' class='wi-{{ station.datasets.2 }}'></i>").openPopup();
+                {% endfor %}
 
-                L.circle([51.508, -0.11], 500, {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.5
-                }).addTo(map).bindPopup("I am a circle.");
-                    L.polygon([
-                    [51.509, -0.08],
-                    [51.503, -0.06],
-                    [51.51, -0.047]
-                ]).addTo(map).bindPopup("I am a polygon.");
-                var popup = L.popup();
-
-                function onMapClick(e) {
-                    popup
-                        .setLatLng(e.latlng)
-                        .setContent("You clicked the map at " + e.latlng.toString())
-                        .openOn(map);
-                }
-                map.on('click', onMapClick);
                 $('#mpl').click(function(){
                     setTimeout(function(){
-                        map.setView([51.505, -0.09], 13);
+                        map.setView([46.0760556,11.1176091], 9);
                     },500);
 
                 })

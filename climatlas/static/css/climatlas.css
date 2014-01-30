@@ -32,3 +32,14 @@ footer {
 .text-justify{
     text-align: justify;
 }
+
+	/* vcard */
+		.vcard .thumbnail {float:left}
+		.vcard > ul {list-style:none;margin:5px 0 0 -25px;overflow:hidden}
+		.vcard > ul > li:first-child {border-top:1px dashed #dcdcdc}
+		.vcard > ul > li {padding:8px;border-bottom:1px dashed #dcdcdc;overflow:hidden}
+		.vcard .item-key {float:left;color:#888;}
+		.vcard .vcard-item {margin-left:160px}
+		.vcard .v-heading {background:#F0F9FF;font-weight:800}
+		.vcard .v-heading span {font-weight:700;font-size:14px;color:#666}
+		.vcard .item-list-more,.vcard .thumbnail.item-list-more {display:none}
