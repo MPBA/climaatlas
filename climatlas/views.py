@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+import json
+import urllib
+
 __author__ = 'ernesto'
 
 #This file contains only the views for the main app. It's made just to render an home page for the project
