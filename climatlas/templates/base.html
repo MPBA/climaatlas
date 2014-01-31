@@ -16,6 +16,8 @@
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <!-- Add custom CSS here -->
     <link href="{% static 'css/climatlas.css' %}" rel="stylesheet">
+    <link href="{% static 'awesome/css/font-awesome.css' %}" rel="stylesheet">
+    <link href="{% static 'weather-icons/css/weather-icons.css' %}" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -64,6 +66,8 @@
                         </a>
                     {% endfor %}
                 </div>
+                {% block page_legend %}
+                {% endblock page_legend %}
             </div>
             {# EO Left Menu #}
             {% block main %} {% endblock main %}
