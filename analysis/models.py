@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 
 class TempTxMed(models.Model):
     periodo = models.CharField(max_length=250, blank=True)
@@ -28,12 +27,15 @@ class TempTxMed(models.Model):
     class Meta:
         managed = False
         db_table = 'temp_tx_med'
+        verbose_name = 'Temperatura Media'
+        verbose_name_plural = 'Temperature Medie'
 
 
 class ChiaveIndiciClimatici(models.Model):
     nome_indice_climatico = models.CharField(max_length=250, blank=True, primary_key=True)
     variabile_r = models.CharField(max_length=250, blank=True)
     db_name = models.CharField(max_length=250, blank=True)
+
     class Meta:
         managed = False
         db_table = 'chiave_indici_climatici'
