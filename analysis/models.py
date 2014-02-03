@@ -4,7 +4,7 @@ from django.db import models
 
 class TempTxMed(models.Model):
     periodo = models.CharField(max_length=250, blank=True)
-    stazione = models.CharField(max_length=250, blank=True)
+    stazione = models.CharField(max_length=250, blank=True, primary_key=True)
     quota = models.FloatField(blank=True, null=True)
     gen = models.FloatField(blank=True, null=True)
     feb = models.FloatField(blank=True, null=True)
