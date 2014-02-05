@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block page_name %}{{ flatpage.title }}{% endblock %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li class="active">{{ flatpage.title }} </li>
+{% endblock breadcumb_items %}
+{% block main %}
+<p>{{ flatpage.content }}</p>
+{% endblock %}

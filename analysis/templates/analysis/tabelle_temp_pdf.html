@@ -1,0 +1,64 @@
+<html>
+<style>
+    @page {
+        size: a4 landscape;
+        margin: 1.9cm;
+         @frame footer {
+            -pdf-frame-content: footerContent;
+            bottom: 0.4cm;
+            margin-left: 1.9cm;
+            margin-right: 1cm;
+            height: 1cm;
+  }
+}
+</style>
+<body>
+                <h1  style="text-align: center">Temperatura media giornaliera (&deg; C)</h1>
+                <hr>
+                <table class="table table-striped">
+                  <thead>
+                    <tr style="background-color: #e3e3e3; padding-top: 5px;">
+                      <th >Stazione</th>
+                      <th style="text-align: right">Quota</th>
+                      <th style="text-align: right">Gen</th>
+                      <th style="text-align: right">Feb</th>
+                      <th style="text-align: right">Mar</th>
+                      <th style="text-align: right">Apr</th>
+                      <th style="text-align: right">Mag</th>
+                      <th style="text-align: right">Giu</th>
+                      <th style="text-align: right">Lug</th>
+                      <th style="text-align: right">Ago</th>
+                      <th style="text-align: right">Set</th>
+                      <th style="text-align: right">Ott</th>
+                      <th style="text-align: right">Nov</th>
+                      <th style="text-align: right">Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for t in tabella %}
+                    <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>
+                      <td width="20%">{{ t.stazione }}</td>
+                      <td style="text-align: right">{{ t.quota|floatformat }}</td>
+                      <td style="text-align: right">{{ t.gen }}</td>
+                      <td style="text-align: right">{{ t.feb }}</td>
+                      <td style="text-align: right">{{ t.mar }}</td>
+                      <td style="text-align: right">{{ t.apr }}</td>
+                      <td style="text-align: right">{{ t.mag }}</td>
+                      <td style="text-align: right">{{ t.giu }}</td>
+                      <td style="text-align: right">{{ t.lug }}</td>
+                      <td style="text-align: right">{{ t.ago }}</td>
+                      <td style="text-align: right">{{ t.sett }}</td>
+                      <td style="text-align: right">{{ t.ott }}</td>
+                      <td style="text-align: right">{{ t.nov }}</td>
+                      <td style="text-align: right">{{ t.dic }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+    <!-- /.container -->
+  <div id="footerContent">
+    <b>Pagina <pdf:pagenumber></b>
+  </div>
+</body>
+</html>

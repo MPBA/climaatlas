@@ -7,12 +7,23 @@
     <li><a href="/view/indici/">Tabelle degli indici climatici</a></li>
     <li class="active">Temperatura media giornaliera</li>
 {% endblock breadcumb_items %}
+
 {% block page_legend %}
+    <div class="well well-sm">
+        <ul style="list-style: none">
+            <li>
+               <a href="{% url 'tabelle_indici_tmed_export' 'xls' %}" ><i class="fa fa-table" ></i> Scarica XLS</a>
+            </li>
+            <li>
+                <a href="{% url 'tabelle_indici_tmed_export' 'pdf' %}" target="_blank"><i class="fa fa-file-text-o" ></i> Scarica PDF</a>
+            </li>
+        </ul>
+    </div>
 {% endblock page_legend %}
 {% block main %}
             <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
                 <div class="page-header">
-                    <h1>Temperatura media giornaliera</h1>
+                    <h1>Temperatura media giornaliera (&deg; C)</h1>
                 </div>
 
                 <table class="table table-striped" id="cstations">
@@ -44,7 +55,7 @@
                     {% for t in tabella %}
                     <tr>
                       <td>{{ t.stazione }}</td>
-                      <td>{{ t.quota }}</td>
+                      <td>{{ t.quota|floatformat }}</td>
                       <td>{{ t.gen }}</td>
                       <td>{{ t.feb }}</td>
                       <td>{{ t.mar }}</td>
