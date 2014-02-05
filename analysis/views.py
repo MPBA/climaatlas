@@ -1,48 +1,64 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.base import View
-from .models import ChiaveIndiciClimatici, TempTxMed
+from .models import IndiciClimatici, IndiciClimaticiData
 from climatlas.utils import render_to_pdf
 from export_xls.views import export_xlwt
 
 
-class TabelleIndiciClimaticiView(TemplateView):
-    template_name = 'analysis/tabelle_indici_climatici.html'
+class IndiciClimaticiListView(TemplateView):
+    template_name = 'analysis/indici_climatici_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(TabelleIndiciClimaticiView, self).get_context_data()
+        context = super(IndiciClimaticiListView, self).get_context_data()
 
-        indici = ChiaveIndiciClimatici.objects.all()
+        indici = IndiciClimatici.objects.all()
+        periodo = IndiciClimaticiData.objects.values('periodo').distinct()
         context['indici'] = indici
+        context['periodo'] = periodo
 
         return context
 
 
-class TempTxMedView(TemplateView):
-    template_name = 'analysis/tabelle_temp.html'
+class IndiciClimaticiDetailsView(TemplateView):
+    template_name = 'analysis/indici_climatici_details.html'
 
     def get_context_data(self, **kwargs):
-        context = super(TempTxMedView, self).get_context_data()
+        context = super(IndiciClimaticiDetailsView, self).get_context_data()
+        indice = self.kwargs['indice']
+        periodo = self.kwargs['periodo']
+        print periodo
+        print indice
+        data = IndiciClimaticiData.objects.filter(periodo=periodo, indice=indice).order_by('stazione__stname')
+        indice = IndiciClimatici.objects.get(db_name=indice)
 
-        tb = TempTxMed.objects.all()
-        context['tabella'] = tb
+        context['data'] = data
+        context['indice'] = indice
+        context['periodo'] = periodo
+
 
         return context
 
 
-class TempTxMedViewExport(View):
-    template_name = 'analysis/tabelle_temp_pdf.html'
+class IndiciClimaticiDetailsViewExport(View):
+    template_name = 'analysis/indici_climatici_export_pdf.html'
 
     def get(self, request, *args, **kwargs):
-        tb = TempTxMed.objects.all()
+        indice = self.kwargs['indice']
+        periodo = self.kwargs['periodo']
+        data = IndiciClimaticiData.objects.filter(periodo=periodo, indice=indice).order_by('stazione__stname')
+        indice = IndiciClimatici.objects.get(db_name=indice)
+        title = '%s %s' % (indice.nome_indice_climatico, periodo)
+
         if self.kwargs['tipo_export'] == 'pdf':
-            return render_to_pdf(self.template_name, {'tabella': tb,
+            return render_to_pdf(self.template_name, {'tabella': data,
                                                       'pagesize': 'A4 landscape',
-                                                      'title': 'Tabella Indici Climatici'})
+                                                      'title': title})
         elif self.kwargs['tipo_export'] == 'xls':
-            fields = ["stazione", "quota", "gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "sett", "ott", "nov", "dic" ]
-            queryset = tb
-            filename = TempTxMed._meta.verbose_name_plural.lower()
+            fields = ["stazione__stname", "stazione__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+            queryset = data
+            filename = title
             try:
                 return export_xlwt(filename, fields, queryset.values_list(*fields))
             except Exception, e:

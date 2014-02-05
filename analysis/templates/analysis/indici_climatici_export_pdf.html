@@ -13,7 +13,7 @@
 }
 </style>
 <body>
-                <h1  style="text-align: center">Temperatura media giornaliera (&deg; C)</h1>
+                <h1  style="text-align: center">{{ title }}</h1>
                 <hr>
                 <table class="table table-striped">
                   <thead>
@@ -32,14 +32,19 @@
                       <th style="text-align: right">Ott</th>
                       <th style="text-align: right">Nov</th>
                       <th style="text-align: right">Dic</th>
+                      <th style="text-align: right">Annua</th>
+                      <th style="text-align: right">Inverno</th>
+                      <th style="text-align: right">Primavera</th>
+                      <th style="text-align: right">Estate</th>
+                      <th style="text-align: right">Autunno</th>
                     </tr>
                   </thead>
                   <tbody>
 
                     {% for t in tabella %}
                     <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>
-                      <td width="20%">{{ t.stazione }}</td>
-                      <td style="text-align: right">{{ t.quota|floatformat }}</td>
+                      <td width="20%">{{ t.stazione.stname }}</td>
+                      <td style="text-align: right">{{ t.stazione.elevation|floatformat }}</td>
                       <td style="text-align: right">{{ t.gen }}</td>
                       <td style="text-align: right">{{ t.feb }}</td>
                       <td style="text-align: right">{{ t.mar }}</td>
@@ -52,6 +57,11 @@
                       <td style="text-align: right">{{ t.ott }}</td>
                       <td style="text-align: right">{{ t.nov }}</td>
                       <td style="text-align: right">{{ t.dic }}</td>
+                      <td style="text-align: right">{{ t.annua|floatformat }}</td>
+                      <td style="text-align: right">{{ t.inverno|floatformat }}</td>
+                      <td style="text-align: right">{{ t.primavera|floatformat }}</td>
+                      <td style="text-align: right">{{ t.estate|floatformat }}</td>
+                      <td style="text-align: right">{{ t.autunno|floatformat }}</td>
                     </tr>
                     {% endfor %}
                   </tbody>

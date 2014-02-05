@@ -13,7 +13,10 @@
                <i class="fa fa-table" ></i> Visualizza tabella
             </li>
             <li>
-                <i class="fa fa-file-text-o" ></i> Scarica PDF
+                <i class="fa fa-chevron-circle-down" ></i> Scarica PDF
+            </li>
+            <li>
+                <i class="fa fa-windows" ></i> Scarica PDF
             </li>
         </ul>
     </div>
@@ -28,9 +31,9 @@
                   <thead>
                     <tr>
                       <th style="width: 50%">Nome indice</th>
-                      <th style="width: 20%">1961-1990</th>
-                      <th style="width: 20%">1971-2000</th>
-                      <th style="width: 20%">1980-2010</th>
+                      {% for p in periodo %}
+                          <th>{{ p.periodo }}</th>
+                      {% endfor %}
                     </tr>
                   </thead>
                   <tbody>
@@ -38,18 +41,19 @@
                     {% for i in indici %}
                     <tr>
                       <td>{{ i.nome_indice_climatico }}</td>
-                      <td>
-                          <i class="fa fa-table" ></i>
-                          <i class="fa fa-file-text-o" ></i>
-                      </td>
-                      <td>
-                          <i class="fa fa-table" ></i>
-                          <i class="fa fa-file-text-o"></i>
-                      </td>
-                      <td>
-                          <i class="fa fa-table" ></i>
-                          <i class="fa fa-file-text-o"></i>
-                      </td>
+                      {% for p in periodo %}
+                          {% if p.periodo in i.periodo_disponibile_list %}
+                              <td>
+                                  <a href="{% url 'tabelle_indici_details' i.db_name p.periodo %}"><span class="fa fa-table" ></span></a>
+                                  <a href="{% url 'tabelle_indici_tmed_export' i.db_name p.periodo 'pdf' %}">
+                                      <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
+                                  </a>
+                                  <a href="{% url 'tabelle_indici_tmed_export' i.db_name p.periodo 'xls' %}"><span class="fa fa-windows" ></span></a>
+                              </td>
+                          {% else %}
+                              <td></td>
+                          {% endif %}
+                      {% endfor %}
                     </tr>
                     {% endfor %}
                   </tbody>

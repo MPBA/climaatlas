@@ -55,8 +55,9 @@
            </ol>
         </div>
 
+
         <div class="row">
-            {# BO Left Menu watch Admin panel to define menu items #}
+            {% block menuleft %}
             <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 visible-lg visible-md visible-sm visible-xs">
                 <div class="list-group">
                     {% load menubuilder %}{% menu leftmenu %}
@@ -69,9 +70,10 @@
                 {% block page_legend %}
                 {% endblock page_legend %}
             </div>
-            {# EO Left Menu #}
+            {% endblock %}
             {% block main %} {% endblock main %}
         </div>
+
 
     </div>
     <div class="container">
