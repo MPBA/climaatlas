@@ -1,0 +1,78 @@
+<html>
+<style>
+    @page {
+        size: a4 landscape;
+        margin: 1.3cm;
+         @frame footer {
+            -pdf-frame-content: footerContent;
+            bottom: 0.4cm;
+            margin-left: 1.3cm;
+            margin-right: 1cm;
+            height: 1cm;
+  }
+}
+</style>
+<body>
+                <h1  style="text-align: center">{{ title }}</h1>
+                <hr>
+                <table class="table table-striped">
+                  <thead>
+                    <tr style="background-color: #e3e3e3; padding-top: 5px;">
+                      <th >Stazione</th>
+                      <th style="text-align: right">Quota</th>
+                      <th style="text-align: right">Gen</th>
+                      <th style="text-align: right">Feb</th>
+                      <th style="text-align: right">Mar</th>
+                      <th style="text-align: right">Apr</th>
+                      <th style="text-align: right">Mag</th>
+                      <th style="text-align: right">Giu</th>
+                      <th style="text-align: right">Lug</th>
+                      <th style="text-align: right">Ago</th>
+                      <th style="text-align: right">Set</th>
+                      <th style="text-align: right">Ott</th>
+                      <th style="text-align: right">Nov</th>
+                      <th style="text-align: right">Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for t in tabella %}
+                    <tr style="padding-top: 5px">
+                      <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.stazione.stname }}</td>
+                      <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.stazione.elevation|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.gen|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.feb|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.mar|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.apr|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.mag|floatformat }}</td>
+                      <td style="text-align: right">{{ t.giu|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.lug|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.ago|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.sett|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.ott|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.nov|floatformat }}</td>
+                      <td  style="text-align: right">{{ t.dic|floatformat }}</td>
+                    </tr>
+                    <tr style="padding-top: 5px">
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.gen_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.feb_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mar_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.apr_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mag_data }}</td>
+                      <td style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.giu_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.lug_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ago_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.sett_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ott_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.nov_data }}</td>
+                      <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.dic_data }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+    <!-- /.container -->
+  <div id="footerContent">
+    <b>Pagina <pdf:pagenumber></b>
+  </div>
+</body>
+</html>

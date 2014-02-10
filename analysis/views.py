@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.base import View
-from .models import IndiciClimatici, IndiciClimaticiData
+from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData
 from climatlas.utils import render_to_pdf
 from export_xls.views import export_xlwt
 
@@ -27,8 +27,7 @@ class IndiciClimaticiDetailsView(TemplateView):
         context = super(IndiciClimaticiDetailsView, self).get_context_data()
         indice = self.kwargs['indice']
         periodo = self.kwargs['periodo']
-        print periodo
-        print indice
+
         data = IndiciClimaticiData.objects.filter(periodo=periodo, indice=indice).order_by('stazione__stname')
         indice = IndiciClimatici.objects.get(db_name=indice)
 
@@ -66,3 +65,58 @@ class IndiciClimaticiDetailsViewExport(View):
         else:
             pass
 
+
+class ValoriEstremiListView(TemplateView):
+    template_name = 'analysis/valori_estremi_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ValoriEstremiListView, self).get_context_data()
+
+        estremi = EstremiClimatici.objects.all().order_by('type', 'nome_indice_climatico')
+        context['estremi'] = estremi
+
+        return context
+
+
+class ValoriEstremiDetailsView(TemplateView):
+    template_name = 'analysis/valori_estremi_details.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ValoriEstremiDetailsView, self).get_context_data()
+        indice = self.kwargs['indice']
+
+        data = ValoriEstremiData.objects.filter(indice=indice).order_by('stazione__stname')
+        estremo = EstremiClimatici.objects.get(db_name=indice)
+
+        context['data'] = data
+        context['estremo'] = estremo
+
+        return context
+
+
+class ValoriEstremiDetailsViewExport(View):
+    template_name = 'analysis/valori_estremi_export_pdf.html'
+
+    def get(self, request, *args, **kwargs):
+        indice = self.kwargs['indice']
+
+        data = ValoriEstremiData.objects.filter(indice=indice).order_by('stazione__stname')
+        indice = EstremiClimatici.objects.get(db_name=indice)
+        title = '%s' % (indice.nome_indice_climatico)
+
+        if self.kwargs['tipo_export'] == 'pdf':
+            return render_to_pdf(self.template_name, {'tabella': data,
+                                                      'pagesize': 'A4 landscape',
+                                                      'title': title})
+        elif self.kwargs['tipo_export'] == 'xls':
+            fields = ["stazione__stname", "stazione__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
+                      "mar_data", "apr", "apr_data", "mag","mag_data", "giu", "giu_data", "lug", "lug_data",
+                      "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            queryset = data
+            filename = title
+            try:
+                return export_xlwt(filename, fields, queryset.values_list(*fields))
+            except Exception, e:
+                raise e
+        else:
+            pass

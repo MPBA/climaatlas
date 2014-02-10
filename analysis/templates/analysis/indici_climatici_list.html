@@ -45,10 +45,10 @@
                           {% if p.periodo in i.periodo_disponibile_list %}
                               <td>
                                   <a href="{% url 'tabelle_indici_details' i.db_name p.periodo %}"><span class="fa fa-table" ></span></a>
-                                  <a href="{% url 'tabelle_indici_tmed_export' i.db_name p.periodo 'pdf' %}">
+                                  <a href="{% url 'tabelle_indici_export' i.db_name p.periodo 'pdf' %}">
                                       <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
                                   </a>
-                                  <a href="{% url 'tabelle_indici_tmed_export' i.db_name p.periodo 'xls' %}"><span class="fa fa-windows" ></span></a>
+                                  <a href="{% url 'tabelle_indici_export' i.db_name p.periodo 'xls' %}"><span class="fa fa-windows" ></span></a>
                               </td>
                           {% else %}
                               <td></td>

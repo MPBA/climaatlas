@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_name %}Tabelle indici{% endblock %}
+{% block extra_head %}
+{% endblock extra_head %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li><a href="/view/estremi/">Tabelle dei valori estremi</a></li>
+    <li class="active">{{ estremo.nome_indice_climatico }}</li>
+{% endblock breadcumb_items %}
+{% block menuleft %}
+{% endblock %}
+{% block main %}
+            <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
+                <div class="page-header">
+                    <h1>{{ estremo.nome_indice_climatico }}</h1>
+                </div>
+                <table class="table table-striped" id="cstations">
+                  <thead>
+                    <tr>
+                      <th style="width:150px;">Stazione</th>
+                      <th>Quota</th>
+                      <th>Gen</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Apr</th>
+                      <th>Mag</th>
+                      <th>Giu</th>
+                      <th>Lug</th>
+                      <th>Ago</th>
+                      <th>Set</th>
+                      <th>Ott</th>
+                      <th>Nov</th>
+                      <th>Dic</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for d in data %}
+                    <tr>
+                      <td>{{ d.stazione.stname }}</td>
+                      <td>{{ d.stazione.elevation|floatformat }}</td>
+                      <td>{{ d.gen }}</td>
+                      <td>{{ d.feb }}<br><h6><small>{{ d.feb_data }}</small></h6></td>
+                      <td>{{ d.mar }}<br><h6><small>{{ d.mar_data }}</small></h6></td>
+                      <td>{{ d.apr }}<br><h6><small>{{ d.apr_data }}</small></h6></td>
+                      <td>{{ d.mag }}<br><h6><small>{{ d.mag_data }}</small></h6></td>
+                      <td>{{ d.giu }}<br><h6><small>{{ d.giu_data }}</small></h6></td>
+                      <td>{{ d.lug }}<br><h6><small>{{ d.lug_data }}</small></h6></td>
+                      <td>{{ d.ago }}<br><h6><small>{{ d.ago_data }}</small></h6></td>
+                      <td>{{ d.sett }}<br><h6><small>{{ d.sett_data }}</small></h6></td>
+                      <td>{{ d.ott }}<br><h6><small>{{ d.ott_data }}</small></h6></td>
+                      <td>{{ d.nov }}<br><h6><small>{{ d.nov_data }}</small></h6></td>
+                      <td>{{ d.dic }}<br><h6><small>{{ d.dic_data }}</small></h6></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+    <!-- /.container -->
+{% endblock main %}

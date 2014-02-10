@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_name %}Valori estremi{% endblock %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li class="active">Tabelle dei valori estremi</li>
+{% endblock breadcumb_items %}
+{% block page_legend %}
+    <div class="well well-sm">
+        <ul style="list-style: none">
+            <li>
+               <i class="fa fa-table" ></i> Visualizza tabella
+            </li>
+            <li>
+                <i class="fa fa-chevron-circle-down" ></i> Scarica PDF
+            </li>
+            <li>
+                <i class="fa fa-windows" ></i> Scarica PDF
+            </li>
+        </ul>
+    </div>
+{% endblock page_legend %}
+{% block main %}
+            <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
+                <div class="page-header">
+                    <h1>Tabelle dei valori estremi</h1>
+                </div>
+                {% regroup estremi by type as estremi_list %}
+                {% for el in estremi_list %}
+                    <table class="table table-striped" id="cstations">
+                    <thead>
+                    <tr>
+                      <th style="width: 50%" colspan="2">{{ el.grouper|capfirst }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in el.list %}
+                       <tr>
+                            <td>{{ e.nome_indice_climatico }}</td>
+                            <td>
+                            {% if e.data_available %}
+                                 <a href="{% url 'valori_estremi_details' e.db_name %}"><span class="fa fa-table" ></span></a>
+                                 <a href="{% url 'valori_estremi_export' e.db_name 'pdf' %}">
+                                      <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
+                                  </a>
+                                  <a href="{% url 'valori_estremi_export' e.db_name 'xls' %}"><span class="fa fa-windows" ></span></a>
+                            {% endif %}
+                            </td>
+                       </tr>
+                       {% endfor %}
+                    </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+    <!-- /.container -->
+{% endblock main %}
