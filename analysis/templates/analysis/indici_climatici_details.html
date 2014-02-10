@@ -74,7 +74,7 @@
                   <tbody>
                     {% for d in data %}
                     <tr>
-                      <td>{{ d.stazione.stname }}</td>
+                      <td>{{ d.stazione.stname }} {{ d.nota }}</td>
                       <td>{{ d.stazione.elevation|floatformat }}</td>
                       <td>{{ d.gen }}</td>
                       <td>{{ d.feb }}</td>
