@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.views.generic.base import View
 from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData
 from climatlas.utils import render_to_pdf
+from climatlas.models import Station
 from export_xls.views import export_xlwt
 
 
@@ -120,3 +121,34 @@ class ValoriEstremiDetailsViewExport(View):
                 raise e
         else:
             pass
+
+
+class DiagrammiClimaticiListView(TemplateView):
+    template_name = 'analysis/diagrammi_climatici_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DiagrammiClimaticiListView, self).get_context_data()
+        meteo_stations = Station.objects.all().order_by('stname')
+
+        context['meteo_stations'] = meteo_stations
+        return context
+
+
+class DiagrammiClimaticiDetailsView(TemplateView):
+    template_name = 'analysis/diagrammi_climatici_details.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DiagrammiClimaticiDetailsView, self).get_context_data()
+        pk = self.kwargs['pk']
+        periodo = self.kwargs['periodo']
+
+        station = Station.objects.get(pk=pk)
+        data = station.indiciclimaticidata_set.filter(periodo=periodo).order_by('indice__nome_indice_climatico','periodo')
+
+        context['station'] = station
+        context['data'] = data
+        context['periodo'] = periodo
+        context['periodo_list'] = ['1971-2000', '1961-1990', '1981-2010']
+        context['station_list'] = Station.objects.all()
+
+        return context

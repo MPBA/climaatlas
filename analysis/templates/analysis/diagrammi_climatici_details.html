@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
+     <script src="{% static 'leaflet/leaflet.js' %}"></script>
+     <style>
+        #map { height: 600px; }
+     </style>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#station").on('change', function() {
+            var pk = $("#station option:selected").attr('pk');
+            var periodo = $("#periodo option:selected").attr('pk');
+            location.href = '/view/diagrammi/details/' + pk + "/" + periodo + "/"
+        });
+        $("#periodo").on('change', function() {
+            var pk = $("#station option:selected").attr('pk');
+            var periodo = $("#periodo option:selected").attr('pk');
+            location.href = '/view/diagrammi/details/' + pk + "/" + periodo + "/"
+        });
+    });
+</script>
+{% endblock extra_head %}
+{% block page_name %}Diagrammi climatici{% endblock %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li><a href="/view/diagrammi/">Diagrammi Climatici</a></li>
+    <li class="active">{{ station.stname }} {{ periodo }}</li>
+{% endblock breadcumb_items %}
+{% block page_legend %}
+<div class="well well-sm">
+    <form role="form">
+        <fieldset>
+        <div class="form-group">
+            <label for="station">Cambia stazione meteo</label>
+            <select id="station" class="form-control">
+                {% for s in station_list %}
+                     <option {% ifequal s station.stname %}active{% endifequal %} pk="{{ s.pk }}">{{ s.stname }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="periodo">Cambia periodo climatico</label>
+            <select id="periodo" class="form-control">
+                {% for p in periodo_list %}
+                    <option {% ifequal p periodo %}active{% endifequal %} pk="{{ p }}">{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock page_legend %}
+{% block main %}
+<div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
+    <div class="page-header">
+        <h1>Diagrammi climatici <small>{{ station.stname }} {{ periodo }}</small></h1>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-5 col-md-5 col-xs-5 col-sm-5 visible-lg visible-md visible-sm visible-xs">
+            <div id="map" style="width: 100%; height: 400px"></div>
+        </div>
+        <div class="col-md-4 col-md-4 col-xs-4 col-sm-4 visible-lg visible-md visible-sm visible-xs">
+            <div class="vcard pull-left" style="width: 450px">
+            <ul>
+                <li class="v-heading">
+                    <span class="item-key">Codice Stazione</span>
+                    <div class="vcard-item">{{ station.code }}</div>
+                </li>
+                <li>
+                    <span class="item-key"><strong>Nome</strong></span>
+                    <div class="vcard-item">{{ station.stname }}</div>
+                </li>
+                <li>
+                    <span class="item-key"><strong>Data Attivazione</strong></span>
+                    <div class="vcard-item">{{ station.commence|date:"d/m/Y" }}</div>
+                </li>
+                <li>
+                    <span class="item-key"><strong>Stato</strong></span>
+                    <div class="vcard-item">
+                        {% if station.0.cease %}
+                                <i class="fa fa-circle" style="color: #cb4437"></i> Dismessa il {{ station.cease|date:"d/m/Y" }}
+                              {% else %}
+                                <i class="fa fa-circle" style="color: #79a038"></i>
+                              {% endif %}
+                    </div>
+                </li>
+                <li>
+                    <span class="item-key"><strong>Descrizione</strong></span>
+                    <div class="vcard-item">{{ station.description }}</div>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
+            <table class="table table-striped" id="cstations">
+              <thead>
+                <tr>
+                  <th style="width:150px;">Indice</th>
+                  <th>Gen</th>
+                  <th>Feb</th>
+                  <th>Mar</th>
+                  <th>Apr</th>
+                  <th>Mag</th>
+                  <th>Giu</th>
+                  <th>Lug</th>
+                  <th>Ago</th>
+                  <th>Set</th>
+                  <th>Ott</th>
+                  <th>Nov</th>
+                  <th>Dic</th>
+                  <th>Annua</th>
+                  <th>Periodo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d in data %}
+                <tr>
+                  <td>{{ d.indice.nome_indice_climatico }} {{ d.nota }}</td>
+                  <td>{{ d.gen }}</td>
+                  <td>{{ d.feb }}</td>
+                  <td>{{ d.mar }}</td>
+                  <td>{{ d.apr }}</td>
+                  <td>{{ d.mag }}</td>
+                  <td>{{ d.giu }}</td>
+                  <td>{{ d.lug }}</td>
+                  <td>{{ d.ago }}</td>
+                  <td>{{ d.sett }}</td>
+                  <td>{{ d.ott }}</td>
+                  <td>{{ d.nov }}</td>
+                  <td>{{ d.dic }}</td>
+                  <td>{{ d.annua|floatformat }}</td>
+                  <td>{{ d.periodo }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    <script>
+        var map = L.map('map')
+
+        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: ''
+        }).addTo(map);
+
+
+        L.marker([{{ station.latitude }},{{ station.longitude }}]).addTo(map)
+            .bindPopup("<b>{{ station.code }}</b><br />{{ station.stname }}</b><br />Coordinate: {{ station.latitude }}, {{ station.longitude }} ").openPopup();
+
+        var popup = L.popup();
+
+        setTimeout(function(){
+            map.setView([{{ station.latitude }},{{ station.longitude }}], 12);
+        },500);
+
+    </script>
+    <!-- /.container -->
+{% endblock main %}

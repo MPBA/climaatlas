@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_name %}Diagrammi climatici{% endblock %}
+{% block extra_head %}
+     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
+     <script src="{% static 'leaflet/leaflet.js' %}"></script>
+     <style>
+        #map { height: 600px; }
+     </style>
+{% endblock extra_head %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li class="active">Diagrammi climatici</li>
+{% endblock breadcumb_items %}
+{% block main %}
+<div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
+    <div class="page-header">
+        <h1>Diagrammi climatici</h1>
+    </div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
+      <li><a href="#mappa" data-toggle="tab" id="mpl">Mappa</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div class="tab-pane fade in active" id="lista">
+          <div class="table-responsive">
+                <table class="table table-striped" id="cstations">
+                  <thead>
+                    <tr>
+                      <th style="width: 10%">Codice</th>
+                      <th style="width: 30%">Nome</th>
+                      <th>Periodo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% for station in meteo_stations %}
+                    <tr>
+                      <td>{{ station.code }}</td>
+                      <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
+                      <td>
+                          {% for periodo in station.periodo_disponibile_list %}
+                              <a href="{% url 'diagrammi_climatici_details' station.pk periodo %}">{{ periodo }}</a>
+                          {% endfor%}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+      </div>
+      <div class="tab-pane fade" id="mappa">
+          <div id="map" style="width: 100%; height: 600px"></div>
+      </div>
+    </div>
+</div>
+<script>
+    var map = L.map('map')
+
+    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: ''
+    }).addTo(map);
+
+    {% for station in meteo_stations %}
+    L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
+        .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \
+                    {% for periodo in station.periodo_disponibile_list %}  \
+                        <li><a href='{% url 'diagrammi_climatici_details' station.pk periodo %}'>Diagramma {{ periodo }}</a></li>  \
+                    {% endfor%}").openPopup();
+    {% endfor %}
+
+    $('#mpl').click(function(){
+        setTimeout(function(){
+            map.setView([46.0760556,11.1176091], 9);
+        },500);
+    })
+</script>
+{% endblock main %}

@@ -19,6 +19,11 @@ class Station(models.Model):
         managed = False
         db_table = 'station'
 
+    @property
+    def periodo_disponibile_list(self):
+        values = self.indiciclimaticidata_set.values_list('periodo').distinct()
+        return [v[0] for v in values]
+
 
 class StationView(models.Model):
     id = models.BigIntegerField(primary_key=True)
