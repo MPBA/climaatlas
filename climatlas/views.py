@@ -11,6 +11,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from .models import Station
 
 
 #class based view for home page rendering
@@ -30,6 +31,7 @@ class StazioniClimaticheView(TemplateView):
         cursor.execute("SELECT * FROM station_view")
         context = super(StazioniClimaticheView, self).get_context_data()
         context['meteo_stations'] = dictfetchall(cursor)
+        #context['meteo_stations'] = Station.objects./
         return context
 
 

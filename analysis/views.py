@@ -149,6 +149,6 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         context['data'] = data
         context['periodo'] = periodo
         context['periodo_list'] = ['1971-2000', '1961-1990', '1981-2010']
-        context['station_list'] = Station.objects.all()
+        context['station_list'] = Station.objects.all().order_by('stname')
 
         return context

@@ -35,7 +35,7 @@
             <label for="station">Cambia stazione meteo</label>
             <select id="station" class="form-control">
                 {% for s in station_list %}
-                     <option {% ifequal s station.stname %}active{% endifequal %} pk="{{ s.pk }}">{{ s.stname }}</option>
+                     <option {% ifequal s.stname station.stname %}selected{% endifequal %} pk="{{ s.pk }}">{{ s.stname }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -43,7 +43,7 @@
             <label for="periodo">Cambia periodo climatico</label>
             <select id="periodo" class="form-control">
                 {% for p in periodo_list %}
-                    <option {% ifequal p periodo %}active{% endifequal %} pk="{{ p }}">{{ p }}</option>
+                    <option {% ifequal p periodo %}selected{% endifequal %} pk="{{ p }}">{{ p }}</option>
                 {% endfor %}
             </select>
         </div>
