@@ -17,12 +17,16 @@ class Station(models.Model):
 
     class Meta:
         managed = False
+        ordering = ['code']
         db_table = 'station'
 
     @property
     def periodo_disponibile_list(self):
         values = self.indiciclimaticidata_set.values_list('periodo').distinct()
         return [v[0] for v in values]
+
+    def __unicode__(self):
+        return u'%s %s' % (self.code, self.stname)
 
 
 class StationView(models.Model):
