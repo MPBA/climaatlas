@@ -1,45 +1,82 @@
 body {
-  padding-top: 115px;
+    padding-top: 115px;
 }
 
 .thumbnail img {
-  width: 100%;
+    width: 100%;
 }
 
 .ratings {
-  color: #d17581;
-  padding-left: 10px;
-  padding-right: 10px;
+    color: #d17581;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .thumbnail {
-  padding: 0;
+    padding: 0;
 }
 
 .thumbnail .caption-full {
-  padding: 9px;
-  color: #333;
+    padding: 9px;
+    color: #333;
 }
 
 footer {
-  margin: 50px 0;
+    margin: 50px 0;
 }
 
 .nav {
-	margin-top: 28px; /* this is a faux center fix for the nav options - adjust this if you wish to change the logo height or the font of the menu items */
+    margin-top: 28px; /* this is a faux center fix for the nav options - adjust this if you wish to change the logo height or the font of the menu items */
 }
 
 .text-justify{
     text-align: justify;
 }
 
-	/* vcard */
-		.vcard .thumbnail {float:left}
-		.vcard > ul {list-style:none;margin:5px 0 0 -25px;overflow:hidden}
-		.vcard > ul > li:first-child {border-top:1px dashed #dcdcdc}
-		.vcard > ul > li {padding:8px;border-bottom:1px dashed #dcdcdc;overflow:hidden}
-		.vcard .item-key {float:left;color:#888;}
-		.vcard .vcard-item {margin-left:160px}
-		.vcard .v-heading {background:#F0F9FF;font-weight:800}
-		.vcard .v-heading span {font-weight:700;font-size:14px;color:#666}
-		.vcard .item-list-more,.vcard .thumbnail.item-list-more {display:none}
+/* vcard */
+.vcard .thumbnail {float:left}
+.vcard > ul {list-style:none;margin:5px 0 0 -25px;overflow:hidden}
+.vcard > ul > li:first-child {border-top:1px dashed #dcdcdc}
+.vcard > ul > li {padding:8px;border-bottom:1px dashed #dcdcdc;overflow:hidden}
+.vcard .item-key {float:left;color:#888;}
+.vcard .vcard-item {margin-left:160px}
+.vcard .v-heading {background:#F0F9FF;font-weight:800}
+.vcard .v-heading span {font-weight:700;font-size:14px;color:#666}
+.vcard .item-list-more,.vcard .thumbnail.item-list-more {display:none}
+
+
+
+
+/* Side notes for calling out things
+-------------------------------------------------- */
+
+/* Base styles (regardless of theme) */
+.bs-callout {
+    margin: 20px 0;
+    padding: 15px 30px 15px 15px;
+    border-left: 5px solid #eee;
+}
+.bs-callout h4 {
+    margin-top: 0;
+}
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code,
+.bs-callout .highlight {
+    background-color: #fff;
+}
+
+/* Themes for different contexts */
+.bs-callout-danger {
+    background-color: #fcf2f2;
+    border-color: #dFb5b4;
+}
+.bs-callout-warning {
+    background-color: #fefbed;
+    border-color: #f1e7bc;
+}
+.bs-callout-info {
+    background-color: #f0f7fd;
+    border-color: #d0e3f0;
+}

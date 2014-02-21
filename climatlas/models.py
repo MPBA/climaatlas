@@ -22,7 +22,7 @@ class Station(models.Model):
 
     @property
     def periodo_disponibile_list(self):
-        values = self.indiciclimaticidata_set.values_list('periodo').distinct()
+        values = self.indiciclimaticidata_set.values_list('periodo').distinct().order_by('periodo')
         return [v[0] for v in values]
 
     def __unicode__(self):
