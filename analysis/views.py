@@ -106,12 +106,16 @@ class ValoriEstremiDetailsViewExport(View):
 
         if self.kwargs['tipo_export'] == 'pdf':
             return render_to_pdf(self.template_name, {'tabella': data,
+                                                      'estremo': indice,
                                                       'pagesize': 'A4 landscape',
                                                       'title': title})
         elif self.kwargs['tipo_export'] == 'xls':
             fields = ["stazione__stname", "stazione__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag","mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            if indice.type == 'mensili':
+                fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
+                           "estate_data", "autunno", "autunno_data"]
             queryset = data
             filename = title
             try:
