@@ -13,7 +13,8 @@ urlpatterns = patterns('',
 
     ### Import analysis app ###
     (r'^view/', include("analysis.urls")),
-
+    ### Import upload tools app ###
+    (r'^upload/', include("dataupload.urls")),
 
     url(r'^admin/', include(admin.site.urls)),
 )
