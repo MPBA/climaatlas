@@ -14,7 +14,7 @@ class IndiciClimaticiListView(TemplateView):
         context = super(IndiciClimaticiListView, self).get_context_data()
 
         indici = IndiciClimatici.objects.all()
-        periodo = IndiciClimaticiData.objects.values('periodo').distinct()
+        periodo = IndiciClimaticiData.objects.values('periodo').distinct().order_by('periodo')
         context['indici'] = indici
         context['periodo'] = periodo
 
@@ -35,7 +35,6 @@ class IndiciClimaticiDetailsView(TemplateView):
         context['data'] = data
         context['indice'] = indice
         context['periodo'] = periodo
-
 
         return context
 
@@ -107,12 +106,16 @@ class ValoriEstremiDetailsViewExport(View):
 
         if self.kwargs['tipo_export'] == 'pdf':
             return render_to_pdf(self.template_name, {'tabella': data,
+                                                      'estremo': indice,
                                                       'pagesize': 'A4 landscape',
                                                       'title': title})
         elif self.kwargs['tipo_export'] == 'xls':
             fields = ["stazione__stname", "stazione__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag","mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            if indice.type == 'mensili':
+                fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
+                           "estate_data", "autunno", "autunno_data"]
             queryset = data
             filename = title
             try:
@@ -148,7 +151,8 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         context['station'] = station
         context['data'] = data
         context['periodo'] = periodo
-        context['periodo_list'] = ['1971-2000', '1961-1990', '1981-2010']
+        context['grafico'] = station.diagrammiclimatici_set.filter(periodo=periodo)
+        context['periodo_list'] = ['1961-1990', '1971-2000', '1981-2010']   ### TODO FIX mettere nei settings o prendere da db!!!
         context['station_list'] = Station.objects.all().order_by('stname')
 
         return context

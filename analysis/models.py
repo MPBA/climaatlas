@@ -34,7 +34,6 @@ class EstremiClimatici(models.Model):
         return self.valoriestremidata_set.count()
 
 
-
 class IndiciClimaticiData(models.Model):
     stazione = models.ForeignKey(Station)
     indice = models.ForeignKey(IndiciClimatici)
@@ -87,3 +86,22 @@ class ValoriEstremiData(models.Model):
     nov_data = models.CharField(max_length=250, blank=True, null=True)
     dic = models.FloatField(blank=True, null=True)
     dic_data = models.CharField(max_length=250, blank=True, null=True)
+    annua = models.FloatField(blank=True, null=True)
+    annua_data = models.CharField(max_length=250, blank=True, null=True)
+    inverno = models.FloatField(blank=True, null=True)
+    inverno_data = models.CharField(max_length=250, blank=True, null=True)
+    primavera = models.FloatField(blank=True, null=True)
+    primavera_data = models.CharField(max_length=250, blank=True, null=True)
+    estate = models.FloatField(blank=True, null=True)
+    estate_data = models.CharField(max_length=250, blank=True, null=True)
+    autunno = models.FloatField(blank=True, null=True)
+    autunno_data = models.CharField(max_length=250, blank=True, null=True)
+
+
+class DiagrammiClimatici(models.Model):
+    stazione = models.ForeignKey(Station)
+    grafico = models.ImageField(upload_to='diagrammi')
+    periodo = models.CharField(max_length=250, blank=True, null=True)
+
+    def __unicode__(self):
+        return u'%s %s %s' % (self.stazione.code, self.stazione.stname, self.periodo)

@@ -17,12 +17,30 @@ class Station(models.Model):
 
     class Meta:
         managed = False
+        ordering = ['code']
         db_table = 'station'
 
     @property
     def periodo_disponibile_list(self):
-        values = self.indiciclimaticidata_set.values_list('periodo').distinct()
+        values = self.indiciclimaticidata_set.values_list('periodo').distinct().order_by('periodo')
         return [v[0] for v in values]
+
+    @property
+    def diagramma_disponibile(self):
+        if self.diagrammiclimatici_set.all().count():
+            return True
+        else:
+            return False
+
+    @property
+    def tabella_disponibile(self):
+        if self.indiciclimaticidata_set.all().count():
+            return True
+        else:
+            return False
+
+    def __unicode__(self):
+        return u'%s %s' % (self.code, self.stname)
 
 
 class StationView(models.Model):
