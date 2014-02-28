@@ -1,0 +1,95 @@
+__author__ = 'ernesto'
+from zipfile import ZipFile
+import collections
+from django.conf import settings
+from datetime import date
+import os
+import subprocess
+import logging
+
+
+def valid_zip_file(request, file, accepted_names, typeofvalidation):
+    if typeofvalidation == 'stazioni':
+        zip_content = map(lambda x:x.lower(), ZipFile(file).namelist())
+        zip_content_2 = map(lambda x:x, ZipFile(file).namelist())
+        compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
+        if compare(zip_content, accepted_names):
+            return True, zip_content_2
+        else:
+            return False, None
+    elif typeofvalidation == 'dati':
+        zip_content = map(lambda x: x.lower(), ZipFile(file).namelist())
+        zip_content_2 = map(lambda x:x, ZipFile(file).namelist())
+        compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
+        if compare(zip_content, accepted_names):
+            return True, zip_content_2
+        else:
+            if len(list(set(zip_content).intersection(accepted_names))) > 0:
+                return_list = []
+                for a in zip_content_2:
+                    if a.lower() in list(set(zip_content).intersection(accepted_names)):
+                        return_list.append(a)
+                return True, return_list
+            else:
+                return False, None
+    else:
+        return False, None
+
+
+def handle_upload(request, file):
+    upload_dir = date.today().strftime(settings.UPLOAD_PATH)
+    upload_full_path = os.path.join(settings.UPLOAD_DIR, upload_dir)
+    saved = ""
+    if not os.path.exists(upload_full_path):
+        os.makedirs(upload_full_path)
+    if file:
+        upload = file
+        while os.path.exists(os.path.join(upload_full_path, upload.name)):
+            upload.name = '_' + upload.name
+        dest = open(os.path.join(upload_full_path, upload.name), 'wb')
+        for chunk in upload.chunks():
+            dest.write(chunk)
+        dest.close()
+        saved = os.path.join(upload_dir, upload.name)
+    return saved
+
+
+#Generic Postgres Server connection parameters
+class PGServer(object):
+    def __init__(self, name, port=5432, alias="", user="", password="", host="", bindir=""):
+        self.name = name
+        self.port = port
+        self.user = user
+        self.password = password
+        self.host = host
+        self.bindir = bindir
+        self.alias = alias if alias else name
+
+
+#calls an os command, returns a tuple with (stdout, stderr, unix_process_exit_code)
+def call_command(command, environment=None, shell=False):
+    env = os.environ.copy()
+    if environment:
+        env.update(environment)
+
+    if type(command) is str:
+        command = command.split(' ')
+
+    logging.debug("COMMAND: " + " ".join(command))
+
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, shell=shell)
+    streamdata = process.communicate()
+
+    logging.debug("RETCOD: {code}".format(code=process.returncode))
+    logging.debug("STDOUT: {outs}".format(outs=streamdata[0]))
+    if len(streamdata[1].strip()) > 0:
+        logging.warning("STDERR: {errs}".format(errs=streamdata[1]))
+
+    return streamdata[0], streamdata[1], process.returncode
+
+
+#determine nr. of cpu cores
+def cpu_count(divide_by=1):
+    import multiprocessing
+    procs = multiprocessing.cpu_count()/int(divide_by)
+    return procs if procs > 0 else 1

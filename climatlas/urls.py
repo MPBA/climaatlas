@@ -20,6 +20,9 @@ urlpatterns = patterns('',
     ### Import exhibit app ###
     (r'^exhibit/', include("exhibit.urls")),
 
+    ### Import upload tools app ###
+    (r'^upload/', include("dataupload.urls")),
+
     url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django_hstore',
     'export_xls',
+    'dataupload',
     'menu',
     'climatlas',
     'analysis',
@@ -102,6 +103,15 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
+UPLOAD_PATH = 'files/'
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5221440
+
+FILE_UPLOAD_HANDLERS = (
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
 STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
@@ -109,6 +119,11 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 
 )
+import re
+FILE_EXT = re.compile(r'^.*?[.](?P<ext>\.zip|tar\.gz|tar\.bz2|\w+)$')
+VALID_EXTTENSIONS = ['zip']
+STAZIONI_NAMES = ['site.dbf', 'site.fpt', 'site.cdx']
+DATI_NAMES = ['pioggia.txt', 'tempmax.txt', 'tempmin.txt']
 
 ##################
 # LOCAL SETTINGS #
