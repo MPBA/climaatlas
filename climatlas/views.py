@@ -10,7 +10,7 @@ from django.db import transaction, connection, DatabaseError, IntegrityError
 from django.shortcuts import render
 from django.contrib import messages
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse, HttpResponseNotFound
 from .models import Station
 
 
@@ -42,4 +42,12 @@ class StazioniClimaticheDetailView(View):
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM station_view WHERE id=%s", [self.kwargs['pk']])
         context = {'station': dictfetchall(cursor)}
+
+        try:
+            station = Station.objects.get(pk=self.kwargs['pk'])
+            context['station1'] = station
+            context['url'] = 'img/qualita/qualita_staz%s.png' % station.code
+        except Station.DoesNotExist:
+            pass
+
         return render(request, self.template_name, context)

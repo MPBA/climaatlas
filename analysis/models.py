@@ -1,4 +1,5 @@
 from django.db import models
+from django_hstore import hstore
 from climatlas.models import Station
 
 class IndiciClimatici(models.Model):
@@ -105,3 +106,16 @@ class DiagrammiClimatici(models.Model):
 
     def __unicode__(self):
         return u'%s %s %s' % (self.stazione.code, self.stazione.stname, self.periodo)
+
+
+class Chart(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    chart_type = models.IntegerField()
+    station = models.ForeignKey(Station)
+    variables = hstore.DictionaryField() # This field type is a guess.
+    image = models.BinaryField()
+
+    objects = hstore.HStoreManager()
+
+    class Meta:
+        db_table = 'chart'

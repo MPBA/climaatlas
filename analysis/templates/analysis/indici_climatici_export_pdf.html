@@ -9,6 +9,7 @@
             margin-left: 1.9cm;
             margin-right: 1cm;
             height: 1cm;
+            size: a4 landscape;
   }
 }
 </style>
@@ -43,20 +44,20 @@
 
                     {% for t in tabella %}
                     <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>
-                      <td width="20%">{{ t.stazione.stname }}</td>
+                      <td width="20%">{{ t.stazione.stname }} <strong>{{ t.nota }}</strong></td>
                       <td style="text-align: right">{{ t.stazione.elevation|floatformat }}</td>
-                      <td style="text-align: right">{{ t.gen }}</td>
-                      <td style="text-align: right">{{ t.feb }}</td>
-                      <td style="text-align: right">{{ t.mar }}</td>
-                      <td style="text-align: right">{{ t.apr }}</td>
-                      <td style="text-align: right">{{ t.mag }}</td>
-                      <td style="text-align: right">{{ t.giu }}</td>
-                      <td style="text-align: right">{{ t.lug }}</td>
-                      <td style="text-align: right">{{ t.ago }}</td>
-                      <td style="text-align: right">{{ t.sett }}</td>
-                      <td style="text-align: right">{{ t.ott }}</td>
-                      <td style="text-align: right">{{ t.nov }}</td>
-                      <td style="text-align: right">{{ t.dic }}</td>
+                      <td style="text-align: right">{{ t.gen|floatformat }}</td>
+                      <td style="text-align: right">{{ t.feb|floatformat }}</td>
+                      <td style="text-align: right">{{ t.mar|floatformat }}</td>
+                      <td style="text-align: right">{{ t.apr|floatformat }}</td>
+                      <td style="text-align: right">{{ t.mag|floatformat }}</td>
+                      <td style="text-align: right">{{ t.giu|floatformat }}</td>
+                      <td style="text-align: right">{{ t.lug|floatformat }}</td>
+                      <td style="text-align: right">{{ t.ago|floatformat }}</td>
+                      <td style="text-align: right">{{ t.sett|floatformat }}</td>
+                      <td style="text-align: right">{{ t.ott|floatformat }}</td>
+                      <td style="text-align: right">{{ t.nov|floatformat }}</td>
+                      <td style="text-align: right">{{ t.dic|floatformat }}</td>
                       <td style="text-align: right">{{ t.annua|floatformat }}</td>
                       <td style="text-align: right">{{ t.inverno|floatformat }}</td>
                       <td style="text-align: right">{{ t.primavera|floatformat }}</td>
@@ -66,6 +67,7 @@
                     {% endfor %}
                   </tbody>
                 </table>
+                <strong>* Serie ottenuta dall'unione di due serie.</strong>
     <!-- /.container -->
   <div id="footerContent">
     <b>Pagina <pdf:pagenumber></b>

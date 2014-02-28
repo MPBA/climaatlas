@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_name %}Cronologia delle temperature{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="{% static 'js/d3.v3.min.js' %}"></script>
+    <script src="{% static 'js/temperature.js' %}"></script>
+    <script src="{% static 'js/underscore-min.js' %}"></script>
+{% endblock extra_head %}
+{% block breadcumb_items %}
+    <li><a href="/">Home</a></li>
+    <li clss="active">Cronologia delle temperature</li>
+{% endblock breadcumb_items %}
+{% block menuleft %}
+{% endblock %}
+{% block main %}
+    <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
+        <div class="page-header">
+            <h1>Cronologia delle temperature</h1>
+        </div>
+    </div>
+    <div id="chart"><svg></svg></div>
+    <div id="widgets">
+        <div id="header">
+            <h1>UK Temperature History</h1>
+            <p>Explore the temperature in the United Kingdom since 1910 by scrolling the page <span class="emphasis">up</span> and <span class="emphasis">down</span>. Visit years marked in <span style="color: indianred;">red</span> or <span style="color: steelblue;">blue</span> that have significant weather events. You can also sort by <span class="emphasis">year</span>, <span class="emphasis">maximum</span>, <span class="emphasis">minimum</span> or <span class="emphasis">mean</span> temperature</p>
+        </div>
+        <div id="menu"></div>
+        <div id="info"></div>
+    </div>
+
+    <script type="text/javascript">
+        d3.json('/static/temp.json', function(temperatureData) {
+            chart.data = temperatureData;
+            chart.init();
+            chart.updateVisibleYears();
+        });
+    </script>
+    <!-- /.container -->
+{% endblock main %}

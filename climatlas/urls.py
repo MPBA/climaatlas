@@ -17,6 +17,8 @@ urlpatterns = patterns('',
     ### Import analysis app ###
     (r'^view/', include("analysis.urls")),
 
+    ### Import exhibit app ###
+    (r'^exhibit/', include("exhibit.urls")),
 
     url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

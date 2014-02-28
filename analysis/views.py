@@ -1,7 +1,9 @@
+#-*- encoding: utf-8 -*-
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.base import View
-from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData
+from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData, Chart
 from climatlas.utils import render_to_pdf
 from climatlas.models import Station
 from export_xls.views import export_xlwt
@@ -156,3 +158,24 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         context['station_list'] = Station.objects.all().order_by('stname')
 
         return context
+
+
+def get_charts(request, chart_type, stazione, tipo_dato, periodo):
+    var = {
+        "tipo_dato": tipo_dato,
+        "periodo_climatico": periodo
+    }
+
+    chart = Chart.objects.filter(station=stazione, chart_type=chart_type, variables__contains=var)
+    if len(chart):
+        return HttpResponse(chart[0].image, mimetype="image/png", status=200)
+    else:
+        return HttpResponseNotFound('Not found.')
+
+
+def get_charts_test(request, pk):
+    try:
+        chart = Chart.objects.get(pk=pk)
+        return HttpResponse(chart.image, mimetype="image/png", status=200)
+    except Chart.DoesNotExist:
+        return HttpResponseNotFound('Not found.')

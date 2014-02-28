@@ -4,7 +4,7 @@ from .views import IndiciClimaticiListView, IndiciClimaticiDetailsView, IndiciCl
                    ValoriEstremiListView, ValoriEstremiDetailsView, ValoriEstremiDetailsViewExport, \
                    DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView
 
-urlpatterns = patterns('climatlas.analysis.views',
+urlpatterns = patterns('analysis.views',
     ### Indici climatici ###
     url(regex='^indici/$', view=IndiciClimaticiListView.as_view(), name='tabelle_indici_view'),
     url(regex='^indici/details/(?P<indice>[-\w_]+)/(?P<periodo>[-\w_]+)/$',
@@ -25,4 +25,7 @@ urlpatterns = patterns('climatlas.analysis.views',
     url(regex='^diagrammi/$', view=DiagrammiClimaticiListView.as_view(), name='diagrammi_climatici_view'),
     url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\w_]+)/$', view=DiagrammiClimaticiDetailsView.as_view(),
         name='diagrammi_climatici_details'),
+
+    url(r'^grafico/(?P<chart_type>\d+)/(?P<stazione>\d+)/(?P<tipo_dato>[-\w_]+)/(?P<periodo>[-\w_]+)/$', 'get_charts'),
+    url(r'^grafico/(?P<pk>\d+)/$', 'get_charts_test'),
 )

@@ -41,10 +41,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'django.contrib.gis',
+    'django_hstore',
     'export_xls',
     'menu',
     'climatlas',
-    'analysis'
+    'analysis',
+    'exhibit'
 )
 
 MIDDLEWARE_CLASSES = (
