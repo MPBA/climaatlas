@@ -1,5 +1,5 @@
 #-*- encoding: utf-8 -*-
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.base import View
@@ -7,6 +7,7 @@ from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, Valo
 from climatlas.utils import render_to_pdf
 from climatlas.models import Station
 from export_xls.views import export_xlwt
+from django.db import transaction, connection, DatabaseError
 
 
 class IndiciClimaticiListView(TemplateView):
@@ -160,6 +161,53 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         return context
 
 
+class TrendClimaticiAnomalieList(TemplateView):
+    template_name = 'analysis/trend_anomalie_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendClimaticiAnomalieList, self).get_context_data()
+        stations_from_charts = Chart.objects.filter(chart_type__in=(6, 7)).values_list('station_id').distinct()
+        stations = Station.objects.filter(pk__in=stations_from_charts)
+        context['stations'] = stations
+        context['type'] = (6, 7)
+        return context
+
+
+class TrendClimaticiAnomalieDetailsView(TemplateView):
+    template_name = 'analysis/trend_anomalie_details.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendClimaticiAnomalieDetailsView, self).get_context_data()
+        ids = list(map(int, self.kwargs['ids'].split('-')))
+        station_from_chart = Chart.objects.filter(id__in=ids).values('station_id').distinct()
+        if len(station_from_chart) > 1:
+            raise Http404
+        else:
+            station = Station.objects.get(id=station_from_chart[0]['station_id'])
+        stations_from_charts = Chart.objects.filter(chart_type__in=(6, 7)).values_list('station_id').distinct()
+
+        periodi = Chart.objects.filter(chart_type__in=(6, 7), station_id=station).values_list('variables', 'id')
+
+        for p in periodi:
+            print p[0]['periodo_climatico']
+            for i in p[1]:
+                print i
+        # ids = []
+        # for a in {str(v[1]) for v in list(periodi)}:
+        #     ids.append(a)
+        # id_grafici = '-'.join(ids)
+        #
+        # s = {'idg': id_grafici, 'val': {str(v[0]['periodo_climatico']) for v in list(periodi)}}
+        # print s
+        # context['periodo_list'] = s
+        context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
+        context['station'] = station
+        context['charts'] = Chart.objects.filter(id__in=ids)
+        context['type'] = (6, 7)
+        return context
+
+
+###############################CHARTS FUNCTIONS##################################################
 def get_charts(request, chart_type, stazione, tipo_dato, periodo):
     var = {
         "tipo_dato": tipo_dato,
@@ -173,9 +221,10 @@ def get_charts(request, chart_type, stazione, tipo_dato, periodo):
         return HttpResponseNotFound('Not found.')
 
 
-def get_charts_test(request, pk):
+def get_chart_by_id(request, pk):
     try:
         chart = Chart.objects.get(pk=pk)
         return HttpResponse(chart.image, mimetype="image/png", status=200)
     except Chart.DoesNotExist:
         return HttpResponseNotFound('Not found.')
+###############################END CHARTS FUNCTIONS##################################################

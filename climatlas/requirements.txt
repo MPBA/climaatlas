@@ -3,3 +3,4 @@ django-menu==0.1.7
 #psycopg2==2.5.2
 xhtml2pdf
 django-export-xls
+django_hstore
