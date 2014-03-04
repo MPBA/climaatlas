@@ -30,7 +30,7 @@ urlpatterns = patterns('analysis.views',
     url(regex='^trend/anomalie/$', view=TrendClimaticiAnomalieList.as_view(), name='trend_anomalie_view'),
     url(regex='^trend/anomalie/details/(?P<ids>[-\d]+)/$', view=TrendClimaticiAnomalieDetailsView.as_view(), name='trend_anomalie_detail'),
 
-
+    url(r'^ajax_periodi_select/$', 'popola_periodi_select', name='ajax_periodi_select'),
     url(r'^grafico/(?P<chart_type>\d+)/(?P<stazione>\d+)/(?P<tipo_dato>[-\w_]+)/(?P<periodo>[-\w_]+)/$', 'get_charts'),
     url(r'^grafico/(?P<pk>\d+)/$', 'get_chart_by_id', name='get_chart_by_id'),
 )

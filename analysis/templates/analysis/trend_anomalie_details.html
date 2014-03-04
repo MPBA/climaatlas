@@ -9,18 +9,34 @@
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
     <style>
         #map { height: 600px; }
+        i { font-size: 16px!important; font-weight: bold}
+
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
+
+
             $("#station").on('change', function() {
-                var pk = $("#station option:selected").attr('pk');
-                var periodo = $("#periodo option:selected").attr('pk');
-                location.href = '/view/anomalie/details/' + pk + "/" + periodo + "/"
+                 var pk = $("#station option:selected").attr('pk');
+                 $.ajax({
+                    type: 'GET',
+                    url: '/view/ajax_periodi_select/',
+                    data: {'station_id': pk, 'tipi_grafici[]':[6,7]},
+                    success: function(json) {
+                        //alert($.parseJSON(json));
+                        $("#periodo").empty();
+                        $('#periodo').append("<option value=-->" + "Scegli un periodo" + "</option>" );
+                        $.each(JSON.parse(json), function(i, v) {
+                            $('#periodo').append("<option value=" + v['ids'] +">" + v['periodo'] + "</option>" );
+                        });
+
+                        }
+                    });
             });
+
             $("#periodo").on('change', function() {
-                var pk = $("#station option:selected").attr('pk');
-                var periodo = $("#periodo option:selected").attr('pk');
-                location.href = '/view/diagrammi/details/' + pk + "/" + periodo + "/"
+                var periodo = $("#periodo option:selected").val();
+                location.href = '/view/trend/anomalie/details/' + periodo + "/"
             });
         });
     </script>
@@ -49,9 +65,11 @@
                 <div class="form-group">
                     <label for="periodo">Cambia periodo climatico</label>
                     <select id="periodo" class="form-control">
-                        {% for p in periodo_list %}
-
-                            <option {% ifequal p periodo %}selected{% endifequal %} pk="{{ p.0 }}">{{ p.1 }}</option>
+                        {% periodi_climatici station.pk type as periodi %}
+                                    {% for per in periodi.items %}
+                                        <option value="{{ per.1 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
+                                            {{ per.0 }}
+                                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -62,7 +80,7 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Anomalie Indici Climatici <small>{{ station.stname }} {{ periodo }}</small></h1>
+            <h1>Anomalie Indici Climatici [{{ periodo_climatico }}] <small>{{ station.stname }} {{ periodo }}</small></h1>
         </div>
         <br>
         <div class="row">
@@ -110,7 +128,7 @@
             {% if chart %}
                 <div class="col-md-6">
                 <div class="panel panel-info">
-                  <div class="panel-heading">{{ chart.variables.tipo_dato|capfirst }}</div>
+                  <div class="panel-heading"><i class="wi-{{ chart.variables.tipo_dato }}"></i> {{ chart.variables.tipo_dato|capfirst }} </div>
                   <div class="panel-body">
                      <a href="{% url 'get_chart_by_id' chart.id %}" data-lightbox="image-1" title="Chart1">
                      <img src="{% url 'get_chart_by_id' chart.id %}" alt="" class="img-thumbnail img-responsive" />

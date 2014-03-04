@@ -112,7 +112,7 @@ class Chart(models.Model):
     id = models.BigIntegerField(primary_key=True)
     chart_type = models.IntegerField()
     station = models.ForeignKey(Station)
-    variables = hstore.DictionaryField() # This field type is a guess.
+    variables = hstore.DictionaryField()
     image = models.BinaryField()
 
     objects = hstore.HStoreManager()

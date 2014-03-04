@@ -223,6 +223,9 @@
 .wi-celcius:before {
   content: "\f03c";
 }
+.wi-temperatura:before {
+  content: "\f03c";
+}
 .wi-cloud-down:before {
   content: "\f03d";
 }
@@ -275,6 +278,9 @@
   content: "\f04d";
 }
 .wi-sprinkles:before {
+  content: "\f04e";
+}
+.wi-precipitazione:before {
   content: "\f04e";
 }
 .wi-rain-custom:before {

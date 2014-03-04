@@ -74,10 +74,9 @@
                                 <td>
                                     {% periodi_climatici station.pk type as periodi %}
 
-                                    {% for per in periodi.1 %}
-                                        <a href="{% url 'trend_anomalie_detail' periodi.0 %}">
-                                            {{ per }}
-
+                                    {% for per in periodi.items %}
+                                        <a href="{% url 'trend_anomalie_detail' per.1 %}">
+                                            {{ per.0 }}
                                         </a>
                                     {% endfor %}
                                 </td>

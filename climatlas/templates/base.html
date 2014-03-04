@@ -110,7 +110,7 @@
                                         {% menu trends %}
                                         {% for item2 in menuitems %}
                                             <li>
-                                               <a data-toggle="dropdown" href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                               <a href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
                                                 {{ item2.title }}
                                                </a>
                                             </li>

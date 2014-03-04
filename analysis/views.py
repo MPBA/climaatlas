@@ -4,10 +4,11 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.base import View
 from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData, Chart
-from climatlas.utils import render_to_pdf
+from climatlas.utils import render_to_pdf, periodi_graph_dict
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 from django.db import transaction, connection, DatabaseError
+import json
 
 
 class IndiciClimaticiListView(TemplateView):
@@ -149,7 +150,7 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         periodo = self.kwargs['periodo']
 
         station = Station.objects.get(pk=pk)
-        data = station.indiciclimaticidata_set.filter(periodo=periodo).order_by('indice__nome_indice_climatico','periodo')
+        data = station.indiciclimaticidata_set.filter(periodo=periodo).order_by('indice__nome_indice_climatico', 'periodo')
 
         context['station'] = station
         context['data'] = data
@@ -185,24 +186,11 @@ class TrendClimaticiAnomalieDetailsView(TemplateView):
         else:
             station = Station.objects.get(id=station_from_chart[0]['station_id'])
         stations_from_charts = Chart.objects.filter(chart_type__in=(6, 7)).values_list('station_id').distinct()
-
-        periodi = Chart.objects.filter(chart_type__in=(6, 7), station_id=station).values_list('variables', 'id')
-
-        for p in periodi:
-            print p[0]['periodo_climatico']
-            for i in p[1]:
-                print i
-        # ids = []
-        # for a in {str(v[1]) for v in list(periodi)}:
-        #     ids.append(a)
-        # id_grafici = '-'.join(ids)
-        #
-        # s = {'idg': id_grafici, 'val': {str(v[0]['periodo_climatico']) for v in list(periodi)}}
-        # print s
-        # context['periodo_list'] = s
+        context['periodo_list'] = periodi_graph_dict(station, (6, 7))
         context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
         context['station'] = station
         context['charts'] = Chart.objects.filter(id__in=ids)
+        context['periodo_climatico'] = Chart.objects.filter(id__in=ids).values_list('variables')[0][0]['periodo_climatico']
         context['type'] = (6, 7)
         return context
 
@@ -227,4 +215,17 @@ def get_chart_by_id(request, pk):
         return HttpResponse(chart.image, mimetype="image/png", status=200)
     except Chart.DoesNotExist:
         return HttpResponseNotFound('Not found.')
-###############################END CHARTS FUNCTIONS##################################################
+###############################EO CHARTS FUNCTIONS##################################################
+
+
+###############################AJAX FUNCTIONS##################################################
+def popola_periodi_select(request):
+    periodi = periodi_graph_dict(request.GET['station_id'], request.GET.getlist('tipi_grafici[]'))
+    result = []
+    for k, p in periodi.iteritems():
+        result.append({
+            'periodo': k,
+            'ids': '-'.join(p)
+        })
+    return HttpResponse(json.dumps(result))
+###############################EO AJAX FUNCTIONS##################################################

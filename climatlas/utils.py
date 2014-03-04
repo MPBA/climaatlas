@@ -5,6 +5,7 @@ __author__ = 'arbitrio@fbk.eu'
 from django import http
 from django.template.loader import get_template
 from django.template import Context
+from analysis.models import Chart
 import xhtml2pdf.pisa as pisa
 import cStringIO as StringIO
 import cgi
@@ -27,3 +28,16 @@ def render_to_pdf(template_src, context_dict):
     if not pdf.err:
         return http.HttpResponse(result.getvalue(), mimetype='application/pdf')
     return http.HttpResponse('We had some errors<pre>%s</pre>' % cgi.escape(html))
+
+
+def periodi_graph_dict(station_id, tipi_grafici):
+    periodi = Chart.objects.filter(chart_type__in=tipi_grafici, station_id=station_id).values_list('variables', 'id')
+    periodi_dict=[]
+    for p in periodi:
+        periodi_dict.append({'periodo': p[0]['periodo_climatico'], 'id': p[1]})
+    results = {}
+    for pl in periodi_dict:
+        if pl['periodo'] not in results.keys():
+            results[pl['periodo']] = []
+        results[pl['periodo']].append(str(pl['id']))
+    return results
