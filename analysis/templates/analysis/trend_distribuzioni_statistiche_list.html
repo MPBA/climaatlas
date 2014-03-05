@@ -13,7 +13,7 @@
 
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li class="active">Per località e indici medi</li>
+    <li class="active">Per distribuzioni statistiche</li>
 {% endblock breadcumb_items %}
 
 {% block page_legend %}
@@ -32,7 +32,7 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Trend Anomalie per località e indici medi</h1>
+            <h1>Trend Anomalie per distribuzioni statistiche</h1>
         </div>
         <div>I diagrammi climatici descrivono per una determinata località le sue caratteristiche climatiche principali attraverso opportuni indici associati all'andamento termico (medie mensili delle temperature massime, medie e minime) e al regime pluviometrico (precipitazioni medie mensili).
             In funzione della disponibilità dei dati, i valori sono espressi rispetto alla media dei trentenni 1961-1990, 1971-2000 e 1981-2010.</div>
@@ -49,10 +49,10 @@
                     <table class="table table-striped" id="cstations">
                         <thead>
                         <tr>
-                            <th style="width: 10%">Codice</th>
-                            <th style="width: 30%">Nome</th>
+                            <th style="width: 20%">Codice</th>
+                            <th style="width: 50%">Nome</th>
                             <th>Dati disponbili</th>
-                            <th>Periodo</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -63,23 +63,15 @@
                                 <td>
 
                                 {% dati_anomalie_disponibili station type as dati %}
-                                    {% if 6 in dati %}
+                                    {% if 14 in dati %}
                                         <i class="wi-sprinkles"></i>
                                     {% endif %}
-                                    {% if 7 in dati %}
+                                    {% if 15 in dati %}
                                         <i class="wi-celcius"></i>
                                     {% endif %}
 
                                 </td>
-                                <td>
-                                    {% periodi_climatici station.pk type as periodi %}
-
-                                    {% for per in periodi.items %}
-                                        <a href="{% url 'trend_anomalie_detail' per.1 %}">
-                                            {{ per.0 }}
-                                        </a>
-                                    {% endfor %}
-                                </td>
+                                <td><a href="{% url 'trend_distr_stats_detail' station.pk %}"><i class="fa fa-folder-open pull-right" style="color: #428bca; font-size: 21px"></i></a></td>
                             </tr>
                         {% endfor %}
                         </tbody>

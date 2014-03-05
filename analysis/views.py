@@ -60,12 +60,13 @@ class ClimateIndexDetailsViewExport(View):
         data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
                                                climate_index=self.index).order_by('station__stname')
 
-        title = '%s %s' % (self.index.name, self.kwargs['periodo'])
+        title = '%s' % self.index.name
+        periodo_rif = '%s' % 'Periodo di riferimento ' + self.kwargs['periodo']
 
         if self.kwargs['tipo_export'] == 'pdf':
             return render_to_pdf(self.template_name, {'tabella': data,
                                                       'pagesize': 'A4 landscape',
-                                                      'title': title})
+                                                      'title': title, 'periodo_rif': periodo_rif})
         elif self.kwargs['tipo_export'] == 'xls':
             fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
                       "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
@@ -223,6 +224,33 @@ class TrendClimaticiAnomalieDetailsView(TemplateView):
         context['charts'] = Chart.objects.filter(id__in=ids)
         context['periodo_climatico'] = Chart.objects.filter(id__in=ids).values_list('variables')[0][0]['periodo_climatico']
         context['type'] = (6, 7)
+        return context
+
+
+class TrendClimaticiDistribuzioniStatisticheList(TemplateView):
+    template_name = 'analysis/trend_distribuzioni_statistiche_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendClimaticiDistribuzioniStatisticheList, self).get_context_data()
+        stations_from_charts = Chart.objects.filter(chart_type__in=(14, 15)).values_list('station_id').distinct()
+        stations = Station.objects.filter(pk__in=stations_from_charts)
+        context['stations'] = stations
+        context['type'] = (14, 15)
+        return context
+
+
+class TrendClimaticiDistribuzioniStatisticheDetail(TemplateView):
+    template_name = 'analysis/trend_distribuzioni_statistiche_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendClimaticiDistribuzioniStatisticheDetail, self).get_context_data()
+        station = Station.objects.get(id=self.kwargs['station_id'])
+        charts = Chart.objects.filter(chart_type__in=(14, 15), station_id=station.pk)
+        context['station'] = station
+        context['charts'] = charts
+        context['type'] = (14, 15)
+        stations_from_charts = Chart.objects.filter(chart_type__in=(14, 15)).values_list('station_id').distinct()
+        context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
         return context
 
 

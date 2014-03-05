@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse, HttpResponseNotFound
 from .models import Station
+from analysis.models import Chart
 
 
 #class based view for home page rendering
@@ -46,7 +47,11 @@ class StazioniClimaticheDetailView(View):
         try:
             station = Station.objects.get(pk=self.kwargs['pk'])
             context['station1'] = station
-            context['url'] = 'img/qualita/qualita_staz%s.png' % station.code
+            try:
+                quality_graph = Chart.objects.get(station_id=station.pk, chart_type=22)
+                context['graph_id'] = quality_graph.pk
+            except Chart.DoesNotExist:
+                context['graph_id'] = "notfound"
         except Station.DoesNotExist:
             pass
 

@@ -14,29 +14,10 @@
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
-
-
-            $("#station").on('change', function() {
-                 var pk = $("#station option:selected").attr('pk');
-                 $.ajax({
-                    type: 'GET',
-                    url: '/view/ajax_periodi_select/',
-                    data: {'station_id': pk, 'tipi_grafici[]':[6,7]},
-                    success: function(json) {
-                        //alert($.parseJSON(json));
-                        $("#periodo").empty();
-                        $('#periodo').append("<option value=-->" + "Scegli un periodo" + "</option>" );
-                        $.each(JSON.parse(json), function(i, v) {
-                            $('#periodo').append("<option value=" + v['ids'] +">" + v['periodo'] + "</option>" );
-                        });
-
-                        }
-                    });
-            });
-
-            $("#periodo").on('change', function() {
-                var periodo = $("#periodo option:selected").val();
-                location.href = '/view/trend/anomalie/details/' + periodo + "/"
+             $("#station").on('change', function() {
+                var pk = $("#station option:selected").attr('pk');
+                var periodo = $("#periodo option:selected").attr('pk');
+                location.href = '/view/trend/stats/distribution/details/' + pk + "/"
             });
         });
     </script>
@@ -44,8 +25,8 @@
 {% block page_name %}Anomalie Indici Climatici{% endblock %}
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li><a href="{% url 'trend_anomalie_view' %}">Per località e indici medi</a></li>
-    <li class="active">{{ station.stname }} {{ periodo }}</li>
+    <li><a href="{% url 'trend_distr_stats_view' %}">Per distribuzioni statistiche</a></li>
+    <li class="active">{{ station.stname }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
     <div class="well well-sm">
@@ -62,17 +43,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="periodo">Cambia periodo climatico</label>
-                    <select id="periodo" class="form-control">
-                        {% periodi_climatici station.pk type as periodi %}
-                                    {% for per in periodi.items %}
-                                        <option value="{{ per.1 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
-                                            {{ per.0 }}
-                                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+
             </fieldset>
         </form>
     </div>
@@ -80,7 +51,7 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Trend anomalie [{{ periodo_climatico }}] <small>{{ station.stname }} {{ periodo }}</small></h1>
+            <h1>Distribuzioni statistiche <small>{{ station.stname }}</small></h1>
         </div>
         <br>
         <div class="row">
