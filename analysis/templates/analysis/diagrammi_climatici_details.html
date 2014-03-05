@@ -43,7 +43,7 @@
                     <label for="periodo">Cambia periodo climatico</label>
                     <select id="periodo" class="form-control">
                         {% for p in periodo_list %}
-                            <option {% ifequal p periodo %}selected{% endifequal %} pk="{{ p }}">{{ p }}</option>
+                            <option {% ifequal p.0 periodo %}selected{% endifequal %} pk="{{ p.0 }}">{{ p.0 }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -96,25 +96,24 @@
         </div>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#grafico" data-toggle="tab">Diagramma climatico</a></li>
-            <li><a href="#tabelle" data-toggle="tab">Tabelle grandezze climatiche</a></li>
+            {% if charts %}
+                <li class="active"><a href="#grafico" data-toggle="tab">Diagramma climatico</a></li>
+            {% endif %}
+            <li><a {% if not charts %}class="active"{% endif %} href="#tabelle" data-toggle="tab">Tabelle grandezze climatiche</a></li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
+            {% if charts %}
             <div class="tab-pane active" id="grafico">
                 <div class="row text-center" style="padding-top: 10px;">
-                    {% if grafico %}
-                        <img src="{{ grafico.0.grafico.url }}" alt="{{ grafico.0.grafico.name }}" class="img-thumbnail img-responsive" />
-                    {% else %}
-                        <div class="bs-callout bs-callout-info">
-                            <h4>Informazione di servizio</h4>
-                            <p>Siamo spiacenti ma per la selezione che e' stata effettuata non e' disponibile un diagramma climatico.</p>
-                        </div>
-                    {% endif %}
+                        {% for c in charts %}
+                            <img src="{% url 'get_chart_by_id' c.id %}" alt="" class="img-thumbnail img-responsive" />
+                        {% endfor %}
                 </div>
             </div>
-            <div class="tab-pane" id="tabelle">
+            {% endif %}
+            <div class="tab-pane {% if not charts %}active{% endif %}" id="tabelle">
                 <div class="row">
                     <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
                         <table class="table table-striped" id="cstations">

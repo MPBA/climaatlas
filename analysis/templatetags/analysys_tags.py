@@ -23,3 +23,9 @@ def periodi_climatici(station_id, tipi_grafici):
 def dati_anomalie_disponibili(station, tipi_grafici):
     dati = station.chart_set.filter(chart_type__in=tipi_grafici).values_list('chart_type')
     return {d[0] for d in list(dati)}
+
+
+@register.assignment_tag()
+def dati_disponibili(station, tipi_grafici):
+    dati = station.chart_set.filter(chart_type__in=tipi_grafici).values_list('chart_type')
+    return {d[0] for d in list(dati)}

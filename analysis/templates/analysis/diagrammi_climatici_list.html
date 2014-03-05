@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load analysys_tags %}
 {% block page_name %}Diagrammi climatici{% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
@@ -61,8 +61,8 @@
                                 <td>{{ station.code }}</td>
                                 <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
                                 <td>
-{#                                TODO: da collegare a charts#}
-                                    {% if station.diagramma_disponibile %}
+                                {% dati_disponibili station type as dati %}
+                                    {% if 20 in dati %}
                                         <i class="fa fa-bar-chart-o"></i>
                                     {% endif %}
                                     {% if station.get_climateindex_count %}

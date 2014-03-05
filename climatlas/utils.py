@@ -5,7 +5,7 @@ __author__ = 'arbitrio@fbk.eu'
 from django import http
 from django.template.loader import get_template
 from django.template import Context
-from analysis.models import Chart
+from analysis.models import Chart, ClimateIndexData
 import xhtml2pdf.pisa as pisa
 import cStringIO as StringIO
 import cgi

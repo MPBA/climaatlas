@@ -164,6 +164,7 @@ class DiagrammiClimaticiListView(TemplateView):
         meteo_stations = Station.objects.all().order_by('stname')
 
         context['meteo_stations'] = meteo_stations
+        context['type'] = (20,)
         return context
 
 
@@ -181,7 +182,12 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         context['station'] = station
         context['data'] = data
         context['periodo'] = periodo
-        context['periodo_list'] = ['1961-1990', '1971-2000', '1981-2010']   ### TODO FIX mettere nei settings o prendere da db!!!
+        context['charts'] = Chart.objects.filter(chart_type__in=(20,),
+                                                 station=station,
+                                                 variables__contains={
+                                                     'periodo_climatico': self.kwargs['periodo']
+                                                 })
+        context['periodo_list'] = station.climateindexdata_set.filter(station=station).values_list('periodo').distinct()
         context['station_list'] = Station.objects.all().order_by('stname')
 
         return context
@@ -245,6 +251,16 @@ def get_chart_by_id(request, pk):
 
 ###############################AJAX FUNCTIONS##################################################
 def popola_periodi_select(request):
+    periodi = periodi_graph_dict(request.GET['station_id'], request.GET.getlist('tipi_grafici[]'))
+    result = []
+    for k, p in periodi.iteritems():
+        result.append({
+            'periodo': k,
+            'ids': '-'.join(p)
+        })
+    return HttpResponse(json.dumps(result))
+
+def popola_periodi_grandezze_select(request):
     periodi = periodi_graph_dict(request.GET['station_id'], request.GET.getlist('tipi_grafici[]'))
     result = []
     for k, p in periodi.iteritems():
