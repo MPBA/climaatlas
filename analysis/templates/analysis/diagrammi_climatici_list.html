@@ -61,15 +61,16 @@
                                 <td>{{ station.code }}</td>
                                 <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
                                 <td>
+{#                                TODO: da collegare a charts#}
                                     {% if station.diagramma_disponibile %}
                                         <i class="fa fa-bar-chart-o"></i>
                                     {% endif %}
-                                    {% if station.tabella_disponibile %}
+                                    {% if station.get_climateindex_count %}
                                         <i class="fa fa-table"></i>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% for periodo in station.periodo_disponibile_list %}
+                                    {% for periodo in station.get_climateindex_periodo_list %}
                                         <a href="{% url 'diagrammi_climatici_details' station.pk periodo %}">{{ periodo }}</a>
                                     {% endfor%}
                                 </td>
@@ -96,7 +97,7 @@
             L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
                     .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \
                      <div>Dati disponbili: {% if station.diagramma_disponibile %}<i class='fa fa-bar-chart-o'></i>{% endif %} \
-                        {% if station.tabella_disponibile %}<i class='fa fa-table'></i>{% endif %}</div>\
+                        {% if station.get_climateindex_count %}<i class='fa fa-table'></i>{% endif %}</div>\
                     {% for periodo in station.periodo_disponibile_list %}  \
                         <li style='white-space: nowrap;'><a href='{% url 'diagrammi_climatici_details' station.pk periodo %}'>Diagramma {{ periodo }}</a></li>  \
                     {% endfor%}").openPopup();

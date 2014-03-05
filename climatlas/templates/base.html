@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-      <!-- JavaScript -->
+    <!-- JavaScript -->
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script>
     <title>{{ SITE_NAME }} | {% block page_name %}{% endblock %}</title>
@@ -19,7 +19,7 @@
     <link href="{% static 'awesome/css/font-awesome.css' %}" rel="stylesheet">
     <link href="{% static 'weather-icons/css/weather-icons.css' %}" rel="stylesheet">
     {% block extra_head %}{% endblock %}
-     <style>
+    <style>
         .rightMenu {
             position:absolute;
             float:right;
@@ -60,91 +60,91 @@
 
 <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-
-                <a class="navbar-brand logo-nav" href="/">
-                    <img src="{% static 'img/climalogo.jpg' %}" width="150">
-                </a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    {% block topmenu %}
-                        {% load menubuilder %}{% menu topmenu %}
-                        {% for item in menuitems %}
-                            <li>
-                                <a href="{{ item.url }}" title="{{ item.title|escape }}">{{ item.title }}</a>
-                            </li>
-                        {% endfor %}
-                    {% endblock %}
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
-        <div class="row">
-           <ol class="breadcrumb">
-              {% block breadcumb_items %}{% endblock breadcumb_items %}
-           </ol>
+        <div class="navbar-header">
+
+            <a class="navbar-brand logo-nav" href="/">
+                <img src="{% static 'img/climalogo.jpg' %}" width="150">
+            </a>
         </div>
-        <div class="row">
-            {# BO Left Menu watch Admin panel to define menu items #}
-            <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 visible-lg visible-md visible-sm visible-xs">
-                {% block menuleft %}
-                  <div class="panel panel-default tree">
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                                    {% block topmenu %}
+                                        {% load menubuilder %}{% menu topmenu %}
+                                        {% for item in menuitems %}
+                                            <li>
+                                                <a href="{{ item.url }}" title="{{ item.title|escape }}">{{ item.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endblock %}
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<div class="container">
+    <div class="row">
+        <ol class="breadcrumb">
+            {% block breadcumb_items %}{% endblock breadcumb_items %}
+        </ol>
+    </div>
+    <div class="row">
+        {# BO Left Menu watch Admin panel to define menu items #}
+        <div class="col-md-3 col-lg-3 col-xs-3 col-sm-3 visible-lg visible-md visible-sm visible-xs">
+            {% block menuleft %}
+                <div class="panel panel-default tree">
                     <ul class="nav nav-list navlist-menu-level-0" style="margin-top: 0px!important">
-                    {% load menubuilder %}{% menu leftmenu %}
-                    {% for item in menuitems %}
-                        <li class="dropdown-toggle">
-                            <a {% ifequal item.title "Trend climatici" %}data-toggle="dropdown"{% endifequal %} href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
-                            {{ item.title }} {% ifequal item.title "Trend climatici" %}<span class="right-caret"></span>{% endifequal %}
-                            </a>
-                            {% ifequal item.title "Trend climatici" %}
+                        {% load menubuilder %}{% menu leftmenu %}
+                        {% for item in menuitems %}
+                            <li class="dropdown-toggle">
+                                <a {% ifequal item.title "Trend climatici" %}data-toggle="dropdown"{% endifequal %} href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                    {{ item.title }} {% ifequal item.title "Trend climatici" %}<span class="right-caret"></span>{% endifequal %}
+                                </a>
+                                {% ifequal item.title "Trend climatici" %}
                                     <ul class="nav nav-list navlist-menu-level-1 dropdown-menu rightMenu">
                                         {% menu trends %}
                                         {% for item2 in menuitems %}
                                             <li>
-                                               <a href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
-                                                {{ item2.title }}
-                                               </a>
+                                                <a href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                                    {{ item2.title }}
+                                                </a>
                                             </li>
                                         {% endfor %}
                                     </ul>
-                            {% endifequal %}
-                        </li>
+                                {% endifequal %}
+                            </li>
 
-                    {% endfor %}
+                        {% endfor %}
                     </ul>
-                  </div>
-                {% endblock %}
-                {% block page_legend %}{% endblock page_legend %}
-            </div>
-            {# EO Left Menu #}
-            {% block main %} {% endblock main %}
+                </div>
+            {% endblock %}
+            {% block page_legend %}{% endblock page_legend %}
         </div>
+        {# EO Left Menu #}
+        {% block main %} {% endblock main %}
     </div>
-    <div class="container">
-        <hr>
-        <footer>
-            <div class="row">
-                <div class="col-md-9">
-                    <p>
+</div>
+<div class="container">
+    <hr>
+    <footer>
+        <div class="row">
+            <div class="col-md-9">
+                <p>
                     <img src="{% static 'img/logo_fbk.JPG' %}" height="50" >
                     <img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="50" >
                     <img src="{% static 'img/logo_pc.jpg' %}" height="40" style="text-align: right">
                     Copyright &copy; 2014 - FBK [Fondazione Bruno Kessler]
-                    </p>
-                </div>
+                </p>
             </div>
-        </footer>
-    </div>
-    <!-- /.container -->
+        </div>
+    </footer>
+</div>
+<!-- /.container -->
 </body>
 </html>
 

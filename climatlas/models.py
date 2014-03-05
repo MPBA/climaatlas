@@ -16,25 +16,24 @@ class Station(models.Model):
     the_geom = models.TextField() # This field type is a guess.
 
     class Meta:
-        managed = False
         ordering = ['code']
         db_table = 'station'
 
     @property
-    def periodo_disponibile_list(self):
-        values = self.indiciclimaticidata_set.values_list('periodo').distinct().order_by('periodo')
+    def get_climateindex_periodo_list(self):
+        values = self.climateindexdata_set.values_list('periodo').distinct().order_by('periodo')
         return [v[0] for v in values]
 
-    @property
-    def diagramma_disponibile(self):
-        if self.diagrammiclimatici_set.all().count():
-            return True
-        else:
-            return False
+    #@property
+    #def diagramma_disponibile(self):
+    #    if self.diagrammiclimatici_set.all().count():
+    #        return True
+    #    else:
+    #        return False
 
     @property
-    def tabella_disponibile(self):
-        if self.indiciclimaticidata_set.all().count():
+    def get_climateindex_count(self):
+        if self.climateindexdata_set.all().count():
             return True
         else:
             return False

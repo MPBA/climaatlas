@@ -44,8 +44,8 @@
 
                     {% for t in tabella %}
                     <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>
-                      <td width="20%">{{ t.stazione.stname }} <strong>{{ t.nota }}</strong></td>
-                      <td style="text-align: right">{{ t.stazione.elevation|floatformat }}</td>
+                      <td width="20%">{{ t.station.stname }} <strong>{{ t.nota }}</strong></td>
+                      <td style="text-align: right">{{ t.station.elevation|floatformat }}</td>
                       <td style="text-align: right">{{ t.gen|floatformat }}</td>
                       <td style="text-align: right">{{ t.feb|floatformat }}</td>
                       <td style="text-align: right">{{ t.mar|floatformat }}</td>

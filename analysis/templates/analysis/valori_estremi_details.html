@@ -7,14 +7,14 @@
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
     <li><a href="/view/estremi/">Tabelle dei valori estremi</a></li>
-    <li class="active">{{ estremo.nome_indice_climatico }}</li>
+    <li class="active">{{ estremo.name }}</li>
 {% endblock breadcumb_items %}
 {% block menuleft %}
 {% endblock %}
 {% block main %}
     <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>{{ estremo.nome_indice_climatico }}</h1>
+            <h1>{{ estremo.name }}</h1>
         </div>
         <table class="table table-striped" id="cstations">
             <thead>
@@ -33,7 +33,7 @@
                 <th>Ott</th>
                 <th>Nov</th>
                 <th>Dic</th>
-                {% if estremo.type == 'mensili' %}
+                {% if estremo.resolution == 'mensili' %}
                     <th>Annua</th>
                     <th>Inverno</th>
                     <th>Primavera</th>
@@ -45,8 +45,8 @@
             <tbody>
             {% for d in data %}
                 <tr>
-                    <td>{{ d.stazione.stname }}</td>
-                    <td>{{ d.stazione.elevation|floatformat }}</td>
+                    <td>{{ d.station.stname }}</td>
+                    <td>{{ d.station.elevation|floatformat }}</td>
                     <td>{{ d.gen }}<br><h6><small>{{ d.gen_data }}</small></h6></td>
                     <td>{{ d.feb }}<br><h6><small>{{ d.feb_data }}</small></h6></td>
                     <td>{{ d.mar }}<br><h6><small>{{ d.mar_data }}</small></h6></td>
@@ -59,7 +59,7 @@
                     <td>{{ d.ott }}<br><h6><small>{{ d.ott_data }}</small></h6></td>
                     <td>{{ d.nov }}<br><h6><small>{{ d.nov_data }}</small></h6></td>
                     <td>{{ d.dic }}<br><h6><small>{{ d.dic_data }}</small></h6></td>
-                    {% if estremo.type == 'mensili' %}
+                    {% if estremo.resolution == 'mensili' %}
                         <td>{{ d.annua|floatformat }}<br><h6><small>{{ d.annua_data }}</small></h6></td>
                         <td>{{ d.inverno|floatformat }}<br><h6><small>{{ d.inverno_data }}</small></h6></td>
                         <td>{{ d.primavera|floatformat }}<br><h6><small>{{ d.primavera_data }}</small></h6></td>

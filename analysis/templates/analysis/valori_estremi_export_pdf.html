@@ -32,7 +32,7 @@
         <th style="text-align: right">Ott</th>
         <th style="text-align: right">Nov</th>
         <th style="text-align: right">Dic</th>
-        {% if estremo.type == 'mensili' %}
+        {% if estremo.resolution == 'mensili' %}
             <th style="text-align: right">Annua</th>
             <th style="text-align: right">Inverno</th>
             <th style="text-align: right">Primavera</th>
@@ -45,8 +45,8 @@
 
     {% for t in tabella %}
         <tr style="padding-top: 5px">
-            <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.stazione.stname }}</td>
-            <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.stazione.elevation|floatformat }}</td>
+            <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.station.stname }}</td>
+            <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.station.elevation|floatformat }}</td>
             <td  style="text-align: right">{{ t.gen|floatformat }}</td>
             <td  style="text-align: right">{{ t.feb|floatformat }}</td>
             <td  style="text-align: right">{{ t.mar|floatformat }}</td>
@@ -59,7 +59,7 @@
             <td  style="text-align: right">{{ t.ott|floatformat }}</td>
             <td  style="text-align: right">{{ t.nov|floatformat }}</td>
             <td  style="text-align: right">{{ t.dic|floatformat }}</td>
-            {% if estremo.type == 'mensili' %}
+            {% if estremo.resolution == 'mensili' %}
                 <td  style="text-align: right">{{ t.annua|floatformat }}</td>
                 <td  style="text-align: right">{{ t.inverno|floatformat }}</td>
                 <td  style="text-align: right">{{ t.primavera|floatformat }}</td>
@@ -80,7 +80,7 @@
             <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ott_data }}</td>
             <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.nov_data }}</td>
             <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.dic_data }}</td>
-            {% if estremo.type == 'mensili' %}
+            {% if estremo.resolution == 'mensili' %}
                 <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.annua_data }}</td>
                 <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.inverno_data }}</td>
                 <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.primavera_data }}</td>

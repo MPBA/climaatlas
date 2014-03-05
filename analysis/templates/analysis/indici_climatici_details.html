@@ -37,7 +37,7 @@
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
     <li><a href="/view/indici/">Tabelle degli indici climatici</a></li>
-    <li class="active">{{ indice.nome_indice_climatico }}</li>
+    <li class="active">{{ indice.name }}</li>
 {% endblock breadcumb_items %}
 
 {% block menuleft %}
@@ -45,7 +45,7 @@
 {% block main %}
             <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
                 <div class="page-header">
-                    <h1>{{ indice.nome_indice_climatico }} ({{ periodo }})</h1>
+                    <h1>{{ indice.name }} ({{ periodo }})</h1>
                 </div>
                 <table class="table table-striped" id="cstations">
                   <thead>
@@ -74,8 +74,8 @@
                   <tbody>
                     {% for d in data %}
                     <tr>
-                      <td>{{ d.stazione.stname }} {{ d.nota }}</td>
-                      <td>{{ d.stazione.elevation|floatformat }}</td>
+                      <td>{{ d.station.stname }} {{ d.nota }}</td>
+                      <td>{{ d.station.elevation|floatformat }}</td>
                       <td>{{ d.gen|floatformat }}</td>
                       <td>{{ d.feb|floatformat }}</td>
                       <td>{{ d.mar|floatformat }}</td>

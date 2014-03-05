@@ -1,64 +1,73 @@
 #-*- encoding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
-from .models import IndiciClimatici, IndiciClimaticiData, EstremiClimatici, ValoriEstremiData, Chart
+from .models import ClimateIndex, ClimateIndexData, ClimateExtremesData, Chart
 from climatlas.utils import render_to_pdf, periodi_graph_dict
 from climatlas.models import Station
 from export_xls.views import export_xlwt
-from django.db import transaction, connection, DatabaseError
 import json
 
 
-class IndiciClimaticiListView(TemplateView):
+class ClimateIndexListView(ListView):
     template_name = 'analysis/indici_climatici_list.html'
+    context_object_name = 'indici'
+
+    def get_queryset(self):
+        indici = ClimateIndex.objects.filter(sezione='index')
+        return indici
 
     def get_context_data(self, **kwargs):
-        context = super(IndiciClimaticiListView, self).get_context_data()
-
-        indici = IndiciClimatici.objects.all()
-        periodo = IndiciClimaticiData.objects.values('periodo').distinct().order_by('periodo')
-        context['indici'] = indici
+        context = super(ClimateIndexListView, self).get_context_data()
+        periodo = ClimateIndexData.objects.values('periodo').distinct().order_by('periodo')
         context['periodo'] = periodo
 
         return context
 
 
-class IndiciClimaticiDetailsView(TemplateView):
+class ClimateIndexDetailsView(ListView):
     template_name = 'analysis/indici_climatici_details.html'
+    context_object_name = 'data'
+
+    def get_queryset(self):
+        self.index = get_object_or_404(ClimateIndex, r_name=self.kwargs['r_name'])
+
+        if self.kwargs['periodo'] not in self.index.get_climateindex_periodo_list:
+            raise Http404('No %s matches the given query.' )
+
+        data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
+                                               climate_index=self.index).order_by('station__stname')
+        return data
 
     def get_context_data(self, **kwargs):
-        context = super(IndiciClimaticiDetailsView, self).get_context_data()
-        indice = self.kwargs['indice']
-        periodo = self.kwargs['periodo']
-
-        data = IndiciClimaticiData.objects.filter(periodo=periodo, indice=indice).order_by('stazione__stname')
-        indice = IndiciClimatici.objects.get(db_name=indice)
-
-        context['data'] = data
-        context['indice'] = indice
-        context['periodo'] = periodo
+        context = super(ClimateIndexDetailsView, self).get_context_data()
+        context['indice'] = self.index
+        context['periodo'] = self.kwargs['periodo']
 
         return context
 
 
-class IndiciClimaticiDetailsViewExport(View):
+class ClimateIndexDetailsViewExport(View):
     template_name = 'analysis/indici_climatici_export_pdf.html'
 
     def get(self, request, *args, **kwargs):
-        indice = self.kwargs['indice']
-        periodo = self.kwargs['periodo']
-        data = IndiciClimaticiData.objects.filter(periodo=periodo, indice=indice).order_by('stazione__stname')
-        indice = IndiciClimatici.objects.get(db_name=indice)
-        title = '%s %s' % (indice.nome_indice_climatico, periodo)
+        self.index = get_object_or_404(ClimateIndex, r_name=self.kwargs['r_name'])
+
+        if self.kwargs['periodo'] not in self.index.get_climateindex_periodo_list:
+            raise Http404('No %s matches the given query.' )
+
+        data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
+                                               climate_index=self.index).order_by('station__stname')
+
+        title = '%s %s' % (self.index.name, self.kwargs['periodo'])
 
         if self.kwargs['tipo_export'] == 'pdf':
             return render_to_pdf(self.template_name, {'tabella': data,
                                                       'pagesize': 'A4 landscape',
                                                       'title': title})
         elif self.kwargs['tipo_export'] == 'xls':
-            fields = ["stazione__stname", "stazione__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+            fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
                       "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
             queryset = data
             filename = title
@@ -70,54 +79,57 @@ class IndiciClimaticiDetailsViewExport(View):
             pass
 
 
-class ValoriEstremiListView(TemplateView):
+class ClimateExtremesListView(ListView):
     template_name = 'analysis/valori_estremi_list.html'
+    context_object_name = 'estremi'
+
+    def get_queryset(self):
+        estremi = ClimateIndex.objects.filter(sezione='extreme').order_by('type', 'name')
+        return estremi
 
     def get_context_data(self, **kwargs):
-        context = super(ValoriEstremiListView, self).get_context_data()
-
-        estremi = EstremiClimatici.objects.all().order_by('type', 'nome_indice_climatico')
-        context['estremi'] = estremi
+        context = super(ClimateExtremesListView, self).get_context_data()
 
         return context
 
 
-class ValoriEstremiDetailsView(TemplateView):
+class ClimateExtremesDetailsView(ListView):
     template_name = 'analysis/valori_estremi_details.html'
+    context_object_name = 'data'
+
+    def get_queryset(self):
+        self.estremo = get_object_or_404(ClimateIndex, r_name=self.kwargs['r_name'])
+
+        data = ClimateExtremesData.objects.filter(climate_index=self.estremo).order_by('station__stname')
+        return data
 
     def get_context_data(self, **kwargs):
-        context = super(ValoriEstremiDetailsView, self).get_context_data()
-        indice = self.kwargs['indice']
-
-        data = ValoriEstremiData.objects.filter(indice=indice).order_by('stazione__stname')
-        estremo = EstremiClimatici.objects.get(db_name=indice)
-
-        context['data'] = data
-        context['estremo'] = estremo
+        context = super(ClimateExtremesDetailsView, self).get_context_data()
+        context['estremo'] = self.estremo
 
         return context
 
 
-class ValoriEstremiDetailsViewExport(View):
+class ClimateExtremesDetailsViewExport(View):
     template_name = 'analysis/valori_estremi_export_pdf.html'
 
     def get(self, request, *args, **kwargs):
-        indice = self.kwargs['indice']
+        self.index = get_object_or_404(ClimateIndex, r_name=self.kwargs['r_name'])
 
-        data = ValoriEstremiData.objects.filter(indice=indice).order_by('stazione__stname')
-        indice = EstremiClimatici.objects.get(db_name=indice)
-        title = '%s' % (indice.nome_indice_climatico)
+        data = ClimateExtremesData.objects.filter(climate_index=self.index).order_by('station__stname')
+
+        title = '%s' % (self.index.name)
 
         if self.kwargs['tipo_export'] == 'pdf':
             return render_to_pdf(self.template_name, {'tabella': data,
-                                                      'estremo': indice,
+                                                      'estremo': self.index,
                                                       'pagesize': 'A4 landscape',
                                                       'title': title})
         elif self.kwargs['tipo_export'] == 'xls':
-            fields = ["stazione__stname", "stazione__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
-                      "mar_data", "apr", "apr_data", "mag","mag_data", "giu", "giu_data", "lug", "lug_data",
+            fields = ["station__stname", "station__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
+                      "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
-            if indice.type == 'mensili':
+            if self.index.resolution == 'mensili':
                 fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
                            "estate_data", "autunno", "autunno_data"]
             queryset = data
@@ -128,6 +140,20 @@ class ValoriEstremiDetailsViewExport(View):
                 raise e
         else:
             pass
+
+
+class ClimateExtremesListView(ListView):
+    template_name = 'analysis/valori_estremi_list.html'
+    context_object_name = 'estremi'
+
+    def get_queryset(self):
+        estremi = ClimateIndex.objects.filter(sezione='extreme').order_by('type', 'name')
+        return estremi
+
+    def get_context_data(self, **kwargs):
+        context = super(ClimateExtremesListView, self).get_context_data()
+
+        return context
 
 
 class DiagrammiClimaticiListView(TemplateView):
@@ -150,12 +176,11 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         periodo = self.kwargs['periodo']
 
         station = Station.objects.get(pk=pk)
-        data = station.indiciclimaticidata_set.filter(periodo=periodo).order_by('indice__nome_indice_climatico', 'periodo')
+        data = station.climateindexdata_set.filter(periodo=periodo).order_by('climate_index__name', 'periodo')
 
         context['station'] = station
         context['data'] = data
         context['periodo'] = periodo
-        context['grafico'] = station.diagrammiclimatici_set.filter(periodo=periodo)
         context['periodo_list'] = ['1961-1990', '1971-2000', '1981-2010']   ### TODO FIX mettere nei settings o prendere da db!!!
         context['station_list'] = Station.objects.all().order_by('stname')
 
