@@ -1,3 +1,4 @@
+{% load static %}
 <html>
 <style>
     @page {
@@ -14,8 +15,16 @@
 }
 </style>
 <body>
-<p style="text-align: center;  font-size: 18px; font-weight: bold">Provincia Autonoma di Trento</p>
-<p style="text-align: center;  font-size: 14px;">{{ title }}<br>{{ periodo_rif }}</p>
+<table>
+    <tr>
+        <td><img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="70" ></td>
+        <td>
+            <p style="text-align: center;  font-size: 18px; font-weight: bold">Provincia Autonoma di Trento</p>
+            <p style="text-align: center;  font-size: 14px;">{{ title }}<br>{{ periodo_rif }}</p>
+        </td>
+        <td align="right"> <img src="{% static 'img/logo_pc.jpg' %}" height="60"></td>
+    </tr>
+</table>
                 <hr>
                 <table class="table table-striped">
                   <thead>
@@ -35,10 +44,10 @@
                       <th style="text-align: right">Nov</th>
                       <th style="text-align: right">Dic</th>
                       <th style="text-align: right">Annua</th>
-                      <th style="text-align: right">Inverno</th>
-                      <th style="text-align: right">Primavera</th>
-                      <th style="text-align: right">Estate</th>
-                      <th style="text-align: right">Autunno</th>
+                      <th style="text-align: right">DGM</th>
+                      <th style="text-align: right">MAM</th>
+                      <th style="text-align: right">GLA</th>
+                      <th style="text-align: right">SON</th>
                     </tr>
                   </thead>
                   <tbody>

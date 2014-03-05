@@ -9,6 +9,8 @@ from analysis.models import Chart, ClimateIndexData
 import xhtml2pdf.pisa as pisa
 import cStringIO as StringIO
 import cgi
+from django.conf import settings
+from django.contrib.staticfiles.finders import find as find_static_file
 
 
 def dictfetchall(cursor):
@@ -19,12 +21,26 @@ def dictfetchall(cursor):
     ]
 
 
+def fetch_resources(uri, rel):
+    if uri.startswith(settings.STATIC_URL):
+        uri = uri[len(settings.STATIC_URL):]
+        path = find_static_file(uri)
+        if path is None:
+            raise Exception('Error retrieving static file ' +
+                            '"{0}" during pdf generation.'.format(uri))
+    else:
+        print ('Warning: path {0} is not a staticfile'.format(uri))
+        path = uri
+
+    return path
+
+
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     context = Context(context_dict)
     html = template.render(context)
     result = StringIO.StringIO()
-    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
+    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result, link_callback=fetch_resources)
     if not pdf.err:
         return http.HttpResponse(result.getvalue(), mimetype='application/pdf')
     return http.HttpResponse('We had some errors<pre>%s</pre>' % cgi.escape(html))

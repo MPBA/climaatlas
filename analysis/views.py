@@ -8,6 +8,7 @@ from climatlas.utils import render_to_pdf, periodi_graph_dict
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
+from django.core import serializers
 
 
 class ClimateIndexListView(ListView):
@@ -22,7 +23,6 @@ class ClimateIndexListView(ListView):
         context = super(ClimateIndexListView, self).get_context_data()
         periodo = ClimateIndexData.objects.values('periodo').distinct().order_by('periodo')
         context['periodo'] = periodo
-
         return context
 
 
@@ -34,7 +34,7 @@ class ClimateIndexDetailsView(ListView):
         self.index = get_object_or_404(ClimateIndex, r_name=self.kwargs['r_name'])
 
         if self.kwargs['periodo'] not in self.index.get_climateindex_periodo_list:
-            raise Http404('No %s matches the given query.' )
+            raise Http404('No %s matches the given query.')
 
         data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
                                                climate_index=self.index).order_by('station__stname')
@@ -44,7 +44,7 @@ class ClimateIndexDetailsView(ListView):
         context = super(ClimateIndexDetailsView, self).get_context_data()
         context['indice'] = self.index
         context['periodo'] = self.kwargs['periodo']
-
+        # print serializers.serialize('json', self.get_queryset())
         return context
 
 
