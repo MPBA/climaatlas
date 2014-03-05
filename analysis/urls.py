@@ -3,8 +3,8 @@ from django.conf.urls import patterns, include, url
 from .views import (ClimateIndexListView, ClimateIndexDetailsView, ClimateIndexDetailsViewExport,
                     ClimateExtremesListView, ClimateExtremesDetailsView, ClimateExtremesDetailsViewExport,
                     DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView,
-                    TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView
-                    )
+                    TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView,
+                    TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail)
 
 urlpatterns = patterns('analysis.views',
    ### Indici climatici ###
@@ -28,8 +28,19 @@ urlpatterns = patterns('analysis.views',
    url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/$', view=DiagrammiClimaticiDetailsView.as_view(),
        name='diagrammi_climatici_details'),
 
+   #### Anomalie trend ####
+
    url(regex='^trend/anomalie/$', view=TrendClimaticiAnomalieList.as_view(), name='trend_anomalie_view'),
    url(regex='^trend/anomalie/details/(?P<ids>[-\d]+)/$', view=TrendClimaticiAnomalieDetailsView.as_view(), name='trend_anomalie_detail'),
+
+   url(regex='^trend/stats/distribution/$',
+       view=TrendClimaticiDistribuzioniStatisticheList.as_view(),
+       name='trend_distr_stats_view'),
+
+   url(regex='^trend/stats/distribution/details/(?P<station_id>\d+)/$',
+       view=TrendClimaticiDistribuzioniStatisticheDetail.as_view(),
+       name='trend_distr_stats_detail'),
+   #
 
    url(r'^ajax_periodi_select/$', 'popola_periodi_select', name='ajax_periodi_select'),
    url(r'^grafico/(?P<chart_type>\d+)/(?P<stazione>\d+)/(?P<tipo_dato>[-\w_]+)/(?P<periodo>[-\w_]+)/$', 'get_charts'),

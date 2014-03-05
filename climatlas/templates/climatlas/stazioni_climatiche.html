@@ -98,7 +98,7 @@
                                       <i class="wi-{{ station.datasets.2 }}" style="font-size: 20px!important"></i>
                                   </td>
                                   <td>{{ station.commence|date:"d/m/Y" }}</td>
-                                  <td>{{ station.latitude }}, {{ station.longitude }}</td>
+                                  <td>{{ station.latitude|floatformat:4 }}, {{ station.longitude|floatformat:4 }}</td>
                                   <td style="text-align: center">{% if station.cease %}
                                         <i class="fa fa-circle" style="color: #cb4437"></i>
                                       {% else %}
