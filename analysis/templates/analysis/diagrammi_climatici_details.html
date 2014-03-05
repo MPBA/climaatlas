@@ -3,6 +3,8 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
+    <script src="{% static 'js/lightbox-2.6.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
     <style>
         #map { height: 600px; }
     </style>
@@ -107,9 +109,18 @@
             {% if charts %}
             <div class="tab-pane active" id="grafico">
                 <div class="row text-center" style="padding-top: 10px;">
-                        {% for c in charts %}
-                            <img src="{% url 'get_chart_by_id' c.id %}" alt="" class="img-thumbnail img-responsive" />
-                        {% endfor %}
+                    {% for c in charts %}
+                        <div class="col-md-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">Distribuzione </div>
+                              <div class="panel-body">
+                                 <a href="{% url 'get_chart_by_id' c.id %}" data-lightbox="image-1" title="Chart1">
+                                    <img src="{% url 'get_chart_by_id' c.id %}" alt="" class="img-thumbnail img-responsive" />
+                                 </a>
+                              </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endif %}
