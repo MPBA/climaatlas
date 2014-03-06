@@ -31,3 +31,7 @@ def dati_disponibili(station, tipi_grafici):
     return {d[0] for d in list(dati)}
 
 
+@register.filter()
+def get_dati_chart(chart_id):
+    dati = Chart.objects.get(pk=chart_id)
+    return dati.variables['anno'], dati.variables['tipo_dato']
