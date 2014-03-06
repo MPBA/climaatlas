@@ -48,7 +48,7 @@ def render_to_pdf(template_src, context_dict):
 
 def periodi_graph_dict(station_id, tipi_grafici):
     periodi = Chart.objects.filter(chart_type__in=tipi_grafici, station_id=station_id).values_list('variables', 'id')
-    periodi_dict=[]
+    periodi_dict = []
     for p in periodi:
         periodi_dict.append({'periodo': p[0]['periodo_climatico'], 'id': p[1]})
     results = {}
@@ -56,4 +56,20 @@ def periodi_graph_dict(station_id, tipi_grafici):
         if pl['periodo'] not in results.keys():
             results[pl['periodo']] = []
         results[pl['periodo']].append(str(pl['id']))
+    return results
+
+
+def anno_graph_dict(station_id, tipi_grafici, periodo_climatico):
+    charts = Chart.objects.filter(station_id=station_id,
+                                  chart_type__in=tipi_grafici,
+                                  variables__contains={
+                                      'periodo_climatico': periodo_climatico}).values_list('variables', 'id')
+    anni_dict = []
+    for c in charts:
+        anni_dict.append({'anno': c[0]['anno'], 'id': c[1]})
+    results = {}
+    for a in anni_dict:
+        if a['anno'] not in results.keys():
+            results[a['anno']] = []
+        results[a['anno']].append(str(a['id']))
     return results

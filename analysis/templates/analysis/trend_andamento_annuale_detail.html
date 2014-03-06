@@ -5,6 +5,7 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/lightbox.css' %}" />
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
+    <script src="{% static 'js/bootstrap-paginator.js' %}"></script>
     <script src="{% static 'js/lightbox-2.6.min.js' %}"></script>
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
     <style>
@@ -13,7 +14,41 @@
 
     </style>
     <script type="text/javascript">
+        json = {{ annographjson|safe }}
         $(document).ready(function() {
+            console.log(json);
+            var options = {
+            currentPage: 1,
+            totalPages: {{ anno_graph_dict|length }},
+            bootstrapMajorVersion: 3,
+            itemTexts: function (type, page, current) {
+                    switch (type) {
+                    case "first":
+                        return "<<";
+                    case "prev":
+                        return "<";
+                    case "next":
+                        return ">";
+                    case "last":
+                        return ">>";
+                    case "page":
+                        return json[page-1]['anno'];
+                    }
+                },
+            onPageChanged: function(e, oldPage, newPage){
+                var idx = newPage-1;
+                var charts = json[idx]['ids'];
+                var charts_img = $('#chartview img');
+                for (var i=0; i<charts.length; i++){
+                    $(charts_img[i]).attr('src','/view/grafico/' + charts[i])
+                    
+                }
+            }
+            }
+
+
+
+            $('#charts_pag').bootstrapPaginator(options);
 
 
             $("#station").on('change', function() {
@@ -21,13 +56,13 @@
                  $.ajax({
                     type: 'GET',
                     url: '/view/ajax_periodi_select/',
-                    data: {'station_id': pk, 'tipi_grafici[]':[6,7]},
+                    data: {'station_id': pk, 'tipi_grafici[]':[16,17]},
                     success: function(json) {
                         //alert($.parseJSON(json));
                         $("#periodo").empty();
                         $('#periodo').append("<option value=-->" + "Scegli un periodo" + "</option>" );
                         $.each(JSON.parse(json), function(i, v) {
-                            $('#periodo').append("<option value=" + v['ids'] +">" + v['periodo'] + "</option>" );
+                            $('#periodo').append("<option value=" + v['periodo'] +">" + v['periodo'] + "</option>" );
                         });
 
                         }
@@ -36,7 +71,8 @@
 
             $("#periodo").on('change', function() {
                 var periodo = $("#periodo option:selected").val();
-                location.href = '/view/trend/anomalie/details/' + periodo + "/"
+                var pk = $("#station option:selected").attr('pk');
+                location.href = '/view/trend/andamento/annuale/detail/' + pk + '/' + periodo + "/"
             });
         });
     </script>
@@ -44,7 +80,7 @@
 {% block page_name %}Anomalie Indici Climatici{% endblock %}
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li><a href="{% url 'trend_anomalie_view' %}">Per località e indici medi</a></li>
+    <li><a href="{% url 'trend_anomalie_view' %}">Andamento Climatico annuale</a></li>
     <li class="active">{{ station.stname }} {{ periodo }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
@@ -67,7 +103,7 @@
                     <select id="periodo" class="form-control">
                         {% periodi_climatici station.pk type as periodi %}
                                     {% for per in periodi.items %}
-                                        <option value="{{ per.1 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
+                                        <option value="{{ per.0 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
                                             {{ per.0 }}
                                         </option>
                         {% endfor %}
@@ -80,7 +116,7 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Trend anomalie <small>{{ station.stname }} {{ periodo_climatico }}</small></h1>
+            <h1>Andamento cliamtico annuale <small>{{ station.stname }} {{ periodo_climatico }}</small></h1>
         </div>
         <br>
         <div class="row">
@@ -123,29 +159,23 @@
 
         <!-- Tab panes -->
 
-        <div class="row text-center" style="padding-top: 10px;">
-        {% for chart in charts %}
-            {% if chart %}
+
+        <div id="chartview" class="row text-center" style="padding-top: 10px;">
+        {% for chart in jsonlist.0.ids %}
                 <div class="col-md-6">
-                <div class="panel panel-info">
-                  <div class="panel-heading"><i class="wi-{{ chart.variables.tipo_dato }}"></i> {{ chart.variables.tipo_dato|capfirst }} </div>
-                  <div class="panel-body">
-                     <a href="{% url 'get_chart_by_id' chart.id %}" data-lightbox="image-1" title="Chart1">
-                     <img src="{% url 'get_chart_by_id' chart.id %}" alt="" class="img-thumbnail img-responsive" />
-                     </a>
-                  </div>
+                    <div class="panel panel-info">
+                      <div class="panel-heading" id="descrizione"></div>
+                      <div class="panel-body">
+                         <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
+                         <img src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
+                         </a>
+                      </div>
+                    </div>
                 </div>
-
-
-                </div>
-            {% else %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>Informazione di servizio</h4>
-                    <p>Siamo spiacenti ma per la selezione che e' stata effettuata non e' disponibile un diagramma climatico.</p>
-                </div>
-            {% endif %}
          {% endfor %}
         </div>
+        <ul id="charts_pag" class="pagination pagination-sm"></ul>
+
 
 
 

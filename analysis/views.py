@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
 from .models import ClimateIndex, ClimateIndexData, ClimateExtremesData, Chart
-from climatlas.utils import render_to_pdf, periodi_graph_dict
+from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
@@ -251,6 +251,44 @@ class TrendClimaticiDistribuzioniStatisticheDetail(TemplateView):
         context['type'] = (14, 15)
         stations_from_charts = Chart.objects.filter(chart_type__in=(14, 15)).values_list('station_id').distinct()
         context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
+        return context
+
+
+class TrendAndamentoAnnualeList(ListView):
+    template_name = 'analysis/trend_andamento_annuale_list.html'
+    context_object_name = 'stations'
+
+    def get_queryset(self):
+        stations_from_charts = Chart.objects.filter(chart_type__in=(16, 17)).values_list('station_id').distinct()
+        stations = Station.objects.filter(pk__in=stations_from_charts)
+        return stations
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendAndamentoAnnualeList, self).get_context_data()
+        context['type'] = (16, 17)
+        return context
+
+
+class TrendAndamentoAnnualeDetail(TemplateView):
+    template_name = 'analysis/trend_andamento_annuale_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrendAndamentoAnnualeDetail, self).get_context_data()
+        context['station'] = Station.objects.get(pk=self.kwargs['station_id'])
+        stations_from_charts = Chart.objects.filter(chart_type__in=(16, 17)).values_list('station_id').distinct()
+        context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
+        context['periodo_climatico'] = self.kwargs['periodo']
+        context['type'] = (16, 17)
+        anni_graph = anno_graph_dict(context['station'].pk, context['type'], context['periodo_climatico'])
+        context['anno_graph_dict'] = anni_graph
+        jsonlist = []
+        for k, p in anni_graph.iteritems():
+            jsonlist.append({
+                'anno': k,
+                'ids': p
+            })
+        context['jsonlist'] = sorted(jsonlist)
+        context['annographjson'] = json.dumps(sorted(jsonlist))
         return context
 
 

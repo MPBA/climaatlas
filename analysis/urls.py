@@ -2,8 +2,8 @@ __author__ = 'droghetti'
 from django.conf.urls import patterns, include, url
 from .views import (ClimateIndexListView, ClimateIndexDetailsView, ClimateIndexDetailsViewExport,
                     ClimateExtremesListView, ClimateExtremesDetailsView, ClimateExtremesDetailsViewExport,
-                    DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView,
-                    TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView,
+                    DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView, TrendAndamentoAnnualeList,
+                    TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView, TrendAndamentoAnnualeDetail,
                     TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail)
 
 urlpatterns = patterns('analysis.views',
@@ -40,6 +40,14 @@ urlpatterns = patterns('analysis.views',
    url(regex='^trend/stats/distribution/details/(?P<station_id>\d+)/$',
        view=TrendClimaticiDistribuzioniStatisticheDetail.as_view(),
        name='trend_distr_stats_detail'),
+
+   url(regex='^trend/andamento/annuale/list$',
+       view=TrendAndamentoAnnualeList.as_view(),
+       name='trend_annuale_list'),
+
+   url(regex='^trend/andamento/annuale/detail/(?P<station_id>\d+)/(?P<periodo>[-\d_]+)/$',
+       view=TrendAndamentoAnnualeDetail.as_view(),
+       name='trend_annuale_details'),
    #
 
    url(r'^ajax_periodi_select/$', 'popola_periodi_select', name='ajax_periodi_select'),
