@@ -166,7 +166,7 @@
                 {% with chart|get_dati_chart as properties %}
                 <div class="{% if jsonlist.0.ids|length > 1%}col-md-6{% else %}col-md-12{% endif %}">
                     <div class="panel panel-info">
-                      <div class="panel-heading" mychart="descrizione"> <span anno="anno">{{ properties.0 }}</span> - <span id="desc">{{ properties.1|capfirst }} <i class="wi-{{ properties.1 }}"></i></span></div>
+                      <div class="panel-heading" mychart="descrizione"> <span anno="anno">{{ properties.anno }}</span> - <span id="desc">{{ properties.tipo_dato|capfirst }} <i class="wi-{{ properties.tipo_dato }}"></i></span></div>
                       <div class="panel-body">
                          <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
                          <img src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
@@ -178,10 +178,6 @@
          {% endfor %}
         </div>
              <ul id="charts_pag" class="pagination pagination-sm"></ul>
-
-
-
-
 
     </div>
 

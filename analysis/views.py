@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
 from .models import ClimateIndex, ClimateIndexData, ClimateExtremesData, Chart
-from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict
+from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict, intervallo_graph_dict
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
@@ -212,7 +212,7 @@ class TrendClimaticiAnomalieDetailsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TrendClimaticiAnomalieDetailsView, self).get_context_data()
         ids = list(map(int, self.kwargs['ids'].split('-')))
-        station_from_chart = Chart.objects.filter(id__in=ids).values('station_id').distinct()
+        station_from_chart = Chart.objects.filteannor(id__in=ids).values('station_id').distinct()
         if len(station_from_chart) > 1:
             raise Http404
         else:
@@ -245,12 +245,15 @@ class TrendClimaticiDistribuzioniStatisticheDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TrendClimaticiDistribuzioniStatisticheDetail, self).get_context_data()
         station = Station.objects.get(id=self.kwargs['station_id'])
-        charts = Chart.objects.filter(chart_type__in=(14, 15), station_id=station.pk)
+        # charts = Chart.objects.filter(chart_type__in=(14, 15), station_id=station.pk)
         context['station'] = station
-        context['charts'] = charts
+        # context['charts'] = charts
         context['type'] = (14, 15)
         stations_from_charts = Chart.objects.filter(chart_type__in=(14, 15)).values_list('station_id').distinct()
         context['station_list'] = Station.objects.filter(pk__in=stations_from_charts)
+        intervalli = intervallo_graph_dict(context['station'].pk, context['type'])
+        context['intervalli_dict'] = intervalli
+
         return context
 
 

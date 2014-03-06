@@ -63,7 +63,7 @@ def anno_graph_dict(station_id, tipi_grafici, periodo_climatico):
     charts = Chart.objects.filter(station_id=station_id,
                                   chart_type__in=tipi_grafici,
                                   variables__contains={
-                                      'periodo_climatico': periodo_climatico}).values_list('variables', 'id')
+                                      'periodo_climatico': periodo_climatico}).values_list('variables', 'id').order_by('chart_type')
     anni_dict = []
     for c in charts:
         anni_dict.append({'anno': c[0]['anno'], 'id': c[1]})
@@ -72,4 +72,17 @@ def anno_graph_dict(station_id, tipi_grafici, periodo_climatico):
         if a['anno'] not in results.keys():
             results[a['anno']] = []
         results[a['anno']].append(str(a['id']))
+    return results
+
+
+def intervallo_graph_dict(station_id, tipi_grafici):
+    charts = Chart.objects.filter(station_id=station_id, chart_type__in=tipi_grafici).values_list('variables', 'id').order_by('-chart_type')
+    intervallo_dict = []
+    for c in charts:
+        intervallo_dict.append({'intervallo': c[0]['intervallo'], 'id': c[1]})
+    results = {}
+    for a in intervallo_dict:
+        if a['intervallo'] not in results.keys():
+            results[a['intervallo']] = []
+        results[a['intervallo']].append(str(a['id']))
     return results

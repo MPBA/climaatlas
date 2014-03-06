@@ -16,8 +16,17 @@
         $(document).ready(function() {
              $("#station").on('change', function() {
                 var pk = $("#station option:selected").attr('pk');
-                var periodo = $("#periodo option:selected").attr('pk');
                 location.href = '/view/trend/stats/distribution/details/' + pk + "/"
+            });
+
+             $("#intervallo").on('change', function() {
+                 var ids = $("#intervallo option:selected").attr('value');
+                 var idlist = ids.split('-');
+                 var mychart = $('img[mychart]');
+                 for (var i=0; i<idlist.length; i++){
+                    $(mychart[i]).attr('src','/view/grafico/'+ idlist[i])
+                 }
+                 $('span[intervallo]').html($("#intervallo option:selected").html())
             });
         });
     </script>
@@ -41,6 +50,15 @@
                         {% for s in station_list %}
                             <option {% ifequal s.stname station.stname %}selected{% endifequal %} pk="{{ s.pk }}">{{ s.stname }}</option>
                         {% endfor %}
+                    </select>
+                    <label for="station">Seleziona intervallo</label>
+                    {% intervalli_climatici station.pk type as intervalli %}
+                    <select id="intervallo" class="form-control">
+                       {% for i in intervalli %}
+                            <option value="{{ i.ids }}">
+                                {{ i.intervallo|capfirst }}
+                            </option>
+                       {% endfor %}
                     </select>
                 </div>
 
@@ -95,20 +113,22 @@
         <!-- Tab panes -->
 
         <div class="row text-center" style="padding-top: 10px;">
-        {% for chart in charts %}
+        {% intervalli_climatici station.pk type as interval %}
+
+        {% for chart in interval.0.idslist %}
             {% if chart %}
+                {% with chart|get_dati_chart as grafico %}
                 <div class="col-md-6">
-                <div class="panel panel-info">
-                  <div class="panel-heading"><i class="wi-{{ chart.variables.tipo_dato }}"></i> {{ chart.variables.tipo_dato|capfirst }} </div>
-                  <div class="panel-body">
-                     <a href="{% url 'get_chart_by_id' chart.id %}" data-lightbox="image-1" title="Chart1">
-                     <img src="{% url 'get_chart_by_id' chart.id %}" alt="" class="img-thumbnail img-responsive" />
-                     </a>
-                  </div>
+                    <div class="panel panel-info">
+                      <div class="panel-heading"><i class="wi-{{ grafico.tipo_dato }}"></i> {{ grafico.tipo_dato|capfirst }} <span intervallo>{{ grafico.intervallo|capfirst }}</span> </div>
+                      <div class="panel-body">
+                         <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
+                         <img mychart src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
+                         </a>
+                      </div>
+                    </div>
                 </div>
-
-
-                </div>
+                {% endwith %}
             {% else %}
                 <div class="bs-callout bs-callout-info">
                     <h4>Informazione di servizio</h4>
