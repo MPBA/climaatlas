@@ -1,10 +1,13 @@
-{% extends 'base.html' %}
-{% load static %}
+{#{% extends 'base.html' %}#}
+<html>
 
+{% load static %}
+<head>
 {% block page_name %}Cronologia delle temperature{% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="/static/style.css">
     <script src="{% static 'js/d3.v3.min.js' %}"></script>
+     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/temperature.js' %}"></script>
     <script src="{% static 'js/underscore-min.js' %}"></script>
 {% endblock extra_head %}
@@ -14,6 +17,8 @@
 {% endblock breadcumb_items %}
 {% block menuleft %}
 {% endblock %}
+</head>
+<body>
 {% block main %}
     <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
@@ -39,3 +44,5 @@
     </script>
     <!-- /.container -->
 {% endblock main %}
+</body>
+</html>
