@@ -212,7 +212,7 @@ class TrendClimaticiAnomalieDetailsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TrendClimaticiAnomalieDetailsView, self).get_context_data()
         ids = list(map(int, self.kwargs['ids'].split('-')))
-        station_from_chart = Chart.objects.filteannor(id__in=ids).values('station_id').distinct()
+        station_from_chart = Chart.objects.filter(id__in=ids).values('station_id').distinct()
         if len(station_from_chart) > 1:
             raise Http404
         else:
