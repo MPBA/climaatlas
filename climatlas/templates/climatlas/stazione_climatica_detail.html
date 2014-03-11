@@ -18,16 +18,13 @@
     <li class="active">{{ station.0.stname }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
-    <div class="well well-sm">
+     <div class="well well-sm">
         <ul style="list-style: none">
             <li>
                 <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazioni
             </li>
             <li>
-                <i class="wi-temp_min" style="font-size: 20px!important"></i> Temperatura Minima
-            </li>
-            <li>
-                <i class="wi-temp_max" style="font-size: 20px!important"></i> Temperatura Massima
+                <i class="wi-thermometer" style="font-size: 20px!important"></i> Temperatura
             </li>
         </ul>
     </div>
@@ -56,9 +53,8 @@
                         <li>
                             <span class="item-key"><strong>Dataset</strong></span>
                             <div class="vcard-item">
-                                <i class="wi-{{ station.0.datasets.0 }}" style="font-size: 20px!important"></i>
-                                <i class="wi-{{ station.0.datasets.1 }}" style="font-size: 20px!important"></i>
-                                <i class="wi-{{ station.0.datasets.2 }}" style="font-size: 20px!important"></i>
+                                {% if 'temp_avg' in station.0.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
+                                      {% if 'rain' in station.0.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
                             </div>
                         </li>
                         <li>

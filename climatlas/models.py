@@ -14,6 +14,7 @@ class Station(models.Model):
     last_modification = models.DateTimeField()
     description = models.TextField(blank=True)
     the_geom = models.TextField() # This field type is a guess.
+    note_omogen = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['code']
@@ -55,6 +56,7 @@ class StationView(models.Model):
     last_modification = models.DateTimeField(blank=True, null=True)
     description = models.TextField(blank=True)
     the_geom = models.TextField(blank=True) # This field type is a guess.
+    note_omogen = models.TextField(null=True, blank=True)
 
     class Meta:
         managed = False

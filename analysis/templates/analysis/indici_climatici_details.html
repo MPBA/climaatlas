@@ -11,9 +11,13 @@
      <script src={% static 'datatables/js/jquery.dataTables.js' %}></script>
      <script src={% static 'datatables/js/bootstrap3_dt.js' %}></script>
      <script type="text/javascript" charset="utf-8">
+            $(document).ready(function(){
+                $("[rel=tooltip]").tooltip({ placement: 'right'});
+            });
 
             /* Table initialisation */
             $(document).ready(function() {
+
                 var x = $('#cstations').dataTable( {
                     "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
                     "sPaginationType": "bootstrap",
@@ -64,18 +68,22 @@
                       <th>Ott</th>
                       <th>Nov</th>
                       <th>Dic</th>
-                      <th>Annua</th>
+                      <th style="border-left: 1px solid #e3e3e3">Annua</th>
                       <th>DGF</th>
                       <th>MAM</th>
                       <th>GLA</th>
-                      <th>SON
-                      </th>
+                      <th>SON</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for d in data %}
                     <tr>
-                      <td>{{ d.station.stname }} {{ d.nota }}</td>
+                      <td>{{ d.station.stname }}
+
+                          {% ifequal d.nota '*' %}
+                            <a href="#" rel="tooltip" data-toggle="tooltip" title="" data-original-title="{{ d.station.note_omogen }}"><i class="fa fa-info-circle"></i></a>
+                          {% endifequal %}
+                      </td>
                       <td>{{ d.station.elevation|floatformat }}</td>
                       <td>{{ d.gen|floatformat }}</td>
                       <td>{{ d.feb|floatformat }}</td>
@@ -89,7 +97,7 @@
                       <td>{{ d.ott|floatformat }}</td>
                       <td>{{ d.nov|floatformat }}</td>
                       <td>{{ d.dic|floatformat }}</td>
-                      <td>{{ d.annua|floatformat }}</td>
+                      <td style="border-left: 1px solid #e3e3e3">{{ d.annua|floatformat }}</td>
                       <td>{{ d.inverno|floatformat }}</td>
                       <td>{{ d.primavera|floatformat }}</td>
                       <td>{{ d.estate|floatformat }}</td>

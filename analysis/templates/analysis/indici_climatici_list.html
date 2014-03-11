@@ -26,6 +26,11 @@
         <div class="page-header">
             <h1>Tabelle degli indici climatici</h1>
         </div>
+        <div class="bs-callout bs-callout-info">
+            <p>
+                Il clima delle località trentine viene descritto tramite i principali indici climatici associati ai parametri di temperatura e precipitazione. I valori sono calcolati sui trentenni di riferimento: 1961-1990, 1971-2000 e 1981-2010
+            </p>
+        </div>
         {% regroup indici by type as indici_list %}
         {% for idc in indici_list %}
             <table class="table table-striped" id="cstations">
