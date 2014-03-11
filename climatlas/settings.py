@@ -30,9 +30,25 @@ STATICFILES_FINDERS = (
 )
 
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    #'django.template.loaders.eggs.Loader',
+)
+
+
 # Application definition
 
 INSTALLED_APPS = (
+    'bootstrap_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'django.contrib.gis',
     'django_hstore',
+    'redactor',
     'export_xls',
     'dataupload',
     'menu',

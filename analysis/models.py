@@ -185,6 +185,7 @@ class ClimateExtremesData(models.Model):
     estate_data = models.TextField(blank=True)
     autunno = models.FloatField(blank=True, null=True)
     autunno_data = models.TextField(blank=True)
+
     class Meta:
         managed = False
         db_table = 'climate_extremes_data'

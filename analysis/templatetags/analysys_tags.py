@@ -51,3 +51,12 @@ def dati_disponibili(station, tipi_grafici):
 def get_dati_chart(chart_id):
     dati = Chart.objects.get(pk=chart_id)
     return dati.variables
+
+@register.filter()
+def dateformat(datatxt):
+    try:
+        data = datatxt.split('-')
+        return u'%s/%s/%s' % (data[2], data[1], data[0])
+    except:
+        data = datatxt
+        return data

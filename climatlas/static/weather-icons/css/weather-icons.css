@@ -316,6 +316,9 @@
 .wi-temp_max:before {
   content: "\f058";
 }
+.wi-temp_avg:before {
+  content: "\f055";
+}
 .wi-wind-east:before {
   content: "\f059";
 }

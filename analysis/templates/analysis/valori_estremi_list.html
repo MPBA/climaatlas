@@ -26,6 +26,10 @@
                 <div class="page-header">
                     <h1>Tabelle dei valori estremi</h1>
                 </div>
+                <div class="bs-callout bs-callout-info">
+                   <p>Nelle tabelle seguenti vengono riportati i principali valori estremi di temperatura e precipitazione, su base giornaliera e mensile, osservati per una serie di stazioni nel periodo indicato</p>
+                </div>
+
                 {% regroup estremi by type as estremi_list %}
                 {% for el in estremi_list %}
                     <table class="table table-striped" id="cstations">

@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     ### Import upload tools app ###
     (r'^upload/', include("dataupload.urls")),
 
+    ### Import WYSIWYG editor ###
+    url(r'^redactor/', include('redactor.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

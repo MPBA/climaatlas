@@ -49,10 +49,13 @@
                 <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazioni
             </li>
             <li>
-                <i class="wi-temp_min" style="font-size: 20px!important"></i> Temperatura Minima
+                <i class="wi-thermometer" style="font-size: 20px!important"></i> Temperatura
             </li>
             <li>
-                <i class="wi-temp_max" style="font-size: 20px!important"></i> Temperatura Massima
+                <i class="fa fa-circle" style="color: #cb4437; font-size: 12px!important"></i> Non attiva
+            </li>
+            <li>
+                <i class="fa fa-circle" style="color: #79a038; font-size: 12px!important"></i> Attiva
             </li>
         </ul>
     </div>
@@ -93,9 +96,9 @@
                                   <td>{{ station.code }}</td>
                                   <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
                                   <td>
-                                      <i class="wi-{{ station.datasets.0 }}" style="font-size: 20px!important"></i>
-                                      <i class="wi-{{ station.datasets.1 }}" style="font-size: 20px!important"></i>
-                                      <i class="wi-{{ station.datasets.2 }}" style="font-size: 20px!important"></i>
+                                      {% if 'temp_avg' in station.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
+                                      {% if 'rain' in station.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
+
                                   </td>
                                   <td>{{ station.commence|date:"d/m/Y" }}</td>
                                   <td>{{ station.latitude|floatformat:4 }}, {{ station.longitude|floatformat:4 }}</td>
@@ -129,7 +132,7 @@
 
                 {% for station in meteo_stations %}
                 L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
-                    .bindPopup("<b>{{ station.code }}</b><br />{{ station.stname }}</b><br /><i style='font-size: 20px!important' class='wi-{{ station.datasets.0 }}'></i> <i style='font-size: 20px!important' class='wi-{{ station.datasets.1 }}'></i><i style='font-size: 20px!important' class='wi-{{ station.datasets.2 }}'></i>").openPopup();
+                    .bindPopup("<b>{{ station.code }}</b><br /><a href='{% url 'stazione_detail' station.id %}'>{{ station.stname }}</a></b><br /><i style='font-size: 20px!important' class='wi-{% if 'rain' in station.datasets %}rain{% endif %}'></i> <i style='font-size: 20px!important' class='wi-{% if 'temp_avg' in station.datasets %}temp_avg{% endif %}'></i>").openPopup();
                 {% endfor %}
 
                 $('#mpl').click(function(){

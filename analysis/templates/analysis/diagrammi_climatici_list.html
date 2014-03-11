@@ -16,16 +16,7 @@
 {% endblock breadcumb_items %}
 
 {% block page_legend %}
-    <div class="well well-sm">
-        <ul style="list-style: none">
-            <li>
-                <i class="fa fa-bar-chart-o"></i> Diagramma climatico
-            </li>
-            <li>
-                <i class="fa fa-table"></i> Tabelle grandezze climatiche
-            </li>
-        </ul>
-    </div>
+
 {% endblock page_legend %}
 
 {% block main %}
@@ -33,8 +24,13 @@
         <div class="page-header">
             <h1>Diagrammi climatici</h1>
         </div>
-        <div>I diagrammi climatici descrivono per una determinata località le sue caratteristiche climatiche principali attraverso opportuni indici associati all'andamento termico (medie mensili delle temperature massime, medie e minime) e al regime pluviometrico (precipitazioni medie mensili).
-            In funzione della disponibilità dei dati, i valori sono espressi rispetto alla media dei trentenni 1961-1990, 1971-2000 e 1981-2010.</div>
+        <div class="bs-callout bs-callout-info">
+            <p>
+                I diagrammi climatici descrivono per una determinata località le sue caratteristiche climatiche principali attraverso opportuni indici associati all'andamento termico (medie mensili delle temperature massime, medie e minime) e al regime pluviometrico (precipitazioni medie mensili).
+            In funzione della disponibilità dei dati, i valori sono calcolati rispetto alla media dei trentenni 1961-1990, 1971-2000 e 1981-2010, ed espressi sia in formato grafico che tabellare.
+            </p>
+        </div>
+
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
@@ -49,8 +45,7 @@
                         <thead>
                         <tr>
                             <th style="width: 10%">Codice</th>
-                            <th style="width: 30%">Nome</th>
-                            <th>Dati disponbili</th>
+                            <th style="width: 60%">Nome</th>
                             <th>Periodo</th>
                         </tr>
                         </thead>
@@ -60,15 +55,7 @@
                             <tr>
                                 <td>{{ station.code }}</td>
                                 <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
-                                <td>
-                                {% dati_disponibili station type as dati %}
-                                    {% if 20 in dati %}
-                                        <i class="fa fa-bar-chart-o"></i>
-                                    {% endif %}
-                                    {% if station.get_climateindex_count %}
-                                        <i class="fa fa-table"></i>
-                                    {% endif %}
-                                </td>
+
                                 <td>
                                     {% for periodo in station.get_climateindex_periodo_list %}
                                         <a href="{% url 'diagrammi_climatici_details' station.pk periodo %}">{{ periodo }}</a>
