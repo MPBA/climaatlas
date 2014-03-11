@@ -26,40 +26,41 @@
         <div class="page-header">
             <h1>Tabelle degli indici climatici</h1>
         </div>
-
-        <table class="table table-striped" id="cstations">
-            <thead>
-            <tr>
-                <th style="width: 50%">Nome indice</th>
-                {% for p in periodo %}
-                    <th>{{ p.periodo }}</th>
+        {% regroup indici by type as indici_list %}
+        {% for idc in indici_list %}
+            <table class="table table-striped" id="cstations">
+                <thead>
+                <tr>
+                    <th>{{ idc.grouper|capfirst }}</th>
+                    {% for p in periodo %}
+                        <th>{{ p.periodo }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in idc.list %}
+                    {% if i.get_climateindex_periodo_list %}
+                        <tr>
+                            <td>{{ i.name }}</td>
+                            {% for p in periodo %}
+                                {% if p.periodo in i.get_climateindex_periodo_list %}
+                                    <td>
+                                        <a href="{% url 'tabelle_indici_details' i.r_name p.periodo %}"><span class="fa fa-table" ></span></a>
+                                        <a href="{% url 'tabelle_indici_export' i.r_name p.periodo 'pdf' %}" target="_blank">
+                                            <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
+                                        </a>
+                                        <a href="{% url 'tabelle_indici_export' i.r_name p.periodo 'xls' %}" target="_blank"><span class="fa fa-windows" ></span></a>
+                                    </td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
                 {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-
-            {% for i in indici %}
-                {% if i.get_climateindex_periodo_list %}
-                    <tr>
-                        <td>{{ i.name }}</td>
-                        {% for p in periodo %}
-                            {% if p.periodo in i.get_climateindex_periodo_list %}
-                                <td>
-                                    <a href="{% url 'tabelle_indici_details' i.r_name p.periodo %}"><span class="fa fa-table" ></span></a>
-                                    <a href="{% url 'tabelle_indici_export' i.r_name p.periodo 'pdf' %}">
-                                        <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
-                                    </a>
-                                    <a href="{% url 'tabelle_indici_export' i.r_name p.periodo 'xls' %}"><span class="fa fa-windows" ></span></a>
-                                </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endif %}
-            {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        {% endfor %}
     </div>
     <!-- /.container -->
 {% endblock main %}

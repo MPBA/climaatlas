@@ -41,10 +41,10 @@
                             <td>
                             {% if e.get_climateextremes_count %}
                                  <a href="{% url 'valori_estremi_details' e.r_name %}"><span class="fa fa-table" ></span></a>
-                                 <a href="{% url 'valori_estremi_export' e.r_name 'pdf' %}">
+                                 <a href="{% url 'valori_estremi_export' e.r_name 'pdf' %}" target="_blank">
                                       <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
                                   </a>
-                                  <a href="{% url 'valori_estremi_export' e.r_name 'xls' %}"><span class="fa fa-windows" ></span></a>
+                                  <a href="{% url 'valori_estremi_export' e.r_name 'xls' %}" target="_blank"><span class="fa fa-windows" ></span></a>
                             {% endif %}
                             </td>
                        </tr>
