@@ -179,9 +179,9 @@ class DiagrammiClimaticiDetailsView(TemplateView):
 
         station = Station.objects.get(pk=pk)
         dataidx = station.climateindexdata_set.filter(periodo=periodo, climate_index__sezione='index')\
-            .order_by('-climate_index__type','climate_index__name')
-        dataext = station.climateindexdata_set.filter(periodo=periodo, climate_index__sezione='extreme')\
-            .order_by('climate_index__type','climate_index__name')
+            .order_by('-climate_index__type', 'climate_index__name')
+        dataext = station.climateextremesdata_set.filter(climate_index__sezione='extreme')\
+            .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__name')
 
         context['station'] = station
         context['dataidx'] = dataidx

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load analysys_tags %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
@@ -10,6 +11,9 @@
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
+            $(document).ready(function(){
+                $("[rel=tooltip]").tooltip({ placement: 'right'});
+            });
             $("#station").on('change', function() {
                 var pk = $("#station option:selected").attr('pk');
                 var periodo = $("#periodo option:selected").attr('pk');
@@ -101,72 +105,142 @@
             {% if charts %}
                 <li class="active"><a href="#grafico" data-toggle="tab">Diagramma climatico</a></li>
             {% endif %}
-            <li><a {% if not charts %}class="active"{% endif %} href="#tabelle" data-toggle="tab">Tabelle grandezze climatiche</a></li>
+            <li><a {% if not charts %}class="active"{% endif %} href="#tabelle" data-toggle="tab">Tabelle indici climatici</a></li>
+            <li><a href="#estremi" data-toggle="tab">Tabelle estremi climatici</a></li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
             {% if charts %}
-            <div class="tab-pane active" id="grafico">
-                <div class="row text-center" style="padding-top: 10px;">
-                    {% for c in charts %}
-                        <div class="col-md-12">
-                            <div class="panel panel-info">
-                              <div class="panel-heading">Distribuzione </div>
-                              <div class="panel-body">
-                                 <a href="{% url 'get_chart_by_id' c.id %}" data-lightbox="image-1" title="Chart1">
-                                    <img src="{% url 'get_chart_by_id' c.id %}" alt="" class="img-thumbnail img-responsive" />
-                                 </a>
-                              </div>
+                <div class="tab-pane active" id="grafico">
+                    <div class="row text-center" style="padding-top: 10px;">
+                        {% for c in charts %}
+                            <div class="col-md-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">Distribuzione </div>
+                                    <div class="panel-body">
+                                        <a href="{% url 'get_chart_by_id' c.id %}" data-lightbox="image-1" title="Chart1">
+                                            <img src="{% url 'get_chart_by_id' c.id %}" alt="" class="img-thumbnail img-responsive" />
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
             {% endif %}
             <div class="tab-pane {% if not charts %}active{% endif %}" id="tabelle">
-                <div class="row">
+                <div class="row" style="padding-top: 10px;">
                     <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
-                        <table class="table table-striped" id="cstations">
-                            <thead>
-                            <tr>
-                                <th style="width:150px;">Indice</th>
-                                <th>Gen</th>
-                                <th>Feb</th>
-                                <th>Mar</th>
-                                <th>Apr</th>
-                                <th>Mag</th>
-                                <th>Giu</th>
-                                <th>Lug</th>
-                                <th>Ago</th>
-                                <th>Set</th>
-                                <th>Ott</th>
-                                <th>Nov</th>
-                                <th>Dic</th>
-                                <th>Annua</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for d in data %}
+                        {% regroup dataidx by climate_index.type as indici_list %}
+                        {% for idc in indici_list %}
+                            <table class="table table-striped">
+                                <thead>
                                 <tr>
-                                    <td>{{ d.climate_index.name }} <strong>{{ d.nota }}</strong></td>
-                                    <td>{{ d.gen|floatformat }}</td>
-                                    <td>{{ d.feb|floatformat }}</td>
-                                    <td>{{ d.mar|floatformat }}</td>
-                                    <td>{{ d.apr|floatformat }}</td>
-                                    <td>{{ d.mag|floatformat }}</td>
-                                    <td>{{ d.giu|floatformat }}</td>
-                                    <td>{{ d.lug|floatformat }}</td>
-                                    <td>{{ d.ago|floatformat }}</td>
-                                    <td>{{ d.sett|floatformat }}</td>
-                                    <td>{{ d.ott|floatformat }}</td>
-                                    <td>{{ d.nov|floatformat }}</td>
-                                    <td>{{ d.dic|floatformat }}</td>
-                                    <td>{{ d.annua|floatformat }}</td>
+                                    <th>{{ idc.grouper|capfirst }}</th>
+                                    <th>Gen</th>
+                                    <th>Feb</th>
+                                    <th>Mar</th>
+                                    <th>Apr</th>
+                                    <th>Mag</th>
+                                    <th>Giu</th>
+                                    <th>Lug</th>
+                                    <th>Ago</th>
+                                    <th>Set</th>
+                                    <th>Ott</th>
+                                    <th>Nov</th>
+                                    <th>Dic</th>
+                                    <th>Annua</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {% for d in idc.list %}
+                                    <tr>
+                                        <td>{{ d.climate_index.name }}
+                                            {% ifequal d.nota '*' %}
+                                                <a href="#" rel="tooltip" data-toggle="tooltip" title="" data-original-title="{{ d.station.note_omogen }}"><i class="fa fa-info-circle"></i></a>
+                                            {% endifequal %}
+                                        </td>
+                                        <td>{{ d.gen|floatformat }}</td>
+                                        <td>{{ d.feb|floatformat }}</td>
+                                        <td>{{ d.mar|floatformat }}</td>
+                                        <td>{{ d.apr|floatformat }}</td>
+                                        <td>{{ d.mag|floatformat }}</td>
+                                        <td>{{ d.giu|floatformat }}</td>
+                                        <td>{{ d.lug|floatformat }}</td>
+                                        <td>{{ d.ago|floatformat }}</td>
+                                        <td>{{ d.sett|floatformat }}</td>
+                                        <td>{{ d.ott|floatformat }}</td>
+                                        <td>{{ d.nov|floatformat }}</td>
+                                        <td>{{ d.dic|floatformat }}</td>
+                                        <td>{{ d.annua|floatformat }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="estremi">
+                <div class="row" style="padding-top: 10px;">
+                    <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
+                        {% regroup dataext by climate_index.resolution as estremi_list %}
+                        {% for idc in estremi_list %}
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{{ idc.grouper|capfirst }}</th>
+                                    <th>Gen</th>
+                                    <th>Feb</th>
+                                    <th>Mar</th>
+                                    <th>Apr</th>
+                                    <th>Mag</th>
+                                    <th>Giu</th>
+                                    <th>Lug</th>
+                                    <th>Ago</th>
+                                    <th>Set</th>
+                                    <th>Ott</th>
+                                    <th>Nov</th>
+                                    <th>Dic</th>
+{#                                    {% if idc.grouper == 'mensili' %}#}
+{#                                        <th>Annua</th>#}
+{#                                        <th>DGF</th>#}
+{#                                        <th>MAM</th>#}
+{#                                        <th>GLA</th>#}
+{#                                        <th>SON</th>#}
+{#                                    {% endif %}#}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for d in idc.list %}
+                                    <tr>
+                                        <td>{{ d.climate_index.name }}
+                                        </td>
+                                        <td>{{ d.gen }}<br><h6><small>{{ d.gen_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.feb }}<br><h6><small>{{ d.feb_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.mar }}<br><h6><small>{{ d.mar_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.apr }}<br><h6><small>{{ d.apr_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.mag }}<br><h6><small>{{ d.mag_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.giu }}<br><h6><small>{{ d.giu_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.lug }}<br><h6><small>{{ d.lug_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.ago }}<br><h6><small>{{ d.ago_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.sett }}<br><h6><small>{{ d.sett_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.ott }}<br><h6><small>{{ d.ott_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.nov }}<br><h6><small>{{ d.nov_data|dateformat }}</small></h6></td>
+                                        <td>{{ d.dic }}<br><h6><small>{{ d.dic_data|dateformat }}</small></h6></td>
+{#                                        {% if idc.grouper == 'mensili' %}#}
+{#                                            <td>{{ d.annua|floatformat }}<br><h6><small>{{ d.annua_data|dateformat }}</small></h6></td>#}
+{#                                            <td>{{ d.inverno|floatformat }}<br><h6><small>{{ d.inverno_data|dateformat }}</small></h6></td>#}
+{#                                            <td>{{ d.primavera|floatformat }}<br><h6><small>{{ d.primavera_data|dateformat }}</small></h6></td>#}
+{#                                            <td>{{ d.estate|floatformat }}<br><h6><small>{{ d.estate_data|dateformat }}</small></h6></td>#}
+{#                                            <td>{{ d.autunno|floatformat }}<br><h6><small>{{ d.autunno_data|dateformat }}</small></h6></td>#}
+{#                                        {% endif %}#}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
