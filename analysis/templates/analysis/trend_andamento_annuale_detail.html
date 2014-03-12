@@ -39,8 +39,10 @@
                 var idx = newPage-1;
                 var charts = json[idx]['ids'];
                 var charts_img = $('#chartview img');
+                var charts_lnk = $('#chartview a');
                 for (var i=0; i<charts.length; i++){
-                    $(charts_img[i]).attr('src','/view/grafico/' + charts[i])
+                    $(charts_img[i]).attr('src','/view/grafico/' + charts[i]);
+                    $(charts_lnk[i]).attr('href','/view/grafico/' + charts[i]);
 
                 }
                 $('div[mychart=descrizione] span[anno=anno]').html(json[idx]['anno']);
