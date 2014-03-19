@@ -4,7 +4,8 @@ from .views import (ClimateIndexListView, ClimateIndexDetailsView, ClimateIndexD
                     ClimateExtremesListView, ClimateExtremesDetailsView, ClimateExtremesDetailsViewExport,
                     DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView, TrendAndamentoAnnualeList,
                     TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView, TrendAndamentoAnnualeDetail,
-                    TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail)
+                    TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail,
+                    MappeClimaticheListView)
 
 urlpatterns = patterns('analysis.views',
    ### Indici climatici ###
@@ -15,36 +16,34 @@ urlpatterns = patterns('analysis.views',
    url(regex='^indici/export/(?P<r_name>[-\w_.]+)/(?P<periodo>[-\w_]+)/(?P<tipo_export>\w+)/$',
        view=ClimateIndexDetailsViewExport.as_view(),
        name='tabelle_indici_export'),
-   #
+
    #### Valori estremi ###
    url(regex='^estremi/$', view=ClimateExtremesListView.as_view(), name='valori_estremi_view'),
    url(regex='^estremi/details/(?P<r_name>[-\w_.]+)/$', view=ClimateExtremesDetailsView.as_view(),
        name='valori_estremi_details'),
    url(regex='^estremi/export/(?P<r_name>[-\w_.]+)/(?P<tipo_export>\w+)/$',
        view=ClimateExtremesDetailsViewExport.as_view(), name='valori_estremi_export'),
-   #
+
    #### Diagrammi climatici ###
    url(regex='^diagrammi/$', view=DiagrammiClimaticiListView.as_view(), name='diagrammi_climatici_view'),
    url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/$', view=DiagrammiClimaticiDetailsView.as_view(),
        name='diagrammi_climatici_details'),
 
-   #### Anomalie trend ####
+   ### Mappe climatiche ###
+   url(regex='^mappe/$', view=MappeClimaticheListView.as_view(), name='mappe_climatiche_view'),
 
+   #### Anomalie trend ####
    url(regex='^trend/anomalie/$', view=TrendClimaticiAnomalieList.as_view(), name='trend_anomalie_view'),
    url(regex='^trend/anomalie/details/(?P<ids>[-\d]+)/$', view=TrendClimaticiAnomalieDetailsView.as_view(), name='trend_anomalie_detail'),
-
    url(regex='^trend/stats/distribution/$',
        view=TrendClimaticiDistribuzioniStatisticheList.as_view(),
        name='trend_distr_stats_view'),
-
    url(regex='^trend/stats/distribution/details/(?P<station_id>\d+)/$',
        view=TrendClimaticiDistribuzioniStatisticheDetail.as_view(),
        name='trend_distr_stats_detail'),
-
    url(regex='^trend/andamento/annuale/list$',
        view=TrendAndamentoAnnualeList.as_view(),
        name='trend_annuale_list'),
-
    url(regex='^trend/andamento/annuale/detail/(?P<station_id>\d+)/(?P<periodo>[-\d_]+)/$',
        view=TrendAndamentoAnnualeDetail.as_view(),
        name='trend_annuale_details'),

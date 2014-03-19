@@ -136,12 +136,51 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 
 )
+
+##################
+# FILE UPLOADER  #
+##################
 import re
 FILE_EXT = re.compile(r'^.*?[.](?P<ext>\.zip|tar\.gz|tar\.bz2|\w+)$')
 VALID_EXTTENSIONS = ['zip']
 STAZIONI_NAMES = ['site.dbf', 'site.fpt', 'site.cdx']
 DATI_NAMES = ['pioggia.txt', 'tempmax.txt', 'tempmin.txt']
 
+####################
+# MAPPE CLIMATICHE #
+####################
+LAYER_TYPE = (
+    ('p', 'Precipitazione'),
+    ('t', 'Temperatura'),
+)
+
+LAYER_PERIOD = (
+    ('1961-1990'),
+    ('1971-2000'),
+    ('1981-2010'),
+)
+
+LAYER_MONTH = (
+    ('01', 'Gennaio', 'PrecipitazioniMensili'),
+    ('02', 'Febbraio', 'PrecipitazioniMensili'),
+    ('03', 'Marzo', 'PrecipitazioniMensili'),
+    ('04', 'Aprile', 'PrecipitazioniMensili'),
+    ('05', 'Maggio', 'PrecipitazioniMensili'),
+    ('06', 'Giugno', 'PrecipitazioniMensili'),
+    ('07', 'Luglio', 'PrecipitazioniMensili'),
+    ('08', 'Agosto', 'PrecipitazioniMensili'),
+    ('09', 'Settembre', 'PrecipitazioniMensili'),
+    ('10', 'Ottobre', 'PrecipitazioniMensili'),
+    ('11', 'Novembre', 'PrecipitazioniMensili'),
+    ('12', 'Dicembre', 'PrecipitazioniMensili'),
+    ('', 'Annuale', 'PrecipitazioniAnnuali'),
+    ('1win', 'Inverno', 'PrecipitazioniStagionali'),
+    ('2spr', 'Primavera', 'PrecipitazioniStagionali'),
+    ('3sum', 'Estate', 'PrecipitazioniStagionali'),
+    ('4aut', 'Autunno', 'PrecipitazioniStagionali'),
+)
+
+GEOSERVER_URL = 'https://climatals.fbk.eu/geoserver'
 ##################
 # LOCAL SETTINGS #
 ##################

@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
+from django.conf import settings
 from .models import ClimateIndex, ClimateIndexData, ClimateExtremesData, Chart
 from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict, intervallo_graph_dict
 from climatlas.models import Station
@@ -296,6 +297,17 @@ class TrendAndamentoAnnualeDetail(TemplateView):
             })
         context['jsonlist'] = sorted(jsonlist)
         context['annographjson'] = json.dumps(sorted(jsonlist))
+        return context
+
+
+class MappeClimaticheListView(TemplateView):
+    template_name = 'analysis/mappe_climatiche.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MappeClimaticheListView, self).get_context_data()
+        context['type'] = settings.LAYER_TYPE
+        context['period'] = settings.LAYER_PERIOD
+        context['month'] = settings.LAYER_MONTH
         return context
 
 
