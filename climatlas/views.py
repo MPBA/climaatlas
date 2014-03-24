@@ -54,5 +54,4 @@ class StazioniClimaticheDetailView(View):
                 context['graph_id'] = "notfound"
         except Station.DoesNotExist:
             pass
-
         return render(request, self.template_name, context)

@@ -18,6 +18,9 @@
             <li>
                 <i class="fa fa-th-large" ></i> Scarica XLS
             </li>
+            <li>
+                <i class="fa fa-code" ></i> Scarica CSV
+            </li>
         </ul>
     </div>
 {% endblock page_legend %}
@@ -49,6 +52,8 @@
                                       <span class="fa fa-chevron-circle-down" style="padding-right: 5px; padding-left: 5px;"></span>
                                   </a>
                                   <a href="{% url 'valori_estremi_export' e.r_name 'xls' %}" target="_blank"><span class="fa fa-th-large" ></span></a>
+                                  <a href="{% url 'valori_estremi_export' e.r_name 'csv' %}" target="_blank"><span class="fa fa-code" ></span></a>
+
                             {% endif %}
                             </td>
                        </tr>

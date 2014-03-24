@@ -180,7 +180,7 @@ LAYER_MONTH = (
     ('4aut', 'Autunno', 'PrecipitazioniStagionali'),
 )
 
-GEOSERVER_URL = 'https://climatals.fbk.eu/geoserver'
+GEOSERVER_URL = 'https://climatlas.fbk.eu/geoserver'
 ##################
 # LOCAL SETTINGS #
 ##################
