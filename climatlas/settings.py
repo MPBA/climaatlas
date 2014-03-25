@@ -187,11 +187,15 @@ LAYER_MONTH = (
     ('4aut', 'Autunno', 'PrecipitazioniStagionali'),
 )
 
-GEOSERVER_URL = 'https://climatals.fbk.eu/geoserver'
+
+GEOSERVER_URL = 'https://climatlas.fbk.eu/geoserver'
 OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
 
 MAPS_ATTRIBUTION_FBK = '(c) 2014 FBK/MPBA - Map data Provincia Autonoma di Trento & MeteoTrentino'
 MAPS_ATTRIBUTION_OSM = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+
+
+
 ##################
 # LOCAL SETTINGS #
 ##################

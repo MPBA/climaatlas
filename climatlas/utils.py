@@ -11,6 +11,9 @@ import cStringIO as StringIO
 import cgi
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static_file
+from django.utils.datastructures import SortedDict
+from django.shortcuts import HttpResponse
+import csv
 
 
 def dictfetchall(cursor):
@@ -46,6 +49,19 @@ def render_to_pdf(template_src, context_dict):
     return http.HttpResponse('We had some errors<pre>%s</pre>' % cgi.escape(html))
 
 
+def export_csv(filename, fields, data):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="' + filename + '.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(fields)
+
+    for row, rowdata in enumerate(data):
+        writer.writerow(rowdata)
+    return response
+
+
 def periodi_graph_dict(station_id, tipi_grafici):
     periodi = Chart.objects.filter(chart_type__in=tipi_grafici, station_id=station_id).values_list('variables', 'id')
     periodi_dict = []
@@ -56,7 +72,9 @@ def periodi_graph_dict(station_id, tipi_grafici):
         if pl['periodo'] not in results.keys():
             results[pl['periodo']] = []
         results[pl['periodo']].append(str(pl['id']))
-    return results
+
+    return SortedDict(sorted(results.items()))
+    #return results
 
 
 def anno_graph_dict(station_id, tipi_grafici, periodo_climatico):

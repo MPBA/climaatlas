@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
 from django.conf import settings
 from .models import ClimateIndex, ClimateIndexData, ClimateExtremesData, Chart
-from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict, intervallo_graph_dict
+from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict, intervallo_graph_dict, export_csv
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
@@ -77,6 +77,12 @@ class ClimateIndexDetailsViewExport(View):
                 return export_xlwt(filename, fields, queryset.values_list(*fields))
             except Exception, e:
                 raise e
+        elif self.kwargs['tipo_export'] == 'csv':
+            fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+            filename = title
+            queryset = data
+            return export_csv(filename, fields, queryset.values_list(*fields))
         else:
             pass
 
@@ -140,6 +146,16 @@ class ClimateExtremesDetailsViewExport(View):
                 return export_xlwt(filename, fields, queryset.values_list(*fields))
             except Exception, e:
                 raise e
+        elif self.kwargs['tipo_export'] == 'csv':
+            fields = ["station__stname", "station__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
+                      "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
+                      "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            if self.index.resolution == 'mensili':
+                fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
+                           "estate_data", "autunno", "autunno_data"]
+            filename = title
+            queryset = data
+            return export_csv(filename, fields, queryset.values_list(*fields))
         else:
             pass
 

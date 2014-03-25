@@ -18,7 +18,7 @@
     <li class="active">{{ station.0.stname }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
-     <div class="well well-sm">
+    <div class="well well-sm">
         <ul style="list-style: none">
             <li>
                 <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazioni
@@ -54,7 +54,7 @@
                             <span class="item-key"><strong>Dataset</strong></span>
                             <div class="vcard-item">
                                 {% if 'temp_avg' in station.0.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
-                                      {% if 'rain' in station.0.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
+                                {% if 'rain' in station.0.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
                             </div>
                         </li>
                         <li>
@@ -74,6 +74,12 @@
                         <li>
                             <span class="item-key"><strong>Descrizione</strong></span>
                             <div class="vcard-item">{{ station.0.description }}</div>
+                        </li>
+                        <li>
+                            {% if station.0.note_omogen %}
+                            <span class="item-key"><strong>Note</strong></span>
+                            <div class="vcard-item">{{ station.0.note_omogen }}</div>
+                            {% endif %}
                         </li>
                     </ul>
                 </div>

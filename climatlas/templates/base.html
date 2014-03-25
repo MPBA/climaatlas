@@ -106,7 +106,7 @@
                                     {{ item.title }} {% ifequal item.title "Trend climatici" %}<span class="right-caret"></span>{% endifequal %}
                                 </a>
                                 {% ifequal item.title "Trend climatici" %}
-                                    <ul class="nav nav-list navlist-menu-level-1 dropdown-menu rightMenu">
+                                    <ul class="nav nav-list navlist-menu-level-1 dropdown-menu rightMenu" style="z-index: 99999">
                                         {% menu trends %}
                                         {% for item2 in menuitems %}
                                             <li>

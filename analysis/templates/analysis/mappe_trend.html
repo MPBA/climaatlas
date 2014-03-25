@@ -49,7 +49,7 @@
                     layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
                 }
 
-                legend_url = String.format(legend_url_default, layer_name);
+                legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
 
                 layer.setParams({
                     layers: layer_name,
@@ -154,7 +154,7 @@
             layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
         }
 
-        legend_url = String.format(legend_url_default, layer_name);
+        legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
 
         layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
             layers: layer_name,
