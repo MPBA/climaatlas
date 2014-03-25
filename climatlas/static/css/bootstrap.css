@@ -320,13 +320,13 @@ textarea {
 }
 
 a {
-  color: #428bca;
+  color: #666666;
   text-decoration: none;
 }
 
 a:hover,
 a:focus {
-  color: #2a6496;
+  color: #be1d2d;
   text-decoration: underline;
 }
 
@@ -4721,12 +4721,12 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-default .navbar-nav > li > a {
-  color: #1e6e6f;
+  color: #666666;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-  color: #333333;
+  color: #be1d2d;
   background-color: transparent;
 }
 
@@ -4909,22 +4909,28 @@ textarea.input-group-sm > .input-group-btn > .btn {
   padding: 8px 15px;
   margin-bottom: 20px;
   list-style: none;
-  background-color: #f5f5f5;
+  background-color: #be1d2d;
   border-radius: 4px;
+  color: #FFF;
 }
 
 .breadcrumb > li {
   display: inline-block;
+  color: #ffffff;
+}
+
+.breadcrumb > li > a {
+    color: #fff;
 }
 
 .breadcrumb > li + li:before {
   padding: 0 5px;
-  color: #cccccc;
+  color: #FFFFFF;
   content: "/\00a0";
 }
 
 .breadcrumb > .active {
-  color: #999999;
+  color: #FFFFFF;
 }
 
 .pagination {
@@ -4967,7 +4973,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .pagination > li > span:hover,
 .pagination > li > a:focus,
 .pagination > li > span:focus {
-  background-color: #eeeeee;
+  background-color: #666666;
 }
 
 .pagination > .active > a,
@@ -4979,8 +4985,8 @@ textarea.input-group-sm > .input-group-btn > .btn {
   z-index: 2;
   color: #ffffff;
   cursor: default;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #be1d2d;
+  border-color: #e3e3e3;
 }
 
 .pagination > .disabled > span,
@@ -5730,7 +5736,7 @@ a.list-group-item.active:focus .list-group-item-text {
 }
 
 .panel-heading {
-  padding: 10px 15px;
+  padding: 7px 12px;
   border-bottom: 1px solid transparent;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
@@ -5752,7 +5758,7 @@ a.list-group-item.active:focus .list-group-item-text {
 }
 
 .panel-footer {
-  padding: 10px 15px;
+  padding: 5px 10px;
   background-color: #f5f5f5;
   border-top: 1px solid #dddddd;
   border-bottom-right-radius: 3px;
@@ -5876,12 +5882,12 @@ a.list-group-item.active:focus .list-group-item-text {
 }
 
 .panel-info {
-  border-color: #bce8f1;
+  border-color: #e3e3e3;
 }
 
 .panel-info > .panel-heading {
-  color: #31708f;
-  background-color: #d9edf7;
+  color: #be1d2d;
+  background-color: #e3e3e3;
   border-color: #bce8f1;
 }
 
