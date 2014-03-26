@@ -38,7 +38,25 @@ class ClimateIndexDetailsView(ListView):
             raise Http404('No %s matches the given query.')
 
         data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
-                                               climate_index=self.index).order_by('station__stname')
+                                               climate_index=self.index).exclude(gen=None,
+                                                                                 feb=None,
+                                                                                 mar=None,
+                                                                                 apr=None,
+                                                                                 mag=None,
+                                                                                 giu=None,
+                                                                                 lug=None,
+                                                                                 ago=None,
+                                                                                 sett=None,
+                                                                                 ott=None,
+                                                                                 nov=None,
+                                                                                 dic=None,
+                                                                                 annua=None,
+                                                                                 autunno=None,
+                                                                                 primavera=None,
+                                                                                 inverno=None,
+                                                                                 estate=None).order_by('station__stname')
+        for d in data:
+            print d.gen
         return data
 
     def get_context_data(self, **kwargs):
@@ -59,7 +77,23 @@ class ClimateIndexDetailsViewExport(View):
             raise Http404('No %s matches the given query.' )
 
         data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
-                                               climate_index=self.index).order_by('station__stname')
+                                               climate_index=self.index).exclude(gen=None,
+                                                                                 feb=None,
+                                                                                 mar=None,
+                                                                                 apr=None,
+                                                                                 mag=None,
+                                                                                 giu=None,
+                                                                                 lug=None,
+                                                                                 ago=None,
+                                                                                 sett=None,
+                                                                                 ott=None,
+                                                                                 nov=None,
+                                                                                 dic=None,
+                                                                                 annua=None,
+                                                                                 autunno=None,
+                                                                                 primavera=None,
+                                                                                 inverno=None,
+                                                                                 estate=None).order_by('station__stname')
 
         title = '%s' % self.index.name
         periodo_rif = '%s' % 'Periodo di riferimento ' + self.kwargs['periodo']
@@ -71,18 +105,22 @@ class ClimateIndexDetailsViewExport(View):
         elif self.kwargs['tipo_export'] == 'xls':
             fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
                       "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+            col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
             queryset = data
             filename = title
             try:
-                return export_xlwt(filename, fields, queryset.values_list(*fields))
+                return export_xlwt(filename, col_name, queryset.values_list(*fields))
             except Exception, e:
                 raise e
         elif self.kwargs['tipo_export'] == 'csv':
             fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
                       "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+            col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
             filename = title
             queryset = data
-            return export_csv(filename, fields, queryset.values_list(*fields))
+            return export_csv(filename, fields, col_name, queryset.values_list(*fields))
         else:
             pass
 
@@ -137,25 +175,33 @@ class ClimateExtremesDetailsViewExport(View):
             fields = ["station__stname", "station__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
             if self.index.resolution == 'mensili':
                 fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
                            "estate_data", "autunno", "autunno_data"]
+                col_name += ["annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
+                           "GLA_data", "SON", "SON_data"]
             queryset = data
             filename = title
             try:
-                return export_xlwt(filename, fields, queryset.values_list(*fields))
+                return export_xlwt(filename, col_name, queryset.values_list(*fields))
             except Exception, e:
                 raise e
         elif self.kwargs['tipo_export'] == 'csv':
             fields = ["station__stname", "station__elevation", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data"]
+            col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
             if self.index.resolution == 'mensili':
                 fields += ["annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
                            "estate_data", "autunno", "autunno_data"]
+                col_name += ["annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
+                           "GLA_data", "SON", "SON_data"]
             filename = title
             queryset = data
-            return export_csv(filename, fields, queryset.values_list(*fields))
+            return export_csv(filename, fields, col_name, queryset.values_list(*fields))
         else:
             pass
 
@@ -209,7 +255,7 @@ class DiagrammiClimaticiDetailsView(TemplateView):
                                                  variables__contains={
                                                      'periodo_climatico': self.kwargs['periodo']
                                                  })
-        context['periodo_list'] = station.climateindexdata_set.filter(station=station).values_list('periodo').distinct()
+        context['periodo_list'] = station.climateindexdata_set.filter(station=station).values_list('periodo').distinct().order_by('periodo')
         context['station_list'] = Station.objects.all().order_by('stname')
 
         return context

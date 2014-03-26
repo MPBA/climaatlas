@@ -97,24 +97,24 @@
                             <a href="#" rel="tooltip" data-toggle="tooltip" title="" data-original-title="{{ d.station.note_omogen }}"><i class="fa fa-info-circle"></i></a>
                         {% endifequal %}
                     </td>
-                    <td>{{ d.station.elevation|floatformat }}</td>
-                    <td>{{ d.gen|floatformat }}</td>
-                    <td>{{ d.feb|floatformat }}</td>
-                    <td>{{ d.mar|floatformat }}</td>
-                    <td>{{ d.apr|floatformat }}</td>
-                    <td>{{ d.mag|floatformat }}</td>
-                    <td>{{ d.giu|floatformat }}</td>
-                    <td>{{ d.lug|floatformat }}</td>
-                    <td>{{ d.ago|floatformat }}</td>
-                    <td>{{ d.sett|floatformat }}</td>
-                    <td>{{ d.ott|floatformat }}</td>
-                    <td>{{ d.nov|floatformat }}</td>
-                    <td>{{ d.dic|floatformat }}</td>
-                    <td style="border-left: 1px solid #e3e3e3">{{ d.annua|floatformat }}</td>
-                    <td>{{ d.inverno|floatformat }}</td>
-                    <td>{{ d.primavera|floatformat }}</td>
-                    <td>{{ d.estate|floatformat }}</td>
-                    <td>{{ d.autunno|floatformat }}</td>
+                    <td>{{ d.station.elevation }}</td>
+                    <td>{{ d.gen|floatformat:"1" }}</td>
+                    <td>{{ d.feb|floatformat:"1" }}</td>
+                    <td>{{ d.mar|floatformat:"1" }}</td>
+                    <td>{{ d.apr|floatformat:"1" }}</td>
+                    <td>{{ d.mag|floatformat:"1" }}</td>
+                    <td>{{ d.giu|floatformat:"1" }}</td>
+                    <td>{{ d.lug|floatformat:"1" }}</td>
+                    <td>{{ d.ago|floatformat:"1" }}</td>
+                    <td>{{ d.sett|floatformat:"1" }}</td>
+                    <td>{{ d.ott|floatformat:"1" }}</td>
+                    <td>{{ d.nov|floatformat:"1" }}</td>
+                    <td>{{ d.dic|floatformat:"1" }}</td>
+                    <td style="border-left: 1px solid #e3e3e3">{{ d.annua|floatformat:"1" }}</td>
+                    <td>{{ d.inverno|floatformat:"1" }}</td>
+                    <td>{{ d.primavera|floatformat:"1" }}</td>
+                    <td>{{ d.estate|floatformat:"1" }}</td>
+                    <td>{{ d.autunno|floatformat:"1" }}</td>
                 </tr>
             {% endfor %}
             </tbody>

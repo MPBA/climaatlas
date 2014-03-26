@@ -19,8 +19,7 @@
     <tr>
         <td><img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="70" ></td>
         <td>
-            <p style="text-align: center;  font-size: 18px; font-weight: bold">Provincia Autonoma di Trento</p>
-            <p style="text-align: center;  font-size: 14px;">{{ title }}<br>{{ periodo_rif }}</p>
+            <p style="text-align: center;  font-size: 16px; font-weight: bold">{{ title }}<br>{{ periodo_rif }}</p>
         </td>
         <td align="right"> <img src="{% static 'img/logo_pc.jpg' %}" height="60"></td>
     </tr>
@@ -56,23 +55,23 @@
                     <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>
                       <td width="20%">{{ t.station.stname }} <strong>{{ t.nota }}</strong></td>
                       <td style="text-align: right">{{ t.station.elevation|floatformat }}</td>
-                      <td style="text-align: right">{{ t.gen|floatformat }}</td>
-                      <td style="text-align: right">{{ t.feb|floatformat }}</td>
-                      <td style="text-align: right">{{ t.mar|floatformat }}</td>
-                      <td style="text-align: right">{{ t.apr|floatformat }}</td>
-                      <td style="text-align: right">{{ t.mag|floatformat }}</td>
-                      <td style="text-align: right">{{ t.giu|floatformat }}</td>
-                      <td style="text-align: right">{{ t.lug|floatformat }}</td>
-                      <td style="text-align: right">{{ t.ago|floatformat }}</td>
-                      <td style="text-align: right">{{ t.sett|floatformat }}</td>
-                      <td style="text-align: right">{{ t.ott|floatformat }}</td>
-                      <td style="text-align: right">{{ t.nov|floatformat }}</td>
-                      <td style="text-align: right">{{ t.dic|floatformat }}</td>
-                      <td style="text-align: right">{{ t.annua|floatformat }}</td>
-                      <td style="text-align: right">{{ t.inverno|floatformat }}</td>
-                      <td style="text-align: right">{{ t.primavera|floatformat }}</td>
-                      <td style="text-align: right">{{ t.estate|floatformat }}</td>
-                      <td style="text-align: right">{{ t.autunno|floatformat }}</td>
+                      <td style="text-align: right">{{ t.gen|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.feb|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.mar|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.apr|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.mag|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.giu|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.lug|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.ago|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.sett|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.ott|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.nov|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.dic|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.annua|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.inverno|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.primavera|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.estate|floatformat:"1" }}</td>
+                      <td style="text-align: right">{{ t.autunno|floatformat:"1" }}</td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -80,7 +79,8 @@
                 <strong>* Serie ottenuta dall'unione di due serie.</strong>
     <!-- /.container -->
   <div id="footerContent">
-    <b>Pagina <pdf:pagenumber></b>
+    <b>Pagina <pdf:pagenumber></b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+       &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;@PAT-Climatrentino
   </div>
 </body>
 </html>

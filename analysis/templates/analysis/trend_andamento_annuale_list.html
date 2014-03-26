@@ -66,10 +66,10 @@ I dati sono aggiornati ogni mese.
                                 <td>
 
                                 {% dati_anomalie_disponibili station type as dati %}
-                                    {% if 16 in dati %}
+                                    {% if 17 in dati %}
                                         <i class="wi-sprinkles"></i>
                                     {% endif %}
-                                    {% if 17 in dati %}
+                                    {% if 16 in dati %}
                                         <i class="wi-temp_avg"></i>
                                     {% endif %}
 
@@ -95,7 +95,10 @@ I dati sono aggiornati ogni mese.
         </div>
     </div>
     <script>
-        var map = L.map('map')
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		        osmAttrib = '@ PAT Climatrentino ',
+		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+                var map = L.map('map').addLayer(osm);
 
         L.tileLayer('{% settings_value 'OSM_URL' %}', {
             maxZoom: 18,

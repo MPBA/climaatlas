@@ -86,7 +86,10 @@
         </div>
     </div>
     <script>
-        var map = L.map('map')
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		        osmAttrib = '@ PAT Climatrentino ',
+		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+                var map = L.map('map').addLayer(osm);
 
         L.tileLayer('{% settings_value 'OSM_URL' %}', {
             maxZoom: 18,
