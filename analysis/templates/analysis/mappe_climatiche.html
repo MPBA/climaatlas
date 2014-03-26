@@ -111,7 +111,10 @@
 
         <div id="map" style="width: 100%; height: 600px"></div>
         <script>
-            var map = L.map('map')
+            var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		        osmAttrib = '@ PAT Climatrentino ',
+		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+                var map = L.map('map').addLayer(osm);
 
             L.tileLayer('{% settings_value "GEOSERVER_URL" %}/gwc/service/tms/1.0.0/mpba%3Abasemap@EPSG%3A900913@png/{z}/{x}/{y}.png', {
                 tms: true,

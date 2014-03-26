@@ -100,12 +100,13 @@
                 </div>
             </div>
         </div>
+        {% regroup dataidx by climate_index.type as indici_list %}
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             {% if charts %}
                 <li class="active"><a href="#grafico" data-toggle="tab">Diagramma climatico</a></li>
             {% endif %}
-            <li><a {% if not charts %}class="active"{% endif %} href="#tabelle" data-toggle="tab">Tabelle indici climatici</a></li>
+            <li {% if not charts %}class="active"{% endif %} ><a href="#tabelle" data-toggle="tab">Tabelle indici climatici</a></li>
             <li><a href="#estremi" data-toggle="tab">Tabelle estremi climatici</a></li>
         </ul>
 
@@ -132,10 +133,11 @@
             <div class="tab-pane {% if not charts %}active{% endif %}" id="tabelle">
                 <div class="row" style="padding-top: 10px;">
                     <div class="col-md-12 col-md-12 col-xs-12 col-sm-12 visible-lg visible-md visible-sm visible-xs">
-                        {% regroup dataidx by climate_index.type as indici_list %}
+
                         {% for idc in indici_list %}
                             <table class="table table-striped">
                                 <thead>
+
                                 <tr>
                                     <th>{{ idc.grouper|capfirst }}</th>
                                     <th>Gen</th>
@@ -152,9 +154,11 @@
                                     <th>Dic</th>
                                     <th>Annua</th>
                                 </tr>
+
                                 </thead>
                                 <tbody>
                                 {% for d in idc.list %}
+                                    {% if d.gen or d.feb or d.mar or d.apr or d.mag or d.giu or d.lug or d.ago or d.sett or d.ott or d.nov or d.div or d.annua %}
                                     <tr>
                                         <td>{{ d.climate_index.name }}
                                             {% ifequal d.nota '*' %}
@@ -175,6 +179,7 @@
                                         <td>{{ d.dic|floatformat }}</td>
                                         <td>{{ d.annua|floatformat }}</td>
                                     </tr>
+                                    {% endif %}
                                 {% endfor %}
                                 </tbody>
                             </table>
@@ -250,7 +255,10 @@
 
 
     <script>
-        var map = L.map('map')
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		        osmAttrib = '@ PAT Climatrentino ',
+		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+                var map = L.map('map').addLayer(osm);
 
         L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
             maxZoom: 18,

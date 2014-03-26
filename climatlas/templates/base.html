@@ -129,17 +129,46 @@
         {% block main %} {% endblock main %}
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Credits</h4>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+                <img src="{% static 'img/logo_fbk.JPG' %}" width="100">
+            </div>
+            <div class="col-md-8">
+              La piattaforma Web e il sistema di analisi dei dati sono stati progettati e realizzati dalla Fondazione Bruno Kessler<br>
+              <a href="http://www.fbk.eu" target="_blank"> http://www.fbk.eu</a>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="container">
     <hr>
     <footer>
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-10">
                 <p>
-                    <img src="{% static 'img/logo_fbk.JPG' %}" height="50" >
+
                     <img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="50" >
                     <img src="{% static 'img/logo_pc.jpg' %}" height="40" style="text-align: right">
-                    Copyright &copy; 2014 - FBK [Fondazione Bruno Kessler]
+                    Provincia Autonoma di Trento - Copyright &copy; 2014
                 </p>
+            </div>
+            <div class="col-md-2" style="text-align: right">
+               <a href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-info"> Credits</i></a>
+
             </div>
         </div>
     </footer>

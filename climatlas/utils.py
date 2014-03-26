@@ -49,13 +49,15 @@ def render_to_pdf(template_src, context_dict):
     return http.HttpResponse('We had some errors<pre>%s</pre>' % cgi.escape(html))
 
 
-def export_csv(filename, fields, data):
+def export_csv(filename, fields, col_name, data):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="' + filename + '.csv"'
-
     writer = csv.writer(response)
-    writer.writerow(fields)
+    caption = filename.split(' ')
+    del caption[-1]
+    writer.writerow([str(' '.join(caption))])
+    writer.writerow(col_name)
 
     for row, rowdata in enumerate(data):
         writer.writerow(rowdata)
