@@ -154,11 +154,18 @@ LAYER_TYPE = (
     ('t', 'Temperatura'),
 )
 
+LAYER_SUFFIX = (
+    ('d', 'Differenza assoluta'),
+    ('p', 'Differenza in percentuale')
+)
+
 LAYER_PERIOD = (
     ('1961-1990'),
     ('1971-2000'),
     ('1981-2010'),
 )
+
+LAYER_YEAR = range(1941, 2012, 1)
 
 LAYER_MONTH = (
     ('01', 'Gennaio', 'PrecipitazioniMensili'),
@@ -180,7 +187,15 @@ LAYER_MONTH = (
     ('4aut', 'Autunno', 'PrecipitazioniStagionali'),
 )
 
+
 GEOSERVER_URL = 'https://climatlas.fbk.eu/geoserver'
+OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+
+MAPS_ATTRIBUTION_FBK = '(c) 2014 FBK/MPBA - Map data Provincia Autonoma di Trento & MeteoTrentino'
+MAPS_ATTRIBUTION_OSM = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+
+
+
 ##################
 # LOCAL SETTINGS #
 ##################

@@ -373,6 +373,18 @@ class MappeClimaticheListView(TemplateView):
         return context
 
 
+class MappeTrendListView(TemplateView):
+    template_name = 'analysis/mappe_trend.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MappeTrendListView, self).get_context_data()
+        context['type'] = settings.LAYER_TYPE
+        #context['period'] = settings.LAYER_PERIOD
+        context['year'] = settings.LAYER_YEAR
+        context['month'] = settings.LAYER_MONTH
+        return context
+
+
 ###############################CHARTS FUNCTIONS##################################################
 def get_charts(request, chart_type, stazione, tipo_dato, periodo):
     var = {

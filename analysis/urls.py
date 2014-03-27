@@ -5,7 +5,7 @@ from .views import (ClimateIndexListView, ClimateIndexDetailsView, ClimateIndexD
                     DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView, TrendAndamentoAnnualeList,
                     TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView, TrendAndamentoAnnualeDetail,
                     TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail,
-                    MappeClimaticheListView)
+                    MappeClimaticheListView, MappeTrendListView)
 
 urlpatterns = patterns('analysis.views',
    ### Indici climatici ###
@@ -31,6 +31,7 @@ urlpatterns = patterns('analysis.views',
 
    ### Mappe climatiche ###
    url(regex='^mappe/$', view=MappeClimaticheListView.as_view(), name='mappe_climatiche_view'),
+   url(regex='^mappe/trend/$', view=MappeTrendListView.as_view(), name='mappe_trend_view'),
 
    #### Anomalie trend ####
    url(regex='^trend/anomalie/$', view=TrendClimaticiAnomalieList.as_view(), name='trend_anomalie_view'),

@@ -99,9 +99,9 @@
 		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
                 var map = L.map('map').addLayer(osm);
 
-        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+        L.tileLayer('{% settings_value 'OSM_URL' %}', {
             maxZoom: 18,
-            attribution: ''
+            attribution: '{% settings_value 'MAPS_ATTRIBUTION_OSM' %}'
         }).addTo(map);
 
         {% for station in stations %}
