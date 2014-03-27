@@ -1,0 +1,79 @@
+{% load static %}
+{% load analysys_tags %}
+<html>
+<style>
+    @page {
+        size: a4 landscape;
+        margin: 1.9cm;
+            @frame footer {
+    -pdf-frame-content: footerContent;
+        bottom: 0.4cm;
+        margin-left: 1.9cm;
+        margin-right: 1cm;
+        height: 1cm;
+        size: a4 landscape;
+    }
+    }
+</style>
+<body>
+<table>
+    <tr>
+        <td><img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="70" ></td>
+        <td>
+            <p style="text-align: center;  font-size: 16px; font-weight: bold">{{ title }}<br>{{ periodo_rif }}</p>
+        </td>
+        <td align="right"> <img src="{% static 'img/logo_pc.jpg' %}" height="60"></td>
+    </tr>
+</table>
+<hr>
+{% regroup tabella by climate_index.resolution as indici_list %}
+{% for idc in indici_list %}
+    <table class="table table-striped" style="margin-bottom: 15px;">
+        <thead>
+        <tr style="background-color: #e3e3e3; padding-top: 5px;">
+            <th>{{ idc.grouper|capfirst }}</th>
+            <th style="text-align: right">Gen</th>
+            <th style="text-align: right">Feb</th>
+            <th style="text-align: right">Mar</th>
+            <th style="text-align: right">Apr</th>
+            <th style="text-align: right">Mag</th>
+            <th style="text-align: right">Giu</th>
+            <th style="text-align: right">Lug</th>
+            <th style="text-align: right">Ago</th>
+            <th style="text-align: right">Set</th>
+            <th style="text-align: right">Ott</th>
+            <th style="text-align: right">Nov</th>
+            <th style="text-align: right">Dic</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for d in idc.list %}
+            {% if d.gen or d.feb or d.mar or d.apr or d.mag or d.giu or d.lug or d.ago or d.sett or d.ott or d.nov or d.div or d.annua %}
+                <tr style="padding-top: 5px">
+                    <td width="250px">{{ d.climate_index.name }} {{ d.nota }}</td>
+                    <td style="text-align: right">{{ d.gen }}<br><h6><small>{{ d.gen_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.feb }}<br><h6><small>{{ d.feb_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.mar }}<br><h6><small>{{ d.mar_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.apr }}<br><h6><small>{{ d.apr_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.mag }}<br><h6><small>{{ d.mag_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.giu }}<br><h6><small>{{ d.giu_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.lug }}<br><h6><small>{{ d.lug_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.ago }}<br><h6><small>{{ d.ago_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.sett }}<br><h6><small>{{ d.sett_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.ott }}<br><h6><small>{{ d.ott_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.nov }}<br><h6><small>{{ d.nov_data|dateformat }}</small></h6></td>
+                    <td style="text-align: right">{{ d.dic }}<br><h6><small>{{ d.dic_data|dateformat }}</small></h6></td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+<strong>* Serie ottenuta dall'unione di due serie.</strong>
+<!-- /.container -->
+<div id="footerContent">
+    <b>Pagina <pdf:pagenumber></b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;@PAT-Climatrentino
+</div>
+</body>
+</html>

@@ -24,6 +24,9 @@ class ClimateIndex(models.Model):
     type = models.TextField()
     sezione = models.TextField()
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         db_table = 'climate_index'
 

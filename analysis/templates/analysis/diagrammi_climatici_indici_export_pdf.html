@@ -1,0 +1,132 @@
+{% load static %}
+<html>
+<style>
+    @page {
+        size: a4 landscape;
+        margin: 1.9cm;
+            @frame footer {
+    -pdf-frame-content: footerContent;
+        bottom: 0.4cm;
+        margin-left: 1.9cm;
+        margin-right: 1cm;
+        height: 1cm;
+        size: a4 landscape;
+    }
+    }
+</style>
+<body>
+<table>
+    <tr>
+        <td><img src="{% static 'img/ProvinciadiTrento.jpg' %}" height="70" ></td>
+        <td>
+            <p style="text-align: center;  font-size: 16px; font-weight: bold">{{ title }}<br>{{ periodo_rif }}</p>
+        </td>
+        <td align="right"> <img src="{% static 'img/logo_pc.jpg' %}" height="60"></td>
+    </tr>
+</table>
+<hr>
+{% regroup tabella by climate_index.type as indici_list %}
+{% for idc in indici_list %}
+    <table class="table table-striped" style="margin-bottom: 15px;">
+        <thead>
+        <tr style="background-color: #e3e3e3; padding-top: 5px;">
+            <th>{{ idc.grouper|capfirst }}</th>
+            <th style="text-align: right">Gen</th>
+            <th style="text-align: right">Feb</th>
+            <th style="text-align: right">Mar</th>
+            <th style="text-align: right">Apr</th>
+            <th style="text-align: right">Mag</th>
+            <th style="text-align: right">Giu</th>
+            <th style="text-align: right">Lug</th>
+            <th style="text-align: right">Ago</th>
+            <th style="text-align: right">Set</th>
+            <th style="text-align: right">Ott</th>
+            <th style="text-align: right">Nov</th>
+            <th style="text-align: right">Dic</th>
+            <th style="text-align: right">Annua</th>
+        </tr>
+
+        </thead>
+        <tbody>
+        {% for d in idc.list %}
+            {% if d.gen or d.feb or d.mar or d.apr or d.mag or d.giu or d.lug or d.ago or d.sett or d.ott or d.nov or d.div or d.annua %}
+                <tr style="padding-top: 5px">
+                    <td width="250px">{{ d.climate_index.name }} {{ d.nota }}</td>
+                    <td  style="text-align: right">{{ d.gen|floatformat }}</td>
+                    <td style="text-align: right">{{ d.feb|floatformat }}</td>
+                    <td style="text-align: right">{{ d.mar|floatformat }}</td>
+                    <td style="text-align: right">{{ d.apr|floatformat }}</td>
+                    <td style="text-align: right">{{ d.mag|floatformat }}</td>
+                    <td style="text-align: right">{{ d.giu|floatformat }}</td>
+                    <td style="text-align: right">{{ d.lug|floatformat }}</td>
+                    <td style="text-align: right">{{ d.ago|floatformat }}</td>
+                    <td style="text-align: right">{{ d.sett|floatformat }}</td>
+                    <td style="text-align: right">{{ d.ott|floatformat }}</td>
+                    <td style="text-align: right">{{ d.nov|floatformat }}</td>
+                    <td style="text-align: right">{{ d.dic|floatformat }}</td>
+                    <td style="text-align: right">{{ d.annua|floatformat }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+{#<table class="table table-striped">#}
+{#    <thead>#}
+{#    <tr style="background-color: #e3e3e3; padding-top: 5px;">#}
+{#        <th >Stazione</th>#}
+{#        <th style="text-align: right">Quota</th>#}
+{#        <th style="text-align: right">Gen</th>#}
+{#        <th style="text-align: right">Feb</th>#}
+{#        <th style="text-align: right">Mar</th>#}
+{#        <th style="text-align: right">Apr</th>#}
+{#        <th style="text-align: right">Mag</th>#}
+{#        <th style="text-align: right">Giu</th>#}
+{#        <th style="text-align: right">Lug</th>#}
+{#        <th style="text-align: right">Ago</th>#}
+{#        <th style="text-align: right">Set</th>#}
+{#        <th style="text-align: right">Ott</th>#}
+{#        <th style="text-align: right">Nov</th>#}
+{#        <th style="text-align: right">Dic</th>#}
+{#        <th style="text-align: right">Annua</th>#}
+{#        <th style="text-align: right">DGF</th>#}
+{#        <th style="text-align: right">MAM</th>#}
+{#        <th style="text-align: right">GLA</th>#}
+{#        <th style="text-align: right">SON</th>#}
+{#    </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{##}
+{#    {% for t in tabella %}#}
+{#        <tr {% ifequal forloop.counter 1 %} style="padding-top: 5px" {% endifequal %}>#}
+{#            <td width="20%">{{ t.station.stname }} <strong>{{ t.nota }}</strong></td>#}
+{#            <td style="text-align: right">{{ t.station.elevation|floatformat }}</td>#}
+{#            <td style="text-align: right">{{ t.gen|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.feb|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.mar|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.apr|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.mag|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.giu|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.lug|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.ago|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.sett|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.ott|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.nov|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.dic|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.annua|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.inverno|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.primavera|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.estate|floatformat:"1" }}</td>#}
+{#            <td style="text-align: right">{{ t.autunno|floatformat:"1" }}</td>#}
+{#        </tr>#}
+{#    {% endfor %}#}
+{#    </tbody>#}
+{#</table>#}
+<strong>* Serie ottenuta dall'unione di due serie.</strong>
+<!-- /.container -->
+<div id="footerContent">
+    <b>Pagina <pdf:pagenumber></b> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;@PAT-Climatrentino
+</div>
+</body>
+</html>

@@ -1,7 +1,4 @@
-__author__ = 'arbitrio@fbk.eu'
-#! /usr/bin/python
 # -*- encoding: utf-8 -*-
-
 from django import http
 from django.template.loader import get_template
 from django.template import Context
@@ -56,12 +53,14 @@ def export_csv(filename, fields, col_name, data):
     response['Content-Disposition'] = 'attachment; filename="' + filename + '.csv"'
     writer = csv.writer(response)
     caption = filename.split(' ')
-    del caption[-1]
-    writer.writerow([str(u' '.join(caption).encode('utf-8'))])
+    writer.writerow([str(u' '.join(caption).encode('raw_unicode_escape'))])
     writer.writerow(col_name)
+    ### Set correct encoding
 
     for row, rowdata in enumerate(data):
-        writer.writerow(rowdata)
+        tmp = (rowdata[0].encode('raw_unicode_escape'),) + rowdata[1:]
+
+        writer.writerow(tmp)
     return response
 
 

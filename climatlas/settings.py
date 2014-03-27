@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for climatlas project.
 
@@ -189,10 +190,10 @@ LAYER_MONTH = (
 
 
 GEOSERVER_URL = 'https://climatlas.fbk.eu/geoserver'
-OSM_URL = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
-MAPS_ATTRIBUTION_FBK = '(c) 2014 FBK/MPBA - Map data Provincia Autonoma di Trento & MeteoTrentino'
-MAPS_ATTRIBUTION_OSM = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+MAPS_ATTRIBUTION_FBK = '@ PAT Climatrentino'
+MAPS_ATTRIBUTION_OSM = '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 
 
 

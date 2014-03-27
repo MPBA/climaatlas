@@ -1,4 +1,5 @@
 {% load static %}
+{% load analysys_tags %}
 <html>
 <style>
     @page {
@@ -30,6 +31,7 @@
     <tr style="background-color: #e3e3e3; padding-top: 5px;">
         <th >Stazione</th>
         <th style="text-align: right">Quota</th>
+        <th style="text-align: right">Anno inizio</th>
         <th style="text-align: right">Gen</th>
         <th style="text-align: right">Feb</th>
         <th style="text-align: right">Mar</th>
@@ -57,6 +59,7 @@
         <tr style="padding-top: 5px">
             <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.station.stname }}</td>
             <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.station.elevation|floatformat }}</td>
+            <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.anno_inizio|dateformat }}</td>
             <td  style="text-align: right">{{ t.gen|floatformat:"1" }}</td>
             <td  style="text-align: right">{{ t.feb|floatformat:"1" }}</td>
             <td  style="text-align: right">{{ t.mar|floatformat:"1" }}</td>
@@ -78,24 +81,24 @@
             {% endif %}
         </tr>
         <tr style="padding-top: 5px">
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.gen_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.feb_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mar_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.apr_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mag_data }}</td>
-            <td style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.giu_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.lug_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ago_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.sett_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ott_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.nov_data }}</td>
-            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.dic_data }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.gen_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.feb_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mar_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.apr_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.mag_data|dateformat }}</td>
+            <td style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.giu_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.lug_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ago_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.sett_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.ott_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.nov_data|dateformat }}</td>
+            <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.dic_data|dateformat }}</td>
             {% if estremo.resolution == 'mensili' %}
-                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.annua_data }}</td>
-                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.inverno_data }}</td>
-                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.primavera_data }}</td>
-                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.estate_data }}</td>
-                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.autunno_data }}</td>
+                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.annua_data|dateformat }}</td>
+                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.inverno_data|dateformat }}</td>
+                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.primavera_data|dateformat }}</td>
+                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.estate_data|dateformat }}</td>
+                <td  style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.autunno_data|dateformat }}</td>
             {% endif %}
         </tr>
     {% endfor %}

@@ -2,9 +2,10 @@ __author__ = 'droghetti'
 from django.conf.urls import patterns, include, url
 from .views import (ClimateIndexListView, ClimateIndexDetailsView, ClimateIndexDetailsViewExport,
                     ClimateExtremesListView, ClimateExtremesDetailsView, ClimateExtremesDetailsViewExport,
-                    DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView, TrendAndamentoAnnualeList,
-                    TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView, TrendAndamentoAnnualeDetail,
-                    TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail,
+                    DiagrammiClimaticiListView, DiagrammiClimaticiDetailsView, DiagrammiClimaticiIndexDetailsViewExport,
+                    DiagrammiClimaticiEstremiDetailsViewExport,
+                    TrendAndamentoAnnualeList, TrendClimaticiAnomalieList, TrendClimaticiAnomalieDetailsView,
+                    TrendAndamentoAnnualeDetail, TrendClimaticiDistribuzioniStatisticheList, TrendClimaticiDistribuzioniStatisticheDetail,
                     MappeClimaticheListView, MappeTrendListView)
 
 urlpatterns = patterns('analysis.views',
@@ -28,6 +29,10 @@ urlpatterns = patterns('analysis.views',
    url(regex='^diagrammi/$', view=DiagrammiClimaticiListView.as_view(), name='diagrammi_climatici_view'),
    url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/$', view=DiagrammiClimaticiDetailsView.as_view(),
        name='diagrammi_climatici_details'),
+   url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\w+)/indici/$',
+       view=DiagrammiClimaticiIndexDetailsViewExport.as_view(), name='diagrammi_climatici_indici_export'),
+url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\w+)/estremi/$',
+       view=DiagrammiClimaticiEstremiDetailsViewExport.as_view(), name='diagrammi_climatici_estremi_export'),
 
    ### Mappe climatiche ###
    url(regex='^mappe/$', view=MappeClimaticheListView.as_view(), name='mappe_climatiche_view'),
@@ -42,7 +47,7 @@ urlpatterns = patterns('analysis.views',
    url(regex='^trend/stats/distribution/details/(?P<station_id>\d+)/$',
        view=TrendClimaticiDistribuzioniStatisticheDetail.as_view(),
        name='trend_distr_stats_detail'),
-   url(regex='^trend/andamento/annuale/list$',
+   url(regex='^trend/andamento/annuale/list/$',
        view=TrendAndamentoAnnualeList.as_view(),
        name='trend_annuale_list'),
    url(regex='^trend/andamento/annuale/detail/(?P<station_id>\d+)/(?P<periodo>[-\d_]+)/$',
