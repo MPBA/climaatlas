@@ -51,10 +51,13 @@ def upload(request):
 
                         iconv_cmd = ["-c", "iconv -f iso-8859-1 -t utf-8 " + sql_file + " > " + sql_file+".utf8"]
                         call_command(iconv_cmd, shell=True)
-
-                        PGBackup(host=settings.DATABASES['default']['HOST'],
+                        try:
+                            PGBackup(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
                                  password=settings.DATABASES['default']['PASSWORD']).pg_file(settings.DATABASES['default']['NAME'], sql_file+".utf8")
+                            messages.add_message(request, messages.SUCCESS, 'Site caricato!')
+                        except:
+                            messages.add_message(request, messages.ERROR, 'Pgdbf error')
 
                     else:
                         messages.add_message(request,
