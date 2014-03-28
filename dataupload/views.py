@@ -82,6 +82,29 @@ def upload(request):
                                                       str(a['tipo']))[1])
                         messages.add_message(request, messages.SUCCESS, 'Upload Completato!')
                         os.remove(os.path.join(settings.UPLOAD_DIR, file_url))
+                        pg = PGBackup(host=settings.DATABASES['default']['HOST'],
+                                      user=settings.DATABASES['default']['USER'],
+                                      password=settings.DATABASES['default']['PASSWORD'])
+                        try:
+                            query_rain = "TRUNCATE TABLE import_rain"
+                            pg.pg_command('climatlas_dev', query_rain)
+                            query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_rain2)
+
+                            query_tmin = "TRUNCATE TABLE import_tmin"
+                            pg.pg_command('climatlas_dev', query_tmin)
+                            query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_tmin2)
+
+                            query_tmax = "TRUNCATE TABLE import_tmax"
+                            pg.pg_command('climatlas_dev', query_tmax)
+                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_tmax2)
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+
                     else:
                         messages.add_message(request,
                                              messages.ERROR,
