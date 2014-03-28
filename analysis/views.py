@@ -209,20 +209,6 @@ class ClimateExtremesDetailsViewExport(View):
             pass
 
 
-class ClimateExtremesListView(ListView):
-    template_name = 'analysis/valori_estremi_list.html'
-    context_object_name = 'estremi'
-
-    def get_queryset(self):
-        estremi = ClimateIndex.objects.filter(sezione='extreme').order_by('type', 'name')
-        return estremi
-
-    def get_context_data(self, **kwargs):
-        context = super(ClimateExtremesListView, self).get_context_data()
-
-        return context
-
-
 class DiagrammiClimaticiListView(TemplateView):
     template_name = 'analysis/diagrammi_climatici_list.html'
 

@@ -45,16 +45,19 @@ def upload(request):
                         fpt_file = upload_full_path + '/site.fpt'
                         dbf_file = upload_full_path + '/site.dbf'
                         sql_file = upload_full_path + '/site.sql'
-
-                        cmd = ["-c", "pgdbf -e -m " + fpt_file + " " + dbf_file + " > " + sql_file]
+                        err_file = upload_full_path + '/site.err'
+                        cmd = ["-c", "/usr/local/bin/pgdbf -e -m " + fpt_file + " " + dbf_file + " > " + sql_file + " 2> " + err_file]
                         call_command(cmd, shell=True)
 
                         iconv_cmd = ["-c", "iconv -f iso-8859-1 -t utf-8 " + sql_file + " > " + sql_file+".utf8"]
                         call_command(iconv_cmd, shell=True)
-
-                        PGBackup(host=settings.DATABASES['default']['HOST'],
+                        try:
+                            PGBackup(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
                                  password=settings.DATABASES['default']['PASSWORD']).pg_file(settings.DATABASES['default']['NAME'], sql_file+".utf8")
+                            messages.add_message(request, messages.SUCCESS, 'Site caricato!' + str(cmd))
+                        except:
+                            messages.add_message(request, messages.ERROR, 'Pgdbf error')
 
                     else:
                         messages.add_message(request,
@@ -82,6 +85,41 @@ def upload(request):
                                                       str(a['tipo']))[1])
                         messages.add_message(request, messages.SUCCESS, 'Upload Completato!')
                         os.remove(os.path.join(settings.UPLOAD_DIR, file_url))
+                        pg = PGBackup(host=settings.DATABASES['default']['HOST'],
+                                      user=settings.DATABASES['default']['USER'],
+                                      password=settings.DATABASES['default']['PASSWORD'])
+                        try:
+                            query_rain = "TRUNCATE TABLE import_rain"
+                            pg.pg_command('climatlas_dev', query_rain)
+                            query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_rain2)
+                            messages.add_message(request, messages.SUCCESS, 'Query rain Completata!')
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                        try:
+                            query_tmin = "TRUNCATE TABLE import_tmin"
+                            pg.pg_command('climatlas_dev', query_tmin)
+                            query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_tmin2)
+                            messages.add_message(request, messages.SUCCESS, 'Query tmin complettata!')
+
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                        try:
+                            query_tmax = "TRUNCATE TABLE import_tmax"
+                            pg.pg_command('climatlas_dev', query_tmax)
+                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            pg.pg_command('climatlas_dev', query_tmax2)
+                            messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+
                     else:
                         messages.add_message(request,
                                              messages.ERROR,
