@@ -41,8 +41,8 @@ class GenerateImmage(object):
     STAGIONE={(MAP_SEASONS[0]): SEASONS[0], (MAP_SEASONS[1]): SEASONS[1],
               (MAP_SEASONS[2]): SEASONS[2], (MAP_SEASONS[3]): SEASONS[3]}
     #def __init__(self, mapgen):
-    GEOSERVER_HOST = "http://geoatlas:50001/geoserver/rest"
-    GEOSERVER_WMS = "http://geoatlas:50001/geoserver/wms"
+    GEOSERVER_HOST = "http://192.168.50.25:50001/geoserver/rest"
+    GEOSERVER_WMS = "http://192.168.50.25:50001/geoserver/wms"
     GEOSERVER_USER = "admin"
     GEOSERVER_PASSWORD = "geoserver"
     GEOSERVER_WORKSPACE = "mpba"
