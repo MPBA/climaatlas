@@ -51,12 +51,13 @@ def render_to_pdf(template_src, context_dict):
 
 def export_csv(filename, fields, col_name, data):
     # Create the HttpResponse object with the appropriate CSV header.
+    filename.encode('utf-8')
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="' + filename + '.csv"'
     writer = csv.writer(response)
     caption = filename.split(' ')
     del caption[-1]
-    writer.writerow([str(' '.join(caption))])
+    writer.writerow([str(u' '.join(caption).encode('utf-8'))])
     writer.writerow(col_name)
 
     for row, rowdata in enumerate(data):
