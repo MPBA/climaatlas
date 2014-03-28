@@ -195,6 +195,7 @@ OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 MAPS_ATTRIBUTION_FBK = '@ PAT Climatrentino'
 MAPS_ATTRIBUTION_OSM = '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 
+EXPORT_MAP_BASE_PATH = '/media/datapart/fbk/code/climaatlas/climaatlas/analysis/'
 
 
 ##################

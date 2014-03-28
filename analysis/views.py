@@ -9,6 +9,7 @@ from climatlas.utils import render_to_pdf, periodi_graph_dict, anno_graph_dict, 
 from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
+from genPng import GenerateImmage
 from django.core import serializers
 
 
@@ -525,3 +526,19 @@ def popola_periodi_grandezze_select(request):
         })
     return HttpResponse(json.dumps(result))
 ###############################EO AJAX FUNCTIONS##################################################
+
+
+def export_mappe_climatiche(request, ltype, periodo, month):
+    g = GenerateImmage()
+
+    if month in ('1win', '2spr', '3sum', '4aut'):
+        map = g.generate_png(ltype, periodo, month=None, season="1win")
+    elif month:
+        map = g.generate_png(ltype, periodo, month=int(month), season=None)
+    else:
+        map = g.generate_png(ltype, period, month=None, season=None)
+
+    response = HttpResponse(mimetype="image/png")
+    map.save(response, "PNG")
+
+    return response

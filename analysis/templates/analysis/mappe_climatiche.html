@@ -23,9 +23,7 @@
         legend_url_default = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
                 '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}{1}{2}&STYLE={3}&' +
                 'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
-        download_url_default = '{% settings_value "GEOSERVER_URL" %}/wms?service=WMS&version=1.1.0&' +
-                             'request=GetMap&layers={0}{1}{2}&styles={3}&bbox=612267.0,5059445.0,728667.0,5157245.0' +
-                             '&width=512&height=430&srs=EPSG:32632&format={4}'
+        download_url_default = 'export/{0}/{1}/{2}'
 
 
         $(document).ready(function() {
@@ -47,7 +45,7 @@
                     transparent: true,
                     styles: style
                 })
-
+                $("#geotiff").attr('href',String.format(download_url_default,type, period, month))
                 $("#legend").attr('src', legend_url)
             });
         });
@@ -103,7 +101,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <a href="" class="btn btn-primary" id="geotiff">Scarica immagine</a>
+                    <a href="" class="btn btn-primary" id="geotiff" target="_blank">Scarica immagine</a>
                 </form>
             </div>
         </div>
@@ -140,7 +138,7 @@
             }).addTo(map);
 
             $("#legend").attr('src', legend_url)
-            $("#geotiff").attr('href',String.format(download_url_default,type, period, month,style,'image%2Ftiff'))
+            $("#geotiff").attr('href',String.format(download_url_default,type, period, month))
             {% for station in meteo_stations %}
                 L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
                         .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \

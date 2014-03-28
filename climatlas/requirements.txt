@@ -13,3 +13,6 @@ six==1.5.2
 wsgiref==0.1.2
 xhtml2pdf==0.0.5
 xlwt==0.7.5
+OWSLib==0.8.6
+PIL==1.1.7
+image==1.2
