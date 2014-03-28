@@ -36,10 +36,11 @@ url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\
 
    ### Mappe climatiche ###
    url(regex='^mappe/$', view=MappeClimaticheListView.as_view(), name='mappe_climatiche_view'),
-   url(regex='^mappe/trend/$', view=MappeTrendListView.as_view(), name='mappe_trend_view'),
-   #url(regex='^mappe/trend/$', view=MappeTrendListView.as_view(), name='mappe_trend_view'),
    url(regex='^mappe/export/(?P<ltype>[-\w_.]+)/(?P<periodo>[-\w_.]+)/(?P<month>[-\w_.]+)/$', view='export_mappe_climatiche', name='export_mappe_climatiche'),
 
+   ### Mappe di trend ###
+   url(regex='^mappe/trend/$', view=MappeTrendListView.as_view(), name='mappe_trend_view'),
+   url(regex='^mappe/trend/export/(?P<ltype>[-\w_.]+)/(?P<suffix>[-\w_.]+)/(?P<year>\d+)/(?P<month>[-\w_.]+)/$', view='export_mappe_trend', name='export_mappe_trend'),
 
    #### Anomalie trend ####
    url(regex='^trend/anomalie/$', view=TrendClimaticiAnomalieList.as_view(), name='trend_anomalie_view'),

@@ -23,9 +23,8 @@
         legend_url_default = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
                 '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}&STYLE={1}&' +
                 'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
-        download_url_default = '{% settings_value "GEOSERVER_URL" %}/wms?service=WMS&version=1.1.0&' +
-                'request=GetMap&layers={0}&styles={1}&bbox=612267.0,5059445.0,728667.0,5157245.0' +
-                '&width=512&height=430&srs=EPSG:32632&format={2}'
+        download_url_default = 'export/{0}/{1}/{2}/{3}/'
+        stylea = '{0}A{1}{2}{3}';
 
 
         $(document).ready(function() {
@@ -35,18 +34,25 @@
                 var year = $("#layeryear option:selected").val();
                 var month = $("#layermonth option:selected").val();
                 var suffix = $("#layersuffix option:selected").val();
+                var per = $("#layermonth option:selected").attr('layerstyle');
 
                 if (type == 't'){
-                    style = 'Temperature'
+                    pre = 'Temperature';
+                    suf = '';
                 } else {
-                    var style = $("#layermonth option:selected").attr('layerstyle');
-                    style += "Legend";
+                    pre = 'Precipitazioni';
+                    if (type == 'd'){
+                        suf = 'A'
+                    } else if (type == 'p') {
+                        suf = ''
+                    }
                 }
+                var style = String.format(stylea, pre, per, suf, "")
 
                 if (month) {
                     layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
                 } else {
-                    layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
+                    layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
                 }
 
                 legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
@@ -59,6 +65,7 @@
                 })
 
                 $("#legend").attr('src', legend_url)
+                $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month))
             });
         });
     </script>
@@ -109,7 +116,7 @@
                     <label class="sr-only" for="layermonth">Media/Somma</label>
                     <select class="form-control" id="layermonth">
                         {% for m in month %}
-                            <option value="{{ m.0 }}" layerstyle="{{ m.2 }}">{{ m.1 }}</option>
+                            <option value="{{ m.0 }}" layerstyle="{{ m.3 }}">{{ m.1 }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -120,7 +127,7 @@
                         <option value="p">Differenza percentuale</option>
                     </select>
                 </div>
-                <a href="" class="btn btn-primary" id="geotiff">GeoTiff</a>
+                <a href="" class="btn btn-primary" id="geotiff" target="_blank">Scarica immagine</a>
             </form>
         </div>
     </div>
@@ -139,19 +146,26 @@
         var year = $("#layeryear option:selected").val();
         var month = $("#layermonth option:selected").val();
         var suffix = $("#layersuffix option:selected").val();
+        var per = $("#layermonth option:selected").attr('layerstyle');
 
         if (type == 't'){
-            style = 'Temperature'
+            pre = 'Temperature';
+            suf = '';
         } else {
-            var style = $("#layermonth option:selected").attr('layerstyle');
-            style += "Legend";
+            pre = 'Precipitazioni';
+            if (type == 'd'){
+                suf = 'A'
+            } else if (type == 'p') {
+                suf = ''
+            }
         }
+        var style = String.format(stylea, pre, per, suf, "")
 
         if (month) {
             layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
 
         } else {
-            layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
+            layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
         }
 
         legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
@@ -164,7 +178,7 @@
         }).addTo(map);
 
         $("#legend").attr('src', legend_url)
-        $("#geotiff").attr('href',String.format(download_url_default,type, year, month,style,'image%2Ftiff'))
+        $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month))
         {% for station in meteo_stations %}
             L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
                     .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \

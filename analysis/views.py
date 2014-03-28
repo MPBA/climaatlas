@@ -522,7 +522,23 @@ def export_mappe_climatiche(request, ltype, periodo, month):
     elif month:
         map = g.generate_png(ltype, periodo, month=int(month), season=None)
     else:
-        map = g.generate_png(ltype, period, month=None, season=None)
+        map = g.generate_png(ltype, periodo, month=None, season=None)
+
+    response = HttpResponse(mimetype="image/png")
+    map.save(response, "PNG")
+
+    return response
+
+
+def export_mappe_trend(request, ltype, suffix, year, month):
+    g = GenerateImmage()
+
+    if month in ('1win', '2spr', '3sum', '4aut'):
+        map = g.generate_png_anomaly(ltype, suffix, year=year, month=None, season=month)
+    elif month:
+        map = g.generate_png_anomaly(ltype, suffix, year=year, month=int(month), season=None)
+    else:
+        map = g.generate_png_anomaly(ltype, suffix, year=year, month=None, season=None)
 
     response = HttpResponse(mimetype="image/png")
     map.save(response, "PNG")
