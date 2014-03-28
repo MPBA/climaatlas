@@ -55,7 +55,7 @@ def upload(request):
                             PGBackup(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
                                  password=settings.DATABASES['default']['PASSWORD']).pg_file(settings.DATABASES['default']['NAME'], sql_file+".utf8")
-                            messages.add_message(request, messages.SUCCESS, 'Site caricato!')
+                            messages.add_message(request, messages.SUCCESS, 'Site caricato!' + str(cmd))
                         except:
                             messages.add_message(request, messages.ERROR, 'Pgdbf error')
 
