@@ -46,7 +46,7 @@ def upload(request):
                         dbf_file = upload_full_path + '/site.dbf'
                         sql_file = upload_full_path + '/site.sql'
                         err_file = upload_full_path + '/site.err'
-                        cmd = ["-c", "pgdbf -e -m " + fpt_file + " " + dbf_file + " > " + sql_file + " 2> " + err_file]
+                        cmd = ["-c", "/usr/local/bin/pgdbf -e -m " + fpt_file + " " + dbf_file + " > " + sql_file + " 2> " + err_file]
                         call_command(cmd, shell=True)
 
                         iconv_cmd = ["-c", "iconv -f iso-8859-1 -t utf-8 " + sql_file + " > " + sql_file+".utf8"]
