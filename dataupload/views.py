@@ -90,16 +90,28 @@ def upload(request):
                             pg.pg_command('climatlas_dev', query_rain)
                             query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
                             pg.pg_command('climatlas_dev', query_rain2)
-
+                            messages.add_message(request, messages.SUCCESS, 'Query rain Completata!')
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                        try:
                             query_tmin = "TRUNCATE TABLE import_tmin"
                             pg.pg_command('climatlas_dev', query_tmin)
                             query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
                             pg.pg_command('climatlas_dev', query_tmin2)
+                            messages.add_message(request, messages.SUCCESS, 'Query tmin complettata!')
 
+                        except:
+                            messages.add_message(request,
+                                         messages.ERROR,
+                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                        try:
                             query_tmax = "TRUNCATE TABLE import_tmax"
                             pg.pg_command('climatlas_dev', query_tmax)
                             query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
                             pg.pg_command('climatlas_dev', query_tmax2)
+                            messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
                         except:
                             messages.add_message(request,
                                          messages.ERROR,
