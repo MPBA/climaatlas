@@ -41,20 +41,21 @@
                     suf = '';
                 } else {
                     pre = 'Precipitazioni';
-                    if (type == 'd'){
+                    if (suffix == 'd'){
                         suf = 'A'
-                    } else if (type == 'p') {
+                    } else if (suffix == 'p') {
                         suf = ''
                     }
                 }
                 var style = String.format(stylea, pre, per, suf, "")
+
 
                 if (month == '') {
                     layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
                 } else {
                     layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, year, month, suffix)
                 }
-
+                console.log(pre, per, suf, style, layer_name)
                 legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
 
                 layer.setParams({
@@ -146,9 +147,9 @@
             suf = '';
         } else {
             pre = 'Precipitazioni';
-            if (type == 'd'){
+            if (suffix == 'd'){
                 suf = 'A'
-            } else if (type == 'p') {
+            } else if (suffix == 'p') {
                 suf = ''
             }
         }
