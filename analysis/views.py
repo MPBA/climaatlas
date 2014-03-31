@@ -105,9 +105,9 @@ class ClimateIndexDetailsViewExport(View):
                                                       'title': title, 'periodo_rif': periodo_rif})
         elif self.kwargs['tipo_export'] == 'xls':
             fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
-                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno", "station__note_omogen"]
             col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
-                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON", "note"]
             queryset = data
             filename = title
             try:
@@ -116,9 +116,9 @@ class ClimateIndexDetailsViewExport(View):
                 raise e
         elif self.kwargs['tipo_export'] == 'csv':
             fields = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
-                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno"]
+                      "ago", "sett", "ott", "nov", "dic", "inverno", "primavera", "estate", "autunno", "station__note_omogen"]
             col_name = ["station__stname", "station__elevation", "gen", "feb", "mar", "apr", "mag", "giu", "lug",
-                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON"]
+                      "ago", "sett", "ott", "nov", "dic", "DGF", "MAM", "GLA", "SON", "note"]
             filename = title
             queryset = data
             return export_csv(filename, fields, col_name, queryset.values_list(*fields))
@@ -131,7 +131,7 @@ class ClimateExtremesListView(ListView):
     context_object_name = 'estremi'
 
     def get_queryset(self):
-        estremi = ClimateIndex.objects.filter(sezione='extreme').order_by('type', 'name')
+        estremi = ClimateIndex.objects.filter(sezione='extreme').order_by('type', 'rank')
         return estremi
 
     def get_context_data(self, **kwargs):
@@ -184,6 +184,9 @@ class ClimateExtremesDetailsViewExport(View):
                            "estate_data", "autunno", "autunno_data"]
                 col_name += ["annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
                            "GLA_data", "SON", "SON_data"]
+
+            fields += ["station__note_omogen"]
+            col_name += ["note"]
             queryset = data
             filename = title
             try:
@@ -202,6 +205,9 @@ class ClimateExtremesDetailsViewExport(View):
                            "estate_data", "autunno", "autunno_data"]
                 col_name += ["annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
                            "GLA_data", "SON", "SON_data"]
+
+            fields += ["station__note_omogen"]
+            col_name += ["note"]
             filename = title
             queryset = data
             return export_csv(filename, fields, col_name, queryset.values_list(*fields))
@@ -233,7 +239,7 @@ class DiagrammiClimaticiDetailsView(TemplateView):
         dataidx = station.climateindexdata_set.filter(periodo=periodo, climate_index__sezione='index')\
             .order_by('-climate_index__type', 'climate_index__name')
         dataext = station.climateextremesdata_set.filter(climate_index__sezione='extreme')\
-            .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__name')
+            .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__rank')
 
         context['station'] = station
         context['dataidx'] = dataidx
@@ -300,7 +306,7 @@ class DiagrammiClimaticiEstremiDetailsViewExport(View):
 
         station = Station.objects.get(pk=pk)
         dataext = station.climateextremesdata_set.filter(climate_index__sezione='extreme')\
-            .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__name')
+            .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__rank')
 
         title = 'Estremi climatici %s' % station.stname
         periodo_rif = '%s' % 'Periodo di riferimento ' + periodo
@@ -310,17 +316,18 @@ class DiagrammiClimaticiEstremiDetailsViewExport(View):
                                                       'pagesize': 'A4 landscape',
                                                       'title': title, 'periodo_rif': periodo_rif})
         elif self.kwargs['tipo_export'] == 'xls':
-            fields = ["climate_index__name", "gen", "gen_data", "feb", "feb_data", "mar",
+            fields = ["climate_index__name","anno_inizio", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data",
                       "annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
                        "estate_data", "autunno", "autunno_data"]
-            col_name = ["estremo climatico", "gen", "gen_data", "feb", "feb_data", "mar",
+            col_name = ["estremo climatico","anno_inizio", "gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data",
                       "annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
                        "GLA_data", "SON", "SON_data"]
-            col_name += []
+            fields += ["station__note_omogen"]
+            col_name += ["note"]
             queryset = dataext
             filename = title
             try:
@@ -328,16 +335,18 @@ class DiagrammiClimaticiEstremiDetailsViewExport(View):
             except Exception, e:
                 raise e
         elif self.kwargs['tipo_export'] == 'csv':
-            fields = ["climate_index__name", "gen", "gen_data", "feb", "feb_data", "mar",
+            fields = ["climate_index__name", "anno_inizio","gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data",
                       "annua", "annua_data", "inverno", "inverno_data", "primavera", "primavera_data", "estate",
                        "estate_data", "autunno", "autunno_data"]
-            col_name = ["estremo climatico", "gen", "gen_data", "feb", "feb_data", "mar",
+            col_name = ["estremo climatico", "anno_inizio","gen", "gen_data", "feb", "feb_data", "mar",
                       "mar_data", "apr", "apr_data", "mag", "mag_data", "giu", "giu_data", "lug", "lug_data",
                       "ago", "ago_data", "sett", "sett_data", "ott", "nov", "nov_data", "dic", "dic_data",
                       "annua", "annua_data", "DGF", "DGF_data", "MAM", "MAM_data", "GLA",
                        "GLA_data", "SON", "SON_data"]
+            fields += ["station__note_omogen"]
+            col_name += ["note"]
             filename = title
             queryset = dataext
             return export_csv(filename, fields, col_name, queryset.values_list(*fields))

@@ -23,6 +23,7 @@ class ClimateIndex(models.Model):
     resolution = models.TextField(blank=True)
     type = models.TextField()
     sezione = models.TextField()
+    rank = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name

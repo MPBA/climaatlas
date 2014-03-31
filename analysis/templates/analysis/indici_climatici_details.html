@@ -96,7 +96,7 @@
                             <a href="#" rel="tooltip" data-toggle="tooltip" title="" data-original-title="{{ d.station.note_omogen }}"><i class="fa fa-info-circle"></i></a>
                         {% endifequal %}
                     </td>
-                    <td>{{ d.station.elevation }}</td>
+                    <td>{{ d.station.elevation|floatformat:"0" }}</td>
                     <td>{{ d.gen|floatformat:"1" }}</td>
                     <td>{{ d.feb|floatformat:"1" }}</td>
                     <td>{{ d.mar|floatformat:"1" }}</td>

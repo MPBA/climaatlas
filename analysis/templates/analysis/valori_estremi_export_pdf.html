@@ -57,7 +57,7 @@
 
     {% for t in tabella %}
         <tr style="padding-top: 5px">
-            <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.station.stname }}</td>
+            <td rowspan="2"  style="border-bottom: 1px solid #dddddd;">{{ t.station.stname }}{{ t. }}</td>
             <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.station.elevation|floatformat }}</td>
             <td rowspan="2" style="text-align: right;border-bottom: 1px solid #dddddd;">{{ t.anno_inizio|dateformat }}</td>
             <td  style="text-align: right">{{ t.gen|floatformat:"1" }}</td>
