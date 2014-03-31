@@ -14,20 +14,22 @@
     </style>
     <script type="text/javascript">
         $(document).ready(function() {
-             $("#station").on('change', function() {
+            $("#station").on('change', function() {
                 var pk = $("#station option:selected").attr('pk');
                 location.href = '/view/trend/stats/distribution/details/' + pk + "/"
             });
-
-             $("#intervallo").on('change', function() {
-                 var ids = $("#intervallo option:selected").attr('value');
-                 var idlist = ids.split('-');
-                 var mychart = $('img[mychart]');
-                 for (var i=0; i<idlist.length; i++){
+            $("#intervallo").on('change', function() {
+                var ids = $("#intervallo option:selected").attr('value');
+                var idlist = ids.split('-');
+                var mychart = $('img[mychart]');
+                for (var i=0; i<idlist.length; i++){
                     $(mychart[i]).attr('src','/view/grafico/'+ idlist[i])
-                 }
-                 $('span[intervallo]').html($("#intervallo option:selected").html())
+                }
+                $('span[intervallo]').html($("#intervallo option:selected").html())
             });
+            $('a[href="#info"]').on('shown.bs.tab', function (e) {
+                map.setView([{{ station.latitude }},{{ station.longitude }}], 12);
+            })
         });
     </script>
 {% endblock extra_head %}
@@ -39,9 +41,9 @@
 {% endblock breadcumb_items %}
 {% block page_legend %}
     <div class="well well-sm">
-    {% for p in periodo_list %}
-    {{ p.val }}
-    {% endfor %}
+        {% for p in periodo_list %}
+            {{ p.val }}
+        {% endfor %}
         <form role="form">
             <fieldset>
                 <div class="form-group">
@@ -54,11 +56,11 @@
                     <label for="station">Seleziona intervallo</label>
                     {% intervalli_climatici station.pk type as intervalli %}
                     <select id="intervallo" class="form-control">
-                       {% for i in intervalli %}
+                        {% for i in intervalli %}
                             <option value="{{ i.ids }}">
                                 {{ i.intervallo|capfirst }}
                             </option>
-                       {% endfor %}
+                        {% endfor %}
                     </select>
                 </div>
 
@@ -73,95 +75,45 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-md-5 col-md-5 col-xs-5 col-sm-5 visible-lg visible-md visible-sm visible-xs">
-                <div id="map" style="width: 100%; height: 250px"></div>
-            </div>
-            <div class="col-md-4 col-md-4 col-xs-4 col-sm-4 visible-lg visible-md visible-sm visible-xs">
-                <div class="vcard pull-left" style="width: 450px">
-                    <ul>
-                        <li class="v-heading">
-                            <span class="item-key">Codice Stazione</span>
-                            <div class="vcard-item">{{ station.code }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Nome</strong></span>
-                            <div class="vcard-item">{{ station.stname }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Data Attivazione</strong></span>
-                            <div class="vcard-item">{{ station.commence|date:"d/m/Y" }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Stato</strong></span>
-                            <div class="vcard-item">
-                                {% if station.0.cease %}
-                                    <i class="fa fa-circle" style="color: #cb4437"></i> Dismessa il {{ station.cease|date:"d/m/Y" }}
-                                {% else %}
-                                    <i class="fa fa-circle" style="color: #79a038"></i>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Descrizione</strong></span>
-                            <div class="vcard-item">{{ station.description }}</div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#grafici" data-toggle="tab">Grafici</a></li>
+                <li><a href="#info" data-toggle="tab">Info</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="grafici">
+                    <div class="row text-center" style="padding-top: 10px;">
+                        {% intervalli_climatici station.pk type as interval %}
 
-        <!-- Tab panes -->
-
-        <div class="row text-center" style="padding-top: 10px;">
-        {% intervalli_climatici station.pk type as interval %}
-
-        {% for chart in interval.0.idslist %}
-            {% if chart %}
-                {% with chart|get_dati_chart as grafico %}
-                <div class="col-md-6">
-                    <div class="panel panel-info">
-                      <div class="panel-heading"><i class="wi-{{ grafico.tipo_dato }}"></i> {{ grafico.tipo_dato|capfirst }} <span intervallo>{{ grafico.intervallo|capfirst }}</span> </div>
-                      <div class="panel-body">
-                         <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
-                         <img mychart src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
-                         </a>
-                      </div>
+                        {% for chart in interval.0.idslist %}
+                            {% if chart %}
+                                {% with chart|get_dati_chart as grafico %}
+                                    <div class="col-md-6">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading"><i class="wi-{{ grafico.tipo_dato }}"></i> {{ grafico.tipo_dato|capfirst }} <span intervallo>{{ grafico.intervallo|capfirst }}</span> </div>
+                                            <div class="panel-body">
+                                                <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
+                                                    <img mychart src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endwith %}
+                            {% else %}
+                                <div class="bs-callout bs-callout-info">
+                                    <h4>Informazione di servizio</h4>
+                                    <p>Siamo spiacenti ma per la selezione che e' stata effettuata non e' disponibile un diagramma climatico.</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
-                {% endwith %}
-            {% else %}
-                <div class="bs-callout bs-callout-info">
-                    <h4>Informazione di servizio</h4>
-                    <p>Siamo spiacenti ma per la selezione che e' stata effettuata non e' disponibile un diagramma climatico.</p>
+                <div class="tab-pane" id="info">
+                    {% with True as deffered_init %}
+                        {% include 'climatlas/stazione_info_panel.html' %}
+                    {% endwith %}
                 </div>
-            {% endif %}
-         {% endfor %}
+            </div>
         </div>
-
-
-
     </div>
-
-    <script>
-       var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '@ PAT Climatrentino ',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
-
-        L.tileLayer('{% settings_value 'OSM_URL' %}', {
-            maxZoom: 18,
-            attribution: '{% settings_value 'MAPS_ATTRIBUTION_OSM' %}'
-        }).addTo(map);
-
-        L.marker([{{ station.latitude }},{{ station.longitude }}]).addTo(map)
-                .bindPopup("<b>{{ station.code }}</b><br />{{ station.stname }}</b><br />Coordinate: {{ station.latitude }}, {{ station.longitude }} ").openPopup();
-
-        var popup = L.popup();
-
-        setTimeout(function(){
-            map.setView([{{ station.latitude }},{{ station.longitude }}], 12);
-        },500);
-
-    </script>
     <!-- /.container -->
 {% endblock main %}

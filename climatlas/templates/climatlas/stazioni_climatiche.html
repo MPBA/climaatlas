@@ -1,41 +1,40 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block extra_head %}
-     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
-     <script src="{% static 'leaflet/leaflet.js' %}"></script>
-     <style>
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
+    <script src="{% static 'leaflet/leaflet.js' %}"></script>
+    <style>
         #map { height: 600px; }
-     </style>
-     <link href="{% static "datatables/css/dt_bootstrap.css" %}" rel="stylesheet">
-     <style>
+    </style>
+    <link href="{% static "datatables/css/dt_bootstrap.css" %}" rel="stylesheet">
+    <style>
         table { table-layout: fixed; }
         table th, table td { overflow: hidden; }
-     </style>
-     <script src={% static 'datatables/js/jquery.dataTables.js' %}></script>
-     <script src={% static 'datatables/js/bootstrap3_dt.js' %}></script>
-     <script type="text/javascript" charset="utf-8">
+    </style>
+    <script src={% static 'datatables/js/jquery.dataTables.js' %}></script>
+    <script src={% static 'datatables/js/bootstrap3_dt.js' %}></script>
+    <script type="text/javascript" charset="utf-8">
+        /* Table initialisation */
+        $(document).ready(function() {
+            var x = $('#cstations').dataTable( {
+                "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records per page"
+                },
 
-            /* Table initialisation */
-            $(document).ready(function() {
-                var x = $('#cstations').dataTable( {
-                    "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
-                    "sPaginationType": "bootstrap",
-                    "oLanguage": {
-                        "sLengthMenu": "_MENU_ records per page"
-                    },
-
-                    "aoColumnDefs": [
-                        { 'bSortable': false, 'aTargets': [ 2,4,5,6 ] }
-                    ]
-                } );
-
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [ 2,4,5,6 ] }
+                ]
             } );
-            jQuery(document).ready(function() {
+
+        } );
+        jQuery(document).ready(function() {
             $('.sublink').tooltip({'placement':'bottom'}); /*enable tooltip bootstrap to all navbar-link class tags*/
             $("select").addClass('form-control');
             $("input").addClass('form-control');
-            });
-	 </script>
+        });
+    </script>
 {% endblock extra_head %}
 {% block page_name %}Home Page{% endblock %}
 {% block breadcumb_items %}
@@ -61,89 +60,87 @@
     </div>
 {% endblock page_legend %}
 {% block main %}
+    <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
+        <div class="page-header">
+            <h1>Anagrafica Stazioni Climatiche <small></small></h1>
+        </div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
+            <li><a href="#mappa" data-toggle="tab" id="mpl">Mappa</a></li>
+        </ul>
 
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="lista">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="cstations">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%">Codice</th>
+                            <th style="width: 28%">Nome</th>
+                            <th style="width: 10%">Dataset</th>
+                            <th style="width: 16%">Data Attivazione</th>
+                            <th style="width: 23%">Coordinate</th>
+                            <th style="width: 6%">Stato</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-            <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
-                <div class="page-header">
-              <h1>Anagrafica Stazioni Climatiche <small></small></h1>
-            </div>
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs">
-                  <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
-                  <li><a href="#mappa" data-toggle="tab" id="mpl">Mappa</a></li>
-                </ul>
+                        {% for station in meteo_stations %}
+                            <tr>
+                                <td>{{ station.code }}</td>
+                                <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
+                                <td>
+                                    {% if 'temp_avg' in station.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
+                                    {% if 'rain' in station.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
 
-                <!-- Tab panes -->
-                <div class="tab-content">
-                  <div class="tab-pane fade in active" id="lista">
-                      <div class="table-responsive">
-                            <table class="table table-striped" id="cstations">
-                              <thead>
-                                <tr>
-                                  <th style="width: 10%">Codice</th>
-                                  <th style="width: 28%">Nome</th>
-                                  <th style="width: 10%">Dataset</th>
-                                  <th style="width: 16%">Data Attivazione</th>
-                                  <th style="width: 23%">Coordinate</th>
-                                  <th style="width: 6%">Stato</th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-
-                                {% for station in meteo_stations %}
-                                <tr>
-                                  <td>{{ station.code }}</td>
-                                  <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
-                                  <td>
-                                      {% if 'temp_avg' in station.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
-                                      {% if 'rain' in station.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
-
-                                  </td>
-                                  <td>{{ station.commence|date:"d/m/Y" }}</td>
-                                  <td>{{ station.latitude|floatformat:4 }}, {{ station.longitude|floatformat:4 }}</td>
-                                  <td style="text-align: center">{% if station.cease %}
-                                        <i class="fa fa-circle" style="color: #cb4437"></i>
-                                      {% else %}
-                                        <i class="fa fa-circle" style="color: #79a038"></i>
-                                      {% endif %}
-                                  </td>
-                                  <td><a href="{% url 'stazione_detail' station.id %}"><i class="fa fa-folder-open pull-right" style="color: #428bca; font-size: 21px"></i></a></td>
-                                </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-                  </div>
-                  <div class="tab-pane fade" id="mappa">
-                      <div id="map" style="width: 100%; height: 600px"></div>
-
-                  </div>
+                                </td>
+                                <td>{{ station.commence|date:"d/m/Y" }}</td>
+                                <td>{{ station.latitude|floatformat:4 }}, {{ station.longitude|floatformat:4 }}</td>
+                                <td style="text-align: center">{% if station.cease %}
+                                    <i class="fa fa-circle" style="color: #cb4437"></i>
+                                {% else %}
+                                    <i class="fa fa-circle" style="color: #79a038"></i>
+                                {% endif %}
+                                </td>
+                                <td><a href="{% url 'stazione_detail' station.id %}"><i class="fa fa-folder-open pull-right" style="color: #428bca; font-size: 21px"></i></a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+            <div class="tab-pane fade" id="mappa">
+                <div id="map" style="width: 100%; height: 600px"></div>
 
-            <script>
-                var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '@ PAT Climatrentino ',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
+            </div>
+        </div>
+    </div>
 
-                L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                attribution: ''
-                }).addTo(map);
+    <script>
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                osmAttrib = '@ PAT Climatrentino ',
+                osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+        var map = L.map('map').addLayer(osm);
 
-                {% for station in meteo_stations %}
-                L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
+        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: ''
+        }).addTo(map);
+
+        {% for station in meteo_stations %}
+            L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
                     .bindPopup("<b>{{ station.code }}</b><br /><a href='{% url 'stazione_detail' station.id %}'>{{ station.stname }}</a></b><br /><i style='font-size: 20px!important' class='wi-{% if 'rain' in station.datasets %}rain{% endif %}'></i> <i style='font-size: 20px!important' class='wi-{% if 'temp_avg' in station.datasets %}temp_avg{% endif %}'></i>").openPopup();
-                {% endfor %}
+        {% endfor %}
 
-                $('#mpl').click(function(){
-                    setTimeout(function(){
-                        map.setView([46.0760556,11.1176091], 9);
-                    },500);
+        $('#mpl').click(function(){
+            setTimeout(function(){
+                map.setView([46.0760556,11.1176091], 9);
+            },500);
 
-                })
-            </script>
+        })
+    </script>
     <!-- /.container -->
 {% endblock main %}

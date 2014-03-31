@@ -155,6 +155,11 @@ LAYER_TYPE = (
     ('t', 'Temperatura'),
 )
 
+LAYER_TYPE_ANOMALIE = (
+    ('p', 'Precipitazione assoluta', 'd'),
+    ('p', 'Precipitazione percentuale', 'p'),
+    ('t', 'Temperatura assoluta', 'd'),
+)
 LAYER_SUFFIX = (
     ('d', 'Differenza assoluta'),
     ('p', 'Differenza in percentuale')
@@ -166,7 +171,7 @@ LAYER_PERIOD = (
     ('1981-2010'),
 )
 
-LAYER_YEAR = range(1941, 2012, 1)
+LAYER_YEAR = range(1941, 2011, 1)
 
 LAYER_MONTH = (
     ('01', 'Gennaio', 'PrecipitazioniMensili', 'M'),

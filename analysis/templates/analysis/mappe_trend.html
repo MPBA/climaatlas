@@ -33,7 +33,7 @@
                 var type = $("#layertype option:selected").val();
                 var year = $("#layeryear option:selected").val();
                 var month = $("#layermonth option:selected").val();
-                var suffix = $("#layersuffix option:selected").val();
+                var suffix = $("#layertype option:selected").attr('suffix');
                 var per = $("#layermonth option:selected").attr('layerstyle');
 
                 if (type == 't'){
@@ -49,10 +49,10 @@
                 }
                 var style = String.format(stylea, pre, per, suf, "")
 
-                if (month) {
+                if (month == '') {
                     layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
                 } else {
-                    layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
+                    layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, year, month, suffix)
                 }
 
                 legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);
@@ -100,7 +100,7 @@
                     <label class="sr-only" for="layertype">Variabile</label>
                     <select class="form-control" id="layertype">
                         {% for t in type %}
-                            <option value="{{ t.0 }}">{{ t.1 }}</option>
+                            <option value="{{ t.0 }}" suffix="{{ t.2 }}">{{ t.1 }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -118,13 +118,6 @@
                         {% for m in month %}
                             <option value="{{ m.0 }}" layerstyle="{{ m.3 }}">{{ m.1 }}</option>
                         {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="layersuffix">Metodo</label>
-                    <select class="form-control" id="layersuffix">
-                        <option value="d">Differenza assoluta</option>
-                        <option value="p">Differenza percentuale</option>
                     </select>
                 </div>
                 <a href="" class="btn btn-primary" id="geotiff" target="_blank">Scarica immagine</a>
@@ -145,7 +138,7 @@
         var type = $("#layertype option:selected").val();
         var year = $("#layeryear option:selected").val();
         var month = $("#layermonth option:selected").val();
-        var suffix = $("#layersuffix option:selected").val();
+        var suffix = $("#layertype option:selected").attr('suffix');
         var per = $("#layermonth option:selected").attr('layerstyle');
 
         if (type == 't'){
@@ -161,11 +154,11 @@
         }
         var style = String.format(stylea, pre, per, suf, "")
 
-        if (month) {
+        if (month == '') {
             layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
 
         } else {
-            layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, month, year, suffix)
+            layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, year, month, suffix)
         }
 
         legend_url = String.format(legend_url_default, layer_name.split(':')[0], style);

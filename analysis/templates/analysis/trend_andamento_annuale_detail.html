@@ -15,69 +15,73 @@
     </style>
     <script type="text/javascript">
         json = {{ annographjson|safe }}
-        $(document).ready(function() {
-            console.log(json);
-            var options = {
-            currentPage: 1,
-            totalPages: {{ anno_graph_dict|length }},
-            bootstrapMajorVersion: 3,
-            itemTexts: function (type, page, current) {
-                    switch (type) {
-                    case "first":
-                        return "<<";
-                    case "prev":
-                        return "<";
-                    case "next":
-                        return ">";
-                    case "last":
-                        return ">>";
-                    case "page":
-                        return json[page-1]['anno'];
-                    }
-                },
-            onPageChanged: function(e, oldPage, newPage){
-                var idx = newPage-1;
-                var charts = json[idx]['ids'];
-                var charts_img = $('#chartview img');
-                var charts_lnk = $('#chartview a');
-                for (var i=0; i<charts.length; i++){
-                    $(charts_img[i]).attr('src','/view/grafico/' + charts[i]);
-                    $(charts_lnk[i]).attr('href','/view/grafico/' + charts[i]);
+                $(document).ready(function() {
+                    console.log(json);
+                    var options = {
+                        currentPage: 1,
+                        totalPages: {{ anno_graph_dict|length }},
+                        bootstrapMajorVersion: 3,
+                        itemTexts: function (type, page, current) {
+                            switch (type) {
+                                case "first":
+                                    return "<<";
+                                case "prev":
+                                    return "<";
+                                case "next":
+                                    return ">";
+                                case "last":
+                                    return ">>";
+                                case "page":
+                                    return json[page-1]['anno'];
+                            }
+                        },
+                        onPageChanged: function(e, oldPage, newPage){
+                            var idx = newPage-1;
+                            var charts = json[idx]['ids'];
+                            var charts_img = $('#chartview img');
+                            var charts_lnk = $('#chartview a');
+                            for (var i=0; i<charts.length; i++){
+                                $(charts_img[i]).attr('src','/view/grafico/' + charts[i]);
+                                $(charts_lnk[i]).attr('href','/view/grafico/' + charts[i]);
 
-                }
-                $('div[mychart=descrizione] span[anno=anno]').html(json[idx]['anno']);
-            }
-            }
-
-
-
-            $('#charts_pag').bootstrapPaginator(options);
-
-
-            $("#station").on('change', function() {
-                 var pk = $("#station option:selected").attr('pk');
-                 $.ajax({
-                    type: 'GET',
-                    url: '/view/ajax_periodi_select/',
-                    data: {'station_id': pk, 'tipi_grafici[]':[16,17]},
-                    success: function(json) {
-                        //alert($.parseJSON(json));
-                        $("#periodo").empty();
-                        $('#periodo').append("<option value=-->" + "Scegli un periodo" + "</option>" );
-                        $.each(JSON.parse(json), function(i, v) {
-                            $('#periodo').append("<option value=" + v['periodo'] +">" + v['periodo'] + "</option>" );
-                        });
-
+                            }
+                            $('div[mychart=descrizione] span[anno=anno]').html(json[idx]['anno']);
                         }
-                    });
-            });
+                    }
 
-            $("#periodo").on('change', function() {
-                var periodo = $("#periodo option:selected").val();
-                var pk = $("#station option:selected").attr('pk');
-                location.href = '/view/trend/andamento/annuale/detail/' + pk + '/' + periodo + "/"
-            });
-        });
+
+
+                    $('#charts_pag').bootstrapPaginator(options);
+
+
+                    $("#station").on('change', function() {
+                        var pk = $("#station option:selected").attr('pk');
+                        $.ajax({
+                            type: 'GET',
+                            url: '/view/ajax_periodi_select/',
+                            data: {'station_id': pk, 'tipi_grafici[]':[16,17]},
+                            success: function(json) {
+                                //alert($.parseJSON(json));
+                                $("#periodo").empty();
+                                $('#periodo').append("<option value=-->" + "Scegli un periodo" + "</option>" );
+                                $.each(JSON.parse(json), function(i, v) {
+                                    $('#periodo').append("<option value=" + v['periodo'] +">" + v['periodo'] + "</option>" );
+                                });
+
+                            }
+                        });
+                    });
+
+                    $("#periodo").on('change', function() {
+                        var periodo = $("#periodo option:selected").val();
+                        var pk = $("#station option:selected").attr('pk');
+                        location.href = '/view/trend/andamento/annuale/detail/' + pk + '/' + periodo + "/"
+                    });
+
+                    $('a[href="#info"]').on('shown.bs.tab', function (e) {
+                        map.setView([{{ station.latitude }},{{ station.longitude }}], 12);
+                    })
+                });
     </script>
 {% endblock extra_head %}
 {% block page_name %}Anomalie Indici Climatici{% endblock %}
@@ -88,9 +92,9 @@
 {% endblock breadcumb_items %}
 {% block page_legend %}
     <div class="well well-sm">
-    {% for p in periodo_list %}
-    {{ p.val }}
-    {% endfor %}
+        {% for p in periodo_list %}
+            {{ p.val }}
+        {% endfor %}
         <form role="form">
             <fieldset>
                 <div class="form-group">
@@ -105,10 +109,10 @@
                     <label for="periodo">Cambia periodo climatico</label>
                     <select id="periodo" class="form-control">
                         {% periodi_climatici station.pk type as periodi %}
-                                    {% for per in periodi.items %}
-                                        <option value="{{ per.0 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
-                                            {{ per.0 }}
-                                        </option>
+                        {% for per in periodi.items %}
+                            <option value="{{ per.0 }}" {% ifequal per.0 periodo_climatico %}selected{% endifequal %}>
+                                {{ per.0 }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -123,87 +127,37 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-md-5 col-md-5 col-xs-5 col-sm-5 visible-lg visible-md visible-sm visible-xs">
-                <div id="map" style="width: 100%; height: 250px"></div>
-            </div>
-            <div class="col-md-4 col-md-4 col-xs-4 col-sm-4 visible-lg visible-md visible-sm visible-xs">
-                <div class="vcard pull-left" style="width: 450px">
-                    <ul>
-                        <li class="v-heading">
-                            <span class="item-key">Codice Stazione</span>
-                            <div class="vcard-item">{{ station.code }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Nome</strong></span>
-                            <div class="vcard-item">{{ station.stname }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Data Attivazione</strong></span>
-                            <div class="vcard-item">{{ station.commence|date:"d/m/Y" }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Stato</strong></span>
-                            <div class="vcard-item">
-                                {% if station.0.cease %}
-                                    <i class="fa fa-circle" style="color: #cb4437"></i> Dismessa il {{ station.cease|date:"d/m/Y" }}
-                                {% else %}
-                                    <i class="fa fa-circle" style="color: #79a038"></i>
-                                {% endif %}
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#grafici" data-toggle="tab">Grafici</a></li>
+                <li><a href="#info" data-toggle="tab">Info</a></li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane active" id="grafici">
+                <div id="chartview" class="row text-center" style="padding-top: 10px;">
+                    {% for chart in jsonlist.0.ids %}
+                        {% with chart|get_dati_chart as properties %}
+                            <div class="{% if jsonlist.0.ids|length > 1%}col-md-6{% else %}col-md-12{% endif %}">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading" mychart="descrizione"> <span anno="anno">{{ properties.anno }}</span> - <span id="desc">{{ properties.tipo_dato|capfirst }} <i class="wi-{{ properties.tipo_dato }}"></i></span></div>
+                                    <div class="panel-body">
+                                        <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
+                                            <img src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Descrizione</strong></span>
-                            <div class="vcard-item">{{ station.description }}</div>
-                        </li>
-                    </ul>
+                        {% endwith %}
+                    {% endfor %}
                 </div>
+                <ul id="charts_pag" class="pagination pagination-sm"></ul>
+            </div>
+            <div class="tab-pane" id="info">
+                {% with True as deffered_init %}
+                    {% include 'climatlas/stazione_info_panel.html' %}
+                {% endwith %}
             </div>
         </div>
-
-        <!-- Tab panes -->
-
-
-        <div id="chartview" class="row text-center" style="padding-top: 10px;">
-        {% for chart in jsonlist.0.ids %}
-                {% with chart|get_dati_chart as properties %}
-                <div class="{% if jsonlist.0.ids|length > 1%}col-md-6{% else %}col-md-12{% endif %}">
-                    <div class="panel panel-info">
-                      <div class="panel-heading" mychart="descrizione"> <span anno="anno">{{ properties.anno }}</span> - <span id="desc">{{ properties.tipo_dato|capfirst }} <i class="wi-{{ properties.tipo_dato }}"></i></span></div>
-                      <div class="panel-body">
-                         <a href="{% url 'get_chart_by_id' chart %}" data-lightbox="image-1" title="Chart1">
-                         <img src="{% url 'get_chart_by_id' chart %}" alt="" class="img-thumbnail img-responsive" />
-                         </a>
-                      </div>
-                    </div>
-                </div>
-                {% endwith %}
-         {% endfor %}
-        </div>
-             <ul id="charts_pag" class="pagination pagination-sm"></ul>
-
     </div>
-
-    <script>
-        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '@ PAT Climatrentino ',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
-
-        L.tileLayer('{% settings_value 'OSM_URL' %}', {
-            maxZoom: 18,
-            attribution: '{% settings_value 'MAPS_ATTRIBUTION_OSM' %}'
-        }).addTo(map);
-
-
-        L.marker([{{ station.latitude }},{{ station.longitude }}]).addTo(map)
-                .bindPopup("<b>{{ station.code }}</b><br />{{ station.stname }}</b><br />Coordinate: {{ station.latitude }}, {{ station.longitude }} ").openPopup();
-
-        var popup = L.popup();
-
-        setTimeout(function(){
-            map.setView([{{ station.latitude }},{{ station.longitude }}], 12);
-        },500);
-
-    </script>
     <!-- /.container -->
 {% endblock main %}

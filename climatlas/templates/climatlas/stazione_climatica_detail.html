@@ -15,7 +15,7 @@
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
     <li><a href="{% url 'stazioni_climatiche' %}">Stazioni Climatiche</a></li>
-    <li class="active">{{ station.0.stname }}</li>
+    <li class="active">{{ station.stname }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
     <div class="well well-sm">
@@ -35,56 +35,7 @@
             <h1>Anagrafica Stazioni Climatiche <small></small></h1>
         </div>
         <br>
-        <div class="row">
-            <div class="col-md-5 col-md-5 col-xs-5 col-sm-5 visible-lg visible-md visible-sm visible-xs">
-                <div id="map" style="width: 100%; height: 400px"></div>
-            </div>
-            <div class="col-md-4 col-md-4 col-xs-4 col-sm-4 visible-lg visible-md visible-sm visible-xs">
-                <div class="vcard pull-left" style="width: 450px">
-                    <ul>
-                        <li class="v-heading">
-                            <span class="item-key">Codice Stazione</span>
-                            <div class="vcard-item">{{ station.0.code }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Nome</strong></span>
-                            <div class="vcard-item">{{ station.0.stname }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Dataset</strong></span>
-                            <div class="vcard-item">
-                                {% if 'temp_avg' in station.0.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
-                                {% if 'rain' in station.0.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
-                            </div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Data Attivazione</strong></span>
-                            <div class="vcard-item">{{ station.0.commence|date:"d/m/Y" }}</div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Stato</strong></span>
-                            <div class="vcard-item">
-                                {% if station.0.cease %}
-                                    <i class="fa fa-circle" style="color: #cb4437"></i> Dismessa il {{ station.0.cease|date:"d/m/Y" }}
-                                {% else %}
-                                    <i class="fa fa-circle" style="color: #79a038"></i>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li>
-                            <span class="item-key"><strong>Descrizione</strong></span>
-                            <div class="vcard-item">{{ station.0.description }}</div>
-                        </li>
-                        <li>
-                            {% if station.0.note_omogen %}
-                            <span class="item-key"><strong>Note</strong></span>
-                            <div class="vcard-item">{{ station.0.note_omogen }}</div>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {% include 'climatlas/stazione_info_panel.html' %}
         <div class="row text-center" style="padding-top: 10px;">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -103,27 +54,26 @@
         </div>
     </div>
 
-    <script>
-        var map = L.map('map')
-
-        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: ''
-        }).addTo(map);
-
-
-        L.marker([{{ station.0.latitude }},{{ station.0.longitude }}]).addTo(map)
-                .bindPopup("<b>{{ station.0.code }}</b><br />{{ station.0.stname }}</b><br />Coordinate: {{ station.0.latitude }}, {{ station.0.longitude }} ").openPopup();
-
-
-        var popup = L.popup();
-
-
-
-        setTimeout(function(){
-            map.setView([{{ station.0.latitude }},{{ station.0.longitude }}], 12);
-        },500);
-
-    </script>
+{#    <script>#}
+{#        var map = L.map('map')#}
+{##}
+{#        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {#}
+{#            maxZoom: 18,#}
+{#            attribution: ''#}
+{#        }).addTo(map);#}
+{##}
+{#        L.marker([{{ station.0.latitude }},{{ station.0.longitude }}]).addTo(map)#}
+{#                .bindPopup("<b>{{ station.0.code }}</b><br />{{ station.0.stname }}</b><br />Coordinate: {{ station.0.latitude }}, {{ station.0.longitude }} ").openPopup();#}
+{##}
+{##}
+{#        var popup = L.popup();#}
+{##}
+{##}
+{##}
+{#        setTimeout(function(){#}
+{#            map.setView([{{ station.0.latitude }},{{ station.0.longitude }}], 12);#}
+{#        },500);#}
+{##}
+{#    </script>#}
     <!-- /.container -->
 {% endblock main %}

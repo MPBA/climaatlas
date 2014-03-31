@@ -461,8 +461,7 @@ class MappeTrendListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MappeTrendListView, self).get_context_data()
-        context['type'] = settings.LAYER_TYPE
-        #context['period'] = settings.LAYER_PERIOD
+        context['type'] = settings.LAYER_TYPE_ANOMALIE
         context['year'] = settings.LAYER_YEAR
         context['month'] = settings.LAYER_MONTH
         return context
