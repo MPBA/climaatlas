@@ -33,10 +33,10 @@
         });
     </script>
 {% endblock extra_head %}
-{% block page_name %}Anomalie Indici Climatici{% endblock %}
+{% block page_name %}Trend per distribuzioni statistiche{% endblock %}
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li><a href="{% url 'trend_distr_stats_view' %}">Per distribuzioni statistiche</a></li>
+    <li><a href="{% url 'trend_distr_stats_view' %}">Trend per distribuzioni statistiche</a></li>
     <li class="active">{{ station.stname }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}
@@ -71,9 +71,8 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Distribuzioni statistiche <small>{{ station.stname }}</small></h1>
+            <h1>Trend per distribuzioni statistiche <small>{{ station.stname }}</small></h1>
         </div>
-        <br>
         <div class="row">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#grafici" data-toggle="tab">Grafici</a></li>

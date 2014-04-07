@@ -41,10 +41,10 @@
         });
     </script>
 {% endblock extra_head %}
-{% block page_name %}Anomalie Indici Climatici{% endblock %}
+{% block page_name %}Trend per località e indici medi{% endblock %}
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li><a href="{% url 'trend_anomalie_view' %}">Per località e indici medi</a></li>
+    <li><a href="{% url 'trend_anomalie_view' %}">Trend per località e indici medi</a></li>
     <li class="active">{{ station.stname }} {{ periodo }}</li>
 {% endblock breadcumb_items %}
 {% block page_legend %}

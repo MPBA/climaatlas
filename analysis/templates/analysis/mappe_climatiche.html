@@ -25,7 +25,6 @@
                 'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
         download_url_default = 'export/{0}/{1}/{2}/'
 
-
         $(document).ready(function() {
             $('#mapselector select').on('change', function() {
                 var type = $("#layertype option:selected").val();
@@ -34,9 +33,11 @@
                 if (type == 't'){
                     style = 'Temperature'
                     legend_url = String.format(legend_url_default, type, period, month, style);
+                    legend_title = 'Temperatura [°C]';
                 } else {
                     var style = $("#layermonth option:selected").attr('layerstyle');
                     legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
+                    legend_title = 'Precipitazione [mm]';
                 }
 
                 layer.setParams({
@@ -44,9 +45,17 @@
                     format: 'image/png',
                     transparent: true,
                     styles: style
-                })
-                $("#geotiff").attr('href',String.format(download_url_default,type, period, month))
-                $("#legend").attr('src', legend_url)
+                });
+                $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
+                $("#legend").attr('src', legend_url);
+                $("#legend-title").html(legend_title);
+                $("#map-title").html(
+                       String.format('{0} {1} {2} {3}', legend_title.split(' ')[0],
+                        $("#layermonth option:selected").html(),
+                        $("#layerperiod option:selected").html(),
+                        legend_title.split(' ')[1]
+                       )
+                );
             });
         });
     </script>
@@ -59,100 +68,105 @@
 
 {% block page_legend %}
     <div class="well well-sm">
+        <div id="legend-title"></div>
         <img id="legend" />
     </div>
 {% endblock page_legend %}
 
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
-        <div class="page-header">
-            <h1>Mappe climatiche</h1>
+    <div class="page-header">
+        <h1>Mappe climatiche - <small id="map-title">Precipitazione 1960-1990 Gennaio</small></h1>
+    </div>
+    <div class="bs-callout bs-callout-info">
+        <p>
+            Le mappe mostrano la distribuzione media delle precipitazioni e della temperatura sul
+            Trentino per i <i>trentenni di riferimento</i> 1961-1990, 1971-2000 e 1981-2010.
+            Selezionare dal menu il parametro (temperatura o precipitazione), il trentennio di riferimento e la base temporale (mese, stagione o anno).<br>
+            Le mappe di temperatura sono elaborate con la tecnica di spazializzazione <i>Optimal Interpolation</i> mentre le precipitazioni con la tecnica
+            <i>Kriging</i>.
+        </p>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form class="form-inline" role="form" id="mapselector">
+                <div class="form-group">
+                    <label class="sr-only" for="layertype">Variabile</label>
+                    <select class="form-control" id="layertype">
+                        {% for t in type %}
+                            <option value="{{ t.0 }}">{{ t.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="layerperiod">Periodo normale</label>
+                    <select class="form-control" id="layerperiod">
+                        {% for p in period %}
+                            <option value="{{ p }}">{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="layermonth">Media/Somma</label>
+                    <select class="form-control" id="layermonth">
+                        {% for m in month %}
+                            <option value="{{ m.0 }}" layerstyle="{{ m.2 }}">{{ m.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <a href="" class="btn btn-primary" id="geotiff" target="_blank">Scarica immagine</a>
+            </form>
         </div>
-        <div class="bs-callout bs-callout-info">
-            <p>
-                Le mappe mostrano la distribuzione media delle precipitazioni e della temperatura sul
-                Trentino per i trentenni 1961-1990, 1971-2000 e 1981-2010
-            </p>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <form class="form-inline" role="form" id="mapselector">
-                    <div class="form-group">
-                        <label class="sr-only" for="layertype">Variabile</label>
-                        <select class="form-control" id="layertype">
-                            {% for t in type %}
-                                <option value="{{ t.0 }}">{{ t.1 }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="sr-only" for="layerperiod">Periodo normale</label>
-                        <select class="form-control" id="layerperiod">
-                            {% for p in period %}
-                                <option value="{{ p }}">{{ p }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="sr-only" for="layermonth">Media/Somma</label>
-                        <select class="form-control" id="layermonth">
-                            {% for m in month %}
-                                <option value="{{ m.0 }}" layerstyle="{{ m.2 }}">{{ m.1 }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <a href="" class="btn btn-primary" id="geotiff" target="_blank">Scarica immagine</a>
-                </form>
-            </div>
-        </div>
+    </div>
 
 
-        <div id="map" style="width: 100%; height: 600px"></div>
-        <script>
-            var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '{% settings_value "MAPS_ATTRIBUTION_OSM" %}',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
+    <div id="map" style="width: 100%; height: 600px"></div>
+    <script>
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                osmAttrib = '{% settings_value "MAPS_ATTRIBUTION_OSM" %}',
+                osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+        var map = L.map('map').addLayer(osm);
 
-            L.tileLayer('{% settings_value "GEOSERVER_URL" %}/gwc/service/tms/1.0.0/mpba%3Abasemap@EPSG%3A900913@png/{z}/{x}/{y}.png', {
-                tms: true,
-                attribution: '{% settings_value 'MAPS_ATTRIBUTION_FBK' %}'
-            }).addTo(map);
+        L.tileLayer('{% settings_value "GEOSERVER_URL" %}/gwc/service/tms/1.0.0/mpba%3Abasemap@EPSG%3A900913@png/{z}/{x}/{y}.png', {
+            tms: true,
+            attribution: '{% settings_value 'MAPS_ATTRIBUTION_FBK' %}'
+        }).addTo(map);
 
-            var type = $("#layertype option:selected").val();
-            var period = $("#layerperiod option:selected").val();
-            var month = $("#layermonth option:selected").val();
-            if (type == 't'){
-                style = 'Temperature'
-                legend_url = String.format(legend_url_default, type, period, month, style);
-            } else {
-                var style = $("#layermonth option:selected").attr('layerstyle');
-                legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
-            }
+        var type = $("#layertype option:selected").val();
+        var period = $("#layerperiod option:selected").val();
+        var month = $("#layermonth option:selected").val();
+        if (type == 't'){
+            style = 'Temperature'
+            legend_url = String.format(legend_url_default, type, period, month, style);
+            legend_title = 'Temperatura [°C]';
+        } else {
+            var style = $("#layermonth option:selected").attr('layerstyle');
+            legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
+            legend_title = 'Precipitazione [mm]';
+        }
 
-            layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
-                layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
-                format: 'image/png',
-                transparent: true,
-                styles: style
-            }).addTo(map);
+        layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
+            layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
+            format: 'image/png',
+            transparent: true,
+            styles: style
+        }).addTo(map);
 
-            $("#legend").attr('src', legend_url)
-            $("#geotiff").attr('href',String.format(download_url_default,type, period, month))
-            {% for station in meteo_stations %}
-                L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
-                        .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \
-                     <div>Dati disponbili: {% if station.diagramma_disponibile %}<i class='fa fa-bar-chart-o'></i>{% endif %} \
-                        {% if station.get_climateindex_count %}<i class='fa fa-table'></i>{% endif %}</div>\
-                    {% for periodo in station.periodo_disponibile_list %}  \
-                        <li style='white-space: nowrap;'><a href='{% url 'diagrammi_climatici_details' station.pk periodo %}'>Diagramma {{ periodo }}</a></li>  \
-                    {% endfor%}").openPopup();
-            {% endfor %}
+        $("#legend").attr('src', legend_url);
+        $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
+        $("#legend-title").html(legend_title);
+        $("#map-title").html(
+                String.format('{0} {1} {2} {3}', legend_title.split(' ')[0],
+                        $("#layermonth option:selected").html(),
+                        $("#layerperiod option:selected").html(),
+                        legend_title.split(' ')[1]
+                )
+        );
 
-            setTimeout(function(){
-                map.setView([46.0760556,11.1176091], 9);
-            },500);
-        </script>
+        setTimeout(function(){
+            map.setView([46.0760556,11.1176091], 9);
+        },500);
+    </script>
 {% endblock main %}
 
 

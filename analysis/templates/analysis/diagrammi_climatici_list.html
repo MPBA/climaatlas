@@ -26,8 +26,11 @@
         </div>
         <div class="bs-callout bs-callout-info">
             <p>
-                I diagrammi climatici descrivono per una determinata località le sue caratteristiche climatiche principali attraverso opportuni indici associati all'andamento termico (medie mensili delle temperature massime, medie e minime) e al regime pluviometrico (precipitazioni medie mensili).
-            In funzione della disponibilità dei dati, i valori sono calcolati rispetto alla media dei trentenni 1961-1990, 1971-2000 e 1981-2010, ed espressi sia in formato grafico che tabellare.
+                I <i>diagrammi climatici</i> descrivono per una determinata località le sue caratteristiche climatiche principali
+                attraverso opportuni indici associati all'andamento termico (medie mensili delle temperature massime, medie e minime)
+                e al regime pluviometrico (precipitazioni medie mensili).
+                In funzione della disponibilità dei dati, i valori sono calcolati rispetto alla media dei <i>trentenni di riferimento</i>
+                1961-1990, 1971-2000 e 1981-2010, ed espressi sia in formato grafico che tabellare.
             </p>
         </div>
 
@@ -44,7 +47,6 @@
                     <table class="table table-striped" id="cstations">
                         <thead>
                         <tr>
-                            <th style="width: 10%">Codice</th>
                             <th style="width: 60%">Nome</th>
                             <th>Periodo</th>
                         </tr>
@@ -53,9 +55,7 @@
 
                         {% for station in meteo_stations %}
                             <tr>
-                                <td>{{ station.code }}</td>
                                 <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
-
                                 <td>
                                     {% for periodo in station.get_climateindex_periodo_list %}
                                         <a href="{% url 'diagrammi_climatici_details' station.pk periodo %}">{{ periodo }}</a>
@@ -74,9 +74,9 @@
     </div>
     <script>
         var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '@ PAT Climatrentino ',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
+                osmAttrib = '@ PAT Climatrentino ',
+                osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+        var map = L.map('map').addLayer(osm);
 
         L.tileLayer('{% settings_value 'OSM_URL' %}', {
             maxZoom: 18,

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load analysys_tags %}
-{% block page_name %}Mappe climatiche{% endblock %}
+{% block page_name %}Mappe di trend{% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
@@ -39,11 +39,14 @@
                 if (type == 't'){
                     pre = 'Temperature';
                     suf = '';
+                    legend_title = 'Temperatura [°C]';
                 } else {
                     pre = 'Precipitazioni';
                     if (suffix == 'd'){
+                        legend_title = 'Precipitazione [mm]';
                         suf = 'A'
                     } else if (suffix == 'p') {
+                        legend_title = 'Precipitazione [%]';
                         suf = ''
                     }
                 }
@@ -65,8 +68,9 @@
                     styles: style
                 })
 
-                $("#legend").attr('src', legend_url)
-                $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month))
+                $("#legend").attr('src', legend_url);
+                $("#legend-title").html(legend_title);
+                $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month));
             });
         });
     </script>
@@ -74,11 +78,12 @@
 
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li class="active">Mappe climatiche</li>
+    <li class="active">Mappe di trend</li>
 {% endblock breadcumb_items %}
 
 {% block page_legend %}
     <div class="well well-sm">
+        <div id="legend-title"></div>
         <img id="legend" />
     </div>
 {% endblock page_legend %}
@@ -86,12 +91,13 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
     <div class="page-header">
-        <h1>Mappe climatiche</h1>
+        <h1>Mappe di trend</h1>
     </div>
     <div class="bs-callout bs-callout-info">
         <p>
-            Le mappe mostrano la distribuzione media delle precipitazioni e della temperatura sul
-            Trentino per i trentenni 1961-1990, 1971-2000 e 1981-2010
+            Le mappe mostrano la distribuzione mensile, stagionale ed annuale delle anomalie di temperatura media (in valori assoluti)
+            e di anomalia delle precipitazioni (in valori assoluti e in variazioni % dove 100% indica la media) per l'anno selezionato rispetto
+            al periodo di riferimento climatico 1981-2010.
         </p>
     </div>
     <div class="panel panel-default">
@@ -145,11 +151,14 @@
         if (type == 't'){
             pre = 'Temperature';
             suf = '';
+            legend_title = 'Temperatura [°C]';
         } else {
             pre = 'Precipitazioni';
             if (suffix == 'd'){
+                legend_title = 'Precipitazione [mm]';
                 suf = 'A'
             } else if (suffix == 'p') {
+                legend_title = 'Precipitazione [%]';
                 suf = ''
             }
         }
@@ -157,7 +166,6 @@
 
         if (month == '') {
             layer_name = String.format('{0}{1}{2}{3}:{0}{1}{2}{3}',type, '1981-2010-', year, suffix)
-
         } else {
             layer_name = String.format('{0}{1}{2}-{3}{4}{5}:{0}{1}{2}-{3}{4}{5}',type, '1981-2010',month, year, month, suffix)
         }
@@ -171,8 +179,9 @@
             styles: style
         }).addTo(map);
 
-        $("#legend").attr('src', legend_url)
-        $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month))
+        $("#legend").attr('src', legend_url);
+        $("#legend-title").html(legend_title);
+        $("#geotiff").attr('href',String.format(download_url_default,type, suffix, year, month));
         {% for station in meteo_stations %}
             L.marker([{{ station.latitude }}, {{ station.longitude }}]).addTo(map)
                     .bindPopup("<b>{{ station.code }}</b> - {{ station.stname }}<br /> \

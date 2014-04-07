@@ -18,7 +18,7 @@ class ClimateIndexListView(ListView):
     context_object_name = 'indici'
 
     def get_queryset(self):
-        indici = ClimateIndex.objects.filter(sezione='index').order_by('-type','name')
+        indici = ClimateIndex.objects.filter(sezione='index').order_by('-type','rank')
         return indici
 
     def get_context_data(self, **kwargs):
@@ -237,7 +237,7 @@ class DiagrammiClimaticiDetailsView(TemplateView):
 
         station = Station.objects.get(pk=pk)
         dataidx = station.climateindexdata_set.filter(periodo=periodo, climate_index__sezione='index')\
-            .order_by('-climate_index__type', 'climate_index__name')
+            .order_by('-climate_index__type', 'climate_index__rank')
         dataext = station.climateextremesdata_set.filter(climate_index__sezione='extreme')\
             .order_by('climate_index__resolution', 'climate_index__type', 'climate_index__rank')
 
@@ -265,7 +265,7 @@ class DiagrammiClimaticiIndexDetailsViewExport(View):
 
         station = Station.objects.get(pk=pk)
         dataidx = station.climateindexdata_set.filter(periodo=periodo, climate_index__sezione='index')\
-            .order_by('-climate_index__type', 'climate_index__name')
+            .order_by('-climate_index__type', 'climate_index__rank')
 
         title = 'Indici climatici %s' % station.stname
         periodo_rif = '%s' % 'Periodo di riferimento ' + periodo

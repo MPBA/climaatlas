@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load analysys_tags %}
-{% block page_name %}Trend Anomalie{% endblock %}
+{% block page_name %}Andamento climatico annuale{% endblock %}
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %} " />
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
     <style>
         #map { height: 600px; }
-        i { font-size: 20px!important;}
+        li i { font-size: 20px!important;}
+        td i { font-size: 20px!important;}
     </style>
 {% endblock extra_head %}
 
 {% block breadcumb_items %}
     <li><a href="/">Home</a></li>
-    <li class="active">Andamento Climatico Annuale</li>
+    <li class="active">Andamento climatico annuale</li>
 {% endblock breadcumb_items %}
 
 {% block page_legend %}
@@ -32,13 +33,16 @@
 {% block main %}
     <div class="col-md-9 col-md-9 col-xs-9 col-sm-9 visible-lg visible-md visible-sm visible-xs">
         <div class="page-header">
-            <h1>Andamento Climatico Annuale</h1>
+            <h1>Andamento climatico annuale</h1>
         </div>
-         <div class="bs-callout bs-callout-info">
-            <p>Per le principali località del Trentino vengono riportati gli andamenti giornalieri di temperatura e precipitazione osservati nell'anno di riferimento.
-I dati sono aggiornati ogni mese.
-             </p>
-         </div>
+        <div class="bs-callout bs-callout-info">
+            <p>
+                Lo studio della variabilitá del clima viene svolto analizzando l'andamento dei principali parametri e indici climatici, legati perlopiú a temperature e precipitazioni,
+                per evidenziare eventuali segnali di trend positivo o negativo significativi dal punto di vista statistico e quindi indicativi o meno di cambiamenti in atto.<br>
+                Selezionando la localitá e il <i>trentennio di riferimento</i> climatico é possibile accedere all'andamento delle temperature e delle precipitazioni giornaliere
+                per l'anno individuato espresse a confronto con le medie del periodo di riferimento climatico.
+            </p>
+        </div>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
@@ -52,7 +56,6 @@ I dati sono aggiornati ogni mese.
                     <table class="table table-striped" id="cstations">
                         <thead>
                         <tr>
-                            <th style="width: 10%">Codice</th>
                             <th style="width: 30%">Nome</th>
                             <th>Dati disponbili</th>
                             <th>Periodo</th>
@@ -61,11 +64,10 @@ I dati sono aggiornati ogni mese.
                         <tbody>
                         {% for station in stations %}
                             <tr>
-                                <td>{{ station.code }}</td>
                                 <td><span class="label label-default" style="font-size: 13px">{{ station.stname }}</span></td>
                                 <td>
 
-                                {% dati_anomalie_disponibili station type as dati %}
+                                    {% dati_anomalie_disponibili station type as dati %}
                                     {% if 17 in dati %}
                                         <i class="wi-sprinkles"></i>
                                     {% endif %}
@@ -96,9 +98,9 @@ I dati sono aggiornati ogni mese.
     </div>
     <script>
         var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		        osmAttrib = '@ PAT Climatrentino ',
-		        osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-                var map = L.map('map').addLayer(osm);
+                osmAttrib = '@ PAT Climatrentino ',
+                osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+        var map = L.map('map').addLayer(osm);
 
         L.tileLayer('{% settings_value 'OSM_URL' %}', {
             maxZoom: 18,
