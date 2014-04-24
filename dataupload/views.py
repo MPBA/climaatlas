@@ -112,7 +112,7 @@ def upload(request):
                         try:
                             query_tmax = "TRUNCATE TABLE import_tmax"
                             pg.pg_command('climatlas_dev', query_tmax)
-                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMAX.txt' csv DELIMITER ';'"
                             pg.pg_command('climatlas_dev', query_tmax2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
                         except:
