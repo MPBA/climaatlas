@@ -6,6 +6,8 @@ from datetime import date
 import os
 import subprocess
 import logging
+import psycopg2
+from local_settings import psycopg_conf
 
 
 def valid_zip_file(request, file, accepted_names, typeofvalidation):
@@ -93,3 +95,81 @@ def cpu_count(divide_by=1):
     import multiprocessing
     procs = multiprocessing.cpu_count()/int(divide_by)
     return procs if procs > 0 else 1
+
+
+def get_tasks_progress():
+    with psycopg2.connect(**psycopg_conf) as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT * FROM task_progress WHERE active')
+            res = cur.fetchone()
+
+            task_progress = None
+
+            if res:  # a task is already running
+                task_progress = {
+                    'ts_start': res[2],
+                    'steps': [
+                        {
+                            'name': 'step1',
+                            'ts_start': res[4],
+                            'ts_end': res[5],
+                            'status': res[6]
+                        },
+                        {
+                            'name': 'step2',
+                            'ts_start': res[7],
+                            'ts_end': res[8],
+                            'status': res[9]
+                        },
+                        {
+                            'name': 'step4',
+                            'ts_start': res[10],
+                            'ts_end': res[11],
+                            'status': res[12]
+                        },
+                        {
+                            'name': 'step5',
+                            'ts_start': res[13],
+                            'ts_end': res[14],
+                            'status': res[15]
+                        },
+                        {
+                            'name': 'step6',
+                            'ts_start': res[16],
+                            'ts_end': res[17],
+                            'status': res[18]
+                        },
+                        {
+                            'name': 'step7',
+                            'ts_start': res[19],
+                            'ts_end': res[20],
+                            'status': res[21]
+                        },
+                        {
+                            'name': 'step8',
+                            'ts_start': res[22],
+                            'ts_end': res[23],
+                            'status': res[24]
+                        },
+                        {
+                            'name': 'step10',
+                            'ts_start': res[25],
+                            'ts_end': res[26],
+                            'status': res[27]
+                        },
+                        {
+                            'name': 'step11',
+                            'ts_start': res[28],
+                            'ts_end': res[29],
+                            'status': res[30]
+                        },
+                        {
+                            'name': 'map_generation',
+                            'ts_start': res[31],
+                            'ts_end': res[32],
+                            'status': res[33]
+                        }
+                    ]
+                }
+
+            return task_progress

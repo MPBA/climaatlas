@@ -14,6 +14,8 @@ from celery.utils.log import get_task_logger
 
 from local_settings import psycopg_conf
 
+# I TRULY HOPE NOBODY WILL HAVE TO WORK ON THIS CODE :)
+
 # import mapgen
 currentdir = os.path.dirname(
     os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -34,15 +36,13 @@ def track_status(name):
             with psycopg2.connect(**psycopg_conf) as conn:
                 with conn.cursor() as cur:
                     # Q: OMG n00b this is vulnerable to SQL injection
-                    # A: I know, but this won't be accessible by anyone. NP.
+                    # A: I know, but this won't be accessible by evil ppl. NP.
                     cur.execute(
                         'UPDATE task_progress SET {0}_start=%s, {0}_status=1 WHERE active'.format(
                             name),
                         (datetime.now(),)
                     )
-            ret = True
-            time.sleep(5)
-            # ret = func(*args, **kwargs)
+            ret = func(*args, **kwargs)
 
             with psycopg2.connect(**psycopg_conf) as conn:
                 with conn.cursor() as cur:
@@ -89,13 +89,10 @@ def track_status_group(name):
             # 0: never executed
             # 1: executing
             # 2: already executed
-            return set_started.si(name) | set_finished.si(name)
             tasks_group = func(*args, **kwargs)
             return set_started.si(name) | chord(tasks_group,
                                                 set_finished.si(name))
-
         return wrapper
-
     return dat_actual_decorator
 
 
@@ -243,7 +240,7 @@ def step8_group(params):
         if '1981-2010' in periods:
             tasks.append(_step8.si(year, 1981, 2010))
 
-    return group(*tasks)
+    return tasks
 
 
 @app.task(queue='geoatlas')
@@ -271,7 +268,7 @@ def step10_group(params):
             pstart, pend = map(int, period.split('-'))
             tasks.append(_step10.si(pstart, pend))
 
-    return group(*tasks)
+    return tasks
 
 
 @app.task(queue='geoatlas')
@@ -301,20 +298,27 @@ def generate_days_group(params):
         tasks.append(_generate_day.si(day, 'p'))
         tasks.append(_generate_day.si(day, 't'))
 
-    return group(*tasks)
+    return set_started('map') | chord(tasks, chord_finisher.si())
 
 
 @app.task(queue='geoatlas')
 def generate_all(params):
     # va eseguito dopo avere modificato i giorni, non prende parametri
-    m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs")
+    pc = psycopg_conf
+    m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs",
+               pguser=pc['user'], pgdb=pc['database'],
+               pgpass=pc['password'], pghost=pc['host'])
     m.generate_all()
 
-    # set active to False
+
+@app.task(queue='geoatlas')
+def set_finished_megachain():
     with psycopg2.connect(**psycopg_conf) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                'UPDATE task_progress SET active=false WHERE active=true')
+                'UPDATE task_progress SET active=false, ts_end=%s WHERE active',
+                datetime.now()
+            )
 
 
 @app.task(queue='geoatlas')
@@ -358,7 +362,10 @@ def launch_celery_tasks():
     )
     with psycopg2.connect(**psycopg_conf) as conn:
         with conn.cursor() as cur:
-            cur.execute('INSERT INTO task_progress(id) VALUES(DEFAULT)')
+            cur.execute(
+                'INSERT INTO task_progress(id, ts_start) VALUES(DEFAULT, %s)',
+                datetime.now()
+            )
 
     return (
         step1.si(p) |  # launch step1 and wait until it finishes
@@ -373,11 +380,12 @@ def launch_celery_tasks():
                  ),
                  step8_group(p),
                  step11.si(p)
-              ], chord_finisher.si())  # |
+              ], chord_finisher.si()) |
 
         # when all of the above terminates, launch generate_days first
-        #generate_days_group(p) |
-        #generate_all.si(p)  # and generate_all then
+        generate_days_group(p) |
+        generate_all.si(p) |  # and generate_all then
+        set_finished_megachain.si()
     ).apply_async(queue='geoatlas')
 
 
@@ -386,13 +394,43 @@ def generate_maps():
     # todo: se chiamato solo per stazioni, settare tutti gli step a fatti e fare solo questo
     with psycopg2.connect(**psycopg_conf) as conn:
         with conn.cursor() as cur:
+            cur.execute('SELECT COUNT(*) FROM task_progress WHERE active')
+            if cur.fetchone()[0]:
+                return None
             cur.call_proc('import_sites')
             date_start, date_end = cur.fetchone()
+            cur.execute(
+                'INSERT INTO task_progress(id) VALUES(DEFAULT, %s)',
+                datetime.now()
+            )
+
+            # set all the other task as 'finished'
+            giant_query = \
+                'UPDATE task_progress SET ' \
+                'step1_start={ts}, step1_status=2, step1_end={ts},' \
+                'step2_start={ts}, step2_status=2, step2_end={ts}' \
+                'step4_start={ts}, step4_status=2, step4_end={ts}' \
+                'step5_start={ts}, step5_status=2, step5_end={ts}' \
+                'step6_start={ts}, step6_status=2, step6_end={ts}' \
+                'step7_start={ts}, step7_status=2, step7_end={ts}' \
+                'step8_start={ts}, step8_status=2, step8_end={ts}' \
+                'step10_start={ts}, step10_status=2, step10_end={ts}' \
+                'step11_start={ts}, step11_status=2, step11_end={ts}' \
+                'map_start={ts}, map_status=1 WHERE active'.format(
+                    ts=cur.mogrify('%s', datetime.now()),
+                )
+            cur.execute(giant_query)
 
     if date_start and date_end:
-        m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs")
-        m.DATE_START = datetime.date(date_start.year, 1, 1)
-        m.DATE_END = datetime.date(date_end.year, 12, 31)
+        pc = psycopg_conf
+        m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs",
+                   pguser=pc['user'], pgdb=pc['database'],
+                   pgpass=pc['password'], pghost=pc['host'])
+        m.DATE_START = datetime(date_start.year, 1, 1)
+        m.DATE_END = datetime(date_end.year, 12, 31)
         m.generate_all()
+
+    set_finished.delay('map')
+    set_finished_megachain.apply_async(queue='geoatlas')
 
 
