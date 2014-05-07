@@ -12,7 +12,7 @@ from celeryapp import app
 from celery import group, chain, chord
 from celery.utils.log import get_task_logger
 
-from local_settings import psycopg_conf
+from local_settings import psycopg_conf, MAPGEN_BINS, MAPGEN_TIFFS
 
 # I TRULY HOPE NOBODY WILL HAVE TO WORK ON THIS CODE :)
 
@@ -286,7 +286,10 @@ def step11(params):
 
 @app.task(queue='geoatlas')
 def _generate_day(day, type_prefix):
-    m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs")
+    pc = psycopg_conf
+    m = Mapgen(MAPGEN_BINS, MAPGEN_TIFFS,
+               pguser=pc['user'], pgdb=pc['database'],
+               pgpass=pc['password'], pghost=pc['host'])
     m.generate_day(type_prefix, day.year, day.month, day.day)
 
 
@@ -305,7 +308,7 @@ def generate_days_group(params):
 def generate_all(params):
     # va eseguito dopo avere modificato i giorni, non prende parametri
     pc = psycopg_conf
-    m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs",
+    m = Mapgen(MAPGEN_BINS, MAPGEN_TIFFS,
                pguser=pc['user'], pgdb=pc['database'],
                pgpass=pc['password'], pghost=pc['host'])
     m.generate_all()
@@ -362,10 +365,7 @@ def launch_celery_tasks():
     )
     with psycopg2.connect(**psycopg_conf) as conn:
         with conn.cursor() as cur:
-            cur.execute(
-                'INSERT INTO task_progress(id, ts_start) VALUES(DEFAULT, %s)',
-                datetime.now()
-            )
+            cur.execute('INSERT INTO task_progress(id) VALUES(DEFAULT)')
 
     return (
         step1.si(p) |  # launch step1 and wait until it finishes
@@ -391,18 +391,19 @@ def launch_celery_tasks():
 
 @app.task(queue='geoatlas')
 def generate_maps():
-    # todo: se chiamato solo per stazioni, settare tutti gli step a fatti e fare solo questo
     with psycopg2.connect(**psycopg_conf) as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT COUNT(*) FROM task_progress WHERE active')
             if cur.fetchone()[0]:
                 return None
+
             cur.call_proc('import_sites')
             date_start, date_end = cur.fetchone()
-            cur.execute(
-                'INSERT INTO task_progress(id) VALUES(DEFAULT, %s)',
-                datetime.now()
-            )
+
+            if None in (date_start, date_end):
+                return None
+
+            cur.execute('INSERT INTO task_progress(id) VALUES(DEFAULT)')
 
             # set all the other task as 'finished'
             giant_query = \
@@ -421,9 +422,8 @@ def generate_maps():
                 )
             cur.execute(giant_query)
 
-    if date_start and date_end:
         pc = psycopg_conf
-        m = Mapgen("/geostore/mapgen/bins", "/geostore/tiffs",
+        m = Mapgen(MAPGEN_BINS, MAPGEN_TIFFS,
                    pguser=pc['user'], pgdb=pc['database'],
                    pgpass=pc['password'], pghost=pc['host'])
         m.DATE_START = datetime(date_start.year, 1, 1)
