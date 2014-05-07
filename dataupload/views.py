@@ -17,6 +17,9 @@ from .utils import handle_upload, valid_zip_file, call_command
 from .pgbackup import PGBackup
 from celeryapp import app
 from utils import get_tasks_progress
+from local_settings import psycopg_conf
+
+db_name = psycopg_conf['database']
 
 @require_http_methods(['GET', 'POST'])
 @csrf_exempt
@@ -101,9 +104,9 @@ def upload(request):
                                       password=settings.DATABASES['default']['PASSWORD'])
                         try:
                             query_rain = "TRUNCATE TABLE import_rain"
-                            pg.pg_command('climatlas_dev', query_rain)
+                            pg.pg_command(db_name, query_rain)
                             query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_rain2)
+                            pg.pg_command(db_name, query_rain2)
                             messages.add_message(request, messages.SUCCESS, 'Query rain Completata!')
                         except:
                             messages.add_message(request,
@@ -112,9 +115,9 @@ def upload(request):
                             tutto_ok = False
                         try:
                             query_tmin = "TRUNCATE TABLE import_tmin"
-                            pg.pg_command('climatlas_dev', query_tmin)
+                            pg.pg_command(db_name, query_tmin)
                             query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_tmin2)
+                            pg.pg_command(db_name, query_tmin2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmin completata!')
 
                         except:
@@ -124,9 +127,9 @@ def upload(request):
                             tutto_ok = False
                         try:
                             query_tmax = "TRUNCATE TABLE import_tmax"
-                            pg.pg_command('climatlas_dev', query_tmax)
+                            pg.pg_command(db_name, query_tmax)
                             query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMAX.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_tmax2)
+                            pg.pg_command(db_name, query_tmax2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
                         except:
                             messages.add_message(request,
