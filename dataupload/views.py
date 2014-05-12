@@ -15,6 +15,11 @@ from django.contrib import messages
 from subprocess import call
 from .utils import handle_upload, valid_zip_file, call_command
 from .pgbackup import PGBackup
+from celeryapp import app
+from utils import get_tasks_progress
+from local_settings import psycopg_conf
+
+db_name = psycopg_conf['database']
 
 @require_http_methods(['GET', 'POST'])
 @csrf_exempt
@@ -27,13 +32,17 @@ def upload(request):
     if response:
         return response
 
+    task_progress = get_tasks_progress()
+    if task_progress is not None:
+        return render(request, 'dataupload/upload_form.html', {'task_progress': task_progress})
+
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
 
         if form.is_valid():
             a = form.cleaned_data
             if a['tipo'] == 'stazioni':
-                #upload zip file for stazioni
+                # upload zip file for stazioni
                 if settings.FILE_EXT.match(str(a['file'])).group('ext') in settings.VALID_EXTTENSIONS:
                     file_url = handle_upload(request, a['file'])
                     if valid_zip_file(request, os.path.join(settings.UPLOAD_DIR, file_url),
@@ -53,9 +62,12 @@ def upload(request):
                         call_command(iconv_cmd, shell=True)
                         try:
                             PGBackup(host=settings.DATABASES['default']['HOST'],
-                                 user=settings.DATABASES['default']['USER'],
-                                 password=settings.DATABASES['default']['PASSWORD']).pg_file(settings.DATABASES['default']['NAME'], sql_file+".utf8")
+                                     user=settings.DATABASES['default']['USER'],
+                                     password=settings.DATABASES['default']['PASSWORD']).pg_file(settings.DATABASES['default']['NAME'], sql_file+".utf8")
                             messages.add_message(request, messages.SUCCESS, 'Site caricato!' + str(cmd))
+
+                            app.send_task('tasks.generate_maps', queue='geoatlas')
+
                         except:
                             messages.add_message(request, messages.ERROR, 'Pgdbf error')
 
@@ -72,12 +84,14 @@ def upload(request):
                                          'Estensione del file errata! Verificare che il file sia .zip')
             elif a['tipo'] == 'dati':
                 #upload zip file for dati
+                tutto_ok = True
+
                 if settings.FILE_EXT.match(str(a['file'])).group('ext') in settings.VALID_EXTTENSIONS:
                     file_url = handle_upload(request, a['file'])
                     if valid_zip_file(request, os.path.join(settings.UPLOAD_DIR, file_url),
                                       settings.DATI_NAMES,
                                       'dati')[0]:
-                        ZipFile(os.path.join(settings.UPLOAD_DIR, file_url)).\
+                        ZipFile(os.path.join(settings.UPLOAD_DIR, file_url)). \
                             extractall(upload_full_path,
                                        valid_zip_file(request,
                                                       os.path.join(settings.UPLOAD_DIR, file_url),
@@ -90,47 +104,57 @@ def upload(request):
                                       password=settings.DATABASES['default']['PASSWORD'])
                         try:
                             query_rain = "TRUNCATE TABLE import_rain"
-                            pg.pg_command('climatlas_dev', query_rain)
+                            pg.pg_command(db_name, query_rain)
                             query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_rain2)
+                            pg.pg_command(db_name, query_rain2)
                             messages.add_message(request, messages.SUCCESS, 'Query rain Completata!')
                         except:
                             messages.add_message(request,
-                                         messages.ERROR,
-                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                                                 messages.ERROR,
+                                                 'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                            tutto_ok = False
                         try:
                             query_tmin = "TRUNCATE TABLE import_tmin"
-                            pg.pg_command('climatlas_dev', query_tmin)
+                            pg.pg_command(db_name, query_tmin)
                             query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_tmin2)
-                            messages.add_message(request, messages.SUCCESS, 'Query tmin complettata!')
+                            pg.pg_command(db_name, query_tmin2)
+                            messages.add_message(request, messages.SUCCESS, 'Query tmin completata!')
 
                         except:
                             messages.add_message(request,
-                                         messages.ERROR,
-                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                                                 messages.ERROR,
+                                                 'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                            tutto_ok = False
                         try:
                             query_tmax = "TRUNCATE TABLE import_tmax"
-                            pg.pg_command('climatlas_dev', query_tmax)
-                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
-                            pg.pg_command('climatlas_dev', query_tmax2)
+                            pg.pg_command(db_name, query_tmax)
+                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMAX.txt' csv DELIMITER ';'"
+                            pg.pg_command(db_name, query_tmax2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
                         except:
                             messages.add_message(request,
-                                         messages.ERROR,
-                                         'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                                                 messages.ERROR,
+                                                 'Si è verificato un errore nella scrittura dei dati in DB! Contattare il gestore del sistema!')
+                            tutto_ok = False
 
                     else:
                         messages.add_message(request,
                                              messages.ERROR,
                                              'Il contenuto del file zip non è conforme alle specifiche!')
+                        tutto_ok = False
                         os.remove(os.path.join(settings.UPLOAD_DIR, file_url))
                 else:
                     messages.add_message(request,
                                          messages.ERROR,
                                          'Estensione del file errata! Verificare che il file sia .zip')
+                    tutto_ok = False
+
+                if tutto_ok:
+                    app.send_task('tasks.generate_maps', queue='geoatlas')
+
             else:
                 pass
+
             return render(request, 'dataupload/upload_form.html', {'form': form})
     else:
         form = UploadFileForm()

@@ -47,14 +47,15 @@ class Mapgen(object):
     DATE_START = datetime.date(1941, 1, 1)
     DATE_END = datetime.date(2011, 12, 31)
 
-    def __init__(self, bindir, tiffdir):
+    def __init__(self, bindir, tiffdir, pguser='postgres', pgdb='climatlas_dev',
+                 pgpass='u7y6t5r4e3w2', pghost='geoatlas'):
         self.bindir = bindir
         self.tiffdir = tiffdir
         self.ref_map = os.path.join(self.tiffdir, self.REFERENCE_MAP)
-        self.pguser = "postgres"
-        self.pgdb = "climatlas_dev"
-        self.pgpass = 'u7y6t5r4e3w2'
-        self.pghost = "geoatlas"
+        self.pguser = pguser
+        self.pgdb = pgdb
+        self.pgpass = pgpass
+        self.pghost = pghost
 
     def geoserver_upload(self, input_file):
         print "upload", input_file
@@ -132,7 +133,8 @@ class Mapgen(object):
 
             return Mapgen.FILE_ANOMALY_MONTH.format(type=type_prefix, period=period, y=year, m=month, suffix=suffix)
         elif season is not None and season != "":
-            return Mapgen.FILE_ANOMALY_SEASON.format(type=type_prefix, period=period, y=year, season=season, suffix=suffix)
+            return Mapgen.FILE_ANOMALY_SEASON.format(type=type_prefix, period=period, y=year, season=season,
+                                                     suffix=suffix)
         else:
             return Mapgen.FILE_ANOMALY.format(type=type_prefix, period=period, y=year, suffix=suffix)
 
@@ -239,8 +241,8 @@ class Mapgen(object):
 
         # export stations to CSV in temp dir
         query = 'SELECT code as "Cod_Hystra", ' \
-                'ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as "UTM_EX", ' \
-                'ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as "UTM_NY", ' \
+            'ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as "UTM_EX", ' \
+            'ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as "UTM_NY", ' \
                 'elevation::numeric(10,3) as "HEIGHT", ' \
                 'commence as "DATA_INST", ' \
                 'COALESCE(cease, CURRENT_TIMESTAMP) as "DATA_DISINST" ' \
@@ -389,7 +391,7 @@ class Mapgen(object):
 
         elif computation_type == "perc":
             #output = (current_arr - period_arr) * 100 / period_arr
-            output = (current_arr) * 100 / period_arr
+            output = current_arr * 100 / period_arr
             output_file = self.get_anomaly_path(type_prefix, period, year=year, month=month, season=season, suffix="p")
         else:
             raise Exception("computation_type not allow")
@@ -404,26 +406,8 @@ class Mapgen(object):
         out_map.SetGeoTransform(ref_map.GetGeoTransform())
         out_map.GetRasterBand(1).SetNoDataValue(-9999)
         out_map.GetRasterBand(1).WriteArray(output, 0, 0)
-        out_map = None
         self.geoserver_upload(output_file)
         return output_file
-
-    def generate_all_anomalies(self):
-        period = self.PERIODS[2]
-
-        delta = (self.DATE_END.year - self.DATE_START.year) + 1
-        for y in range(self.DATE_START.year, self.DATE_START.year + delta):
-            self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=None, season=None, computation_type="diff")
-            self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=None, computation_type="diff")
-            self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=None, computation_type="perc")
-            for m in range(1, 13):
-                self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=m, season=None, computation_type="diff")
-                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=m, season=None, computation_type="diff")
-                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=m, season=None, computation_type="perc")
-            for s in self.SEASONS:
-                self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=None, season=s, computation_type="diff")
-                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=s, computation_type="diff")
-                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=s, computation_type="perc")
 
     # generates tiff file (temperature/precipitation) for a given multiyear period (input is year(+month) tif file)
     def generate_period(self, type_prefix, period, month=None):
@@ -466,6 +450,23 @@ class Mapgen(object):
 
         self.geoserver_upload(output_file)
         return output_file
+
+    def generate_all_anomalies(self):
+        period = self.PERIODS[2]
+
+        delta = (self.DATE_END.year - self.DATE_START.year) + 1
+        for y in range(self.DATE_START.year, self.DATE_START.year + delta):
+            self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=None, season=None, computation_type="diff")
+            self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=None, computation_type="diff")
+            self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=None, computation_type="perc")
+            for m in range(1, 13):
+                self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=m, season=None, computation_type="diff")
+                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=m, season=None, computation_type="diff")
+                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=m, season=None, computation_type="perc")
+            for s in self.SEASONS:
+                self.compute_anomaly(self.TEMP_PREFIX, period, year=y, month=None, season=s, computation_type="diff")
+                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=s, computation_type="diff")
+                self.compute_anomaly(self.PREC_PREFIX, period, year=y, month=None, season=s, computation_type="perc")
 
     def generate_all_days(self):
         delta = (self.DATE_END - self.DATE_START).days + 1
@@ -514,8 +515,8 @@ class Mapgen(object):
 
     def generate_station(self, type_prefix):
         query = "SELECT code, " \
-                "ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as \"UTM_EX\", " \
-                "ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as \"UTM_NY\", " \
+            "ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as \"UTM_EX\", " \
+            "ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(longitude,latitude),4326),32632))::numeric(10,1) as \"UTM_NY\", " \
                 "the_geom FROM climatlas.station " \
                 "RIGHT JOIN ( " \
                 "   SELECT station_id FROM climatlas.{type} " \
