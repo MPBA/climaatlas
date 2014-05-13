@@ -57,9 +57,9 @@
                             {% if step.status == 0 %}
                                 Not executed yet.
                             {% elif step.status == 1 %}
-                                Executing...
+                                <span style="color: dodgerblue">Executing...</span>
                             {% elif step.status == 2 %}
-                                Already executed.
+                                <span style="color: green">Executed.</span>
                             {% endif %}
                         </td>
                     <td>{{ step.ts_start }}</td>

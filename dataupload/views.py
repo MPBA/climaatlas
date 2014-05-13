@@ -5,7 +5,6 @@ from django.shortcuts import render
 from .basicauth import BasicAuthMiddleware
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 from .forms import UploadFileForm
 from zipfile import ZipFile
 from datetime import date
@@ -18,6 +17,7 @@ from .pgbackup import PGBackup
 from celeryapp import app
 from utils import get_tasks_progress
 from local_settings import psycopg_conf
+from django.conf import settings
 
 db_name = psycopg_conf['database']
 
@@ -105,7 +105,8 @@ def upload(request):
                         try:
                             query_rain = "TRUNCATE TABLE import_rain"
                             pg.pg_command(db_name, query_rain)
-                            query_rain2 = "\copy import_rain FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/Pioggia.txt' csv DELIMITER ';'"
+                            query_rain2 = "\copy import_rain FROM '{0}' csv DELIMITER ';'"\
+                                .format(os.path.join(settings.UPLOAD_DIR, 'files/Pioggia.txt'))
                             pg.pg_command(db_name, query_rain2)
                             messages.add_message(request, messages.SUCCESS, 'Query rain Completata!')
                         except:
@@ -116,7 +117,8 @@ def upload(request):
                         try:
                             query_tmin = "TRUNCATE TABLE import_tmin"
                             pg.pg_command(db_name, query_tmin)
-                            query_tmin2 = "\copy import_tmin FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMIN.txt' csv DELIMITER ';'"
+                            query_tmin2 = "\copy import_tmin FROM '{0}' csv DELIMITER ';'"\
+                                .format(os.path.join(settings.UPLOAD_DIR, 'files/TempMIN.txt'))
                             pg.pg_command(db_name, query_tmin2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmin completata!')
 
@@ -128,7 +130,8 @@ def upload(request):
                         try:
                             query_tmax = "TRUNCATE TABLE import_tmax"
                             pg.pg_command(db_name, query_tmax)
-                            query_tmax2 = "\copy import_tmax FROM '/www/climatlas/climaatlas/climaatlas/uploads/files/TempMAX.txt' csv DELIMITER ';'"
+                            query_tmax2 = "\copy import_tmax FROM '{0}' csv DELIMITER ';'"\
+                                .format(os.path.join(settings.UPLOAD_DIR, 'files/TempMAX.txt'))
                             pg.pg_command(db_name, query_tmax2)
                             messages.add_message(request, messages.SUCCESS, 'Query tmax Completata!')
                         except:
@@ -150,7 +153,7 @@ def upload(request):
                     tutto_ok = False
 
                 if tutto_ok:
-                    app.send_task('tasks.generate_maps', queue='geoatlas')
+                    app.send_task('tasks.launch_celery_tasks', queue='geoatlas')
 
             else:
                 pass
