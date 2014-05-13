@@ -1,6 +1,5 @@
 # coding=utf-8
 from __future__ import absolute_import
-import time
 import os
 import sys
 import inspect
@@ -10,8 +9,6 @@ import psycopg2
 
 from celeryapp import app
 from celery import group, chain, chord
-from celery.utils.log import get_task_logger
-
 from local_settings import psycopg_conf, MAPGEN_BINS, MAPGEN_TIFFS
 
 # I TRULY HOPE NOBODY WILL HAVE TO WORK ON THIS CODE :)
@@ -52,7 +49,7 @@ def track_status(name):
                         (datetime.now(),)
                     )
 
-            return ret
+            return ret if ret is not None else True
 
         return wrapper
 
@@ -90,9 +87,10 @@ def track_status_group(name):
             # 1: executing
             # 2: already executed
             tasks_group = func(*args, **kwargs)
-            return set_started.si(name) | chord(tasks_group,
-                                                set_finished.si(name))
+            return set_started.si(name) | group(tasks_group) | set_finished.si(name)
+
         return wrapper
+
     return dat_actual_decorator
 
 
@@ -217,7 +215,6 @@ def _step8(mean_year, pstart, pend):
             )
 
 
-@app.task(queue='geoatlas')
 @track_status_group('step8')
 def step8_group(params):
     tasks = []
@@ -259,7 +256,6 @@ def _step10(pstart, pend):
             )
 
 
-@app.task(queue='geoatlas')
 @track_status_group('step10')
 def step10_group(params):
     tasks = []
@@ -293,7 +289,6 @@ def _generate_day(day, type_prefix):
     m.generate_day(type_prefix, day.year, day.month, day.day)
 
 
-@app.task(queue='geoatlas')
 def generate_days_group(params):
     tasks = []
 
@@ -301,7 +296,7 @@ def generate_days_group(params):
         tasks.append(_generate_day.si(day, 'p'))
         tasks.append(_generate_day.si(day, 't'))
 
-    return set_started('map') | chord(tasks, chord_finisher.si())
+    return set_started.si('map') | chord(tasks, chord_finisher.si())
 
 
 @app.task(queue='geoatlas')
@@ -322,6 +317,14 @@ def set_finished_megachain():
                 'UPDATE task_progress SET active=false, ts_end=%s WHERE active',
                 datetime.now()
             )
+
+@app.task(queue='geoatlas')
+def dumb_task():
+    """
+    Needed for task-synchronization purposes.
+    As of celery 3.1.11, this is needed, otherwise celery will blow up
+    """
+    return True
 
 
 @app.task(queue='geoatlas')
@@ -367,25 +370,25 @@ def launch_celery_tasks():
         with conn.cursor() as cur:
             cur.execute('INSERT INTO task_progress(id) VALUES(DEFAULT)')
 
+    step8 = step8_group(p)
+    step10 = step10_group(p)
+    generate_days = generate_days_group(p)
+
     return (
-        step1.si(p) |  # launch step1 and wait until it finishes
-        chord([  # then launch step2, 4, 8 and 11 together
-                 (
-                     chord([step2.si(p), step4.si(p)], chord_finisher.si()) |
-
-                     # when both step2 and step4 have finished, launch step10,7,5,6.
-                     # note that step10 spawns a bunch of subtasks
-                     chord([step10_group(p), step7.si(p), step5.si(p),
-                            step6.si(p)], chord_finisher.si())
-                 ),
-                 step8_group(p),
-                 step11.si(p)
-              ], chord_finisher.si()) |
-
-        # when all of the above terminates, launch generate_days first
-        generate_days_group(p) |
-        generate_all.si(p) |  # and generate_all then
-        set_finished_megachain.si()
+        step1.si(p) |
+        group(step2.si(p), step4.si(p)) |
+        dumb_task.si() | dumb_task.si() |
+        group(
+            step11.si(p),
+            step7.si(p),
+            step5.si(p),
+            step6.si(p),
+        ) |
+        dumb_task.si() | dumb_task.si() |
+        step10 | step8 |
+        generate_days |
+        generate_all.si(p) |
+        set_finished_megachain.si(p)
     ).apply_async(queue='geoatlas')
 
 
@@ -395,13 +398,13 @@ def generate_maps():
         with conn.cursor() as cur:
             cur.execute('SELECT COUNT(*) FROM task_progress WHERE active')
             if cur.fetchone()[0]:
-                return None
+                return False
 
-            cur.call_proc('import_sites')
+            cur.callproc('import_sites')
             date_start, date_end = cur.fetchone()
 
             if None in (date_start, date_end):
-                return None
+                return False
 
             cur.execute('INSERT INTO task_progress(id) VALUES(DEFAULT)')
 
@@ -432,5 +435,6 @@ def generate_maps():
 
     set_finished.delay('map')
     set_finished_megachain.apply_async(queue='geoatlas')
+
 
 
