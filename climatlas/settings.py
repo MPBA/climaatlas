@@ -21,6 +21,8 @@ SITE_ID = 1
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '9dvjjlf)u%dw!1!7(li9=xy0xfut2xno)52&xck-nq+1srrv6h'
 
+DEBUG = True
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # List of finder classes that know how to find static files in
 # various locations.
