@@ -7,8 +7,8 @@ import os
 import subprocess
 import logging
 import psycopg2
-from local_settings import psycopg_conf
-
+# from local_settings import psycopg_conf
+from django.conf import settings
 
 def valid_zip_file(request, file, accepted_names, typeofvalidation):
     if typeofvalidation == 'stazioni':
@@ -98,7 +98,8 @@ def cpu_count(divide_by=1):
 
 
 def get_tasks_progress():
-    with psycopg2.connect(**psycopg_conf) as conn:
+    # with psycopg2.connect(**psycopg_conf) as conn:
+    with psycopg2.connect(**settings.psycopg_conf) as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT * FROM task_progress WHERE active')
             res = cur.fetchone()

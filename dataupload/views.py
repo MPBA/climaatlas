@@ -17,7 +17,7 @@ from .pgbackup import PGBackup
 from celeryapp import app
 from utils import get_tasks_progress
 from local_settings import psycopg_conf
-from django.conf import settings
+#as from django.conf import settings
 
 db_name = psycopg_conf['database']
 
