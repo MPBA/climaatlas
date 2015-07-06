@@ -2,7 +2,7 @@
 from owslib.wms import WebMapService
 import urllib2
 import StringIO
-import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 import os
 
 class GenerateImmage(object):
