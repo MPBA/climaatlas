@@ -21,8 +21,6 @@ SITE_ID = 1
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '9dvjjlf)u%dw!1!7(li9=xy0xfut2xno)52&xck-nq+1srrv6h'
 
-DEBUG = True
-
 # SECURITY WARNING: don't run with debug turned on in production!
 # List of finder classes that know how to find static files in
 # various locations.
@@ -213,6 +211,6 @@ EXPORT_MAP_BASE_PATH = '/media/datapart/fbk/code/climaatlas/climaatlas/analysis/
 # ignored in your version control system allowing for settings to be
 # defined per machine.
 try:
-    from local_settings import *
+    from climatlas.local_settings import *
 except ImportError:
     pass
