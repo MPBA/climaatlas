@@ -34,18 +34,37 @@
                     style = 'Temperature'
                     legend_url = String.format(legend_url_default, type, period, month, style);
                     legend_title = 'Temperatura [°C]';
-                } else {
+                } else if (type == 'p'){
                     var style = $("#layermonth option:selected").attr('layerstyle');
                     legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
                     legend_title = 'Precipitazione [mm]';
+                    console.log(String.format(legend_url_default, type, period, month, style+"Legend"));
+                } else if (type == 'r'){
+                    var style = 'atlante_mensile_gen';
+                    tmplegend_url = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
+                                    '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}_{1}_{2}&STYLE={3}&' +
+                                    'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
+                    legend_url = String.format(tmplegend_url, 'atlante_solare', '01', '2013', 'atlante_mensile_2');
+                    legend_title = 'Radiazioni [MJm-2]';
                 }
 
-                layer.setParams({
-                    layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
-                    format: 'image/png',
-                    transparent: true,
-                    styles: style
-                });
+                if (type == 'r'){
+                    layer.setParams({
+                        layers: String.format('{0}_{1}_{2}:{0}_{1}_{2}', 'atlante_solare', '01', '2013'),
+                        format: 'image/png',
+                        transparent: true,
+                        styles: style
+                    });
+                    console.log('Ciao');
+                } else {
+                    console.log(type);
+                    layer.setParams({
+                        layers: String.format('{0}{1}{2}:{0}{1}{2}', type, period, month),
+                        format: 'image/png',
+                        transparent: true,
+                        styles: style
+                    });
+                }
                 $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
                 $("#legend").attr('src', legend_url);
                 $("#legend-title").html(legend_title);
@@ -142,19 +161,44 @@
             style = 'Temperature'
             legend_url = String.format(legend_url_default, type, period, month, style);
             legend_title = 'Temperatura [°C]';
-        } else {
+        } else if (type == 'p'){
             var style = $("#layermonth option:selected").attr('layerstyle');
             legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
             legend_title = 'Precipitazione [mm]';
+            console.log(String.format(legend_url_default, type, period, month, style+"Legend"));
+        } else if (type == 'r'){
+            var style = 'atlante_mensile_gen';
+            tmplegend_url = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
+                            '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}_{1}_{2}&STYLE={3}&' +
+                            'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
+            legend_url = String.format(tmplegend_url, ' ', '01', '2013', 'atlante_mensile_2');
+            legend_title = 'Radiazioni [MJm-2]';
         }
 
+{#        #}
+{#        {#}
+{#            var style = $("#layermonth option:selected").attr('layerstyle');#}
+{#            legend_url = String.format(legend_url_default, type, period, month, style+"Legend");#}
+{#            legend_title = 'Precipitazione [mm]';#}
+{#        }#}
+
+{#        if (type == 'r'){#}
+{#            console.log('culo');#}
+{#            layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {#}
+{#                layers: String.format('{0}_{1}_{2}:{0}_{1}_{2}','atlante_solare', '01', '2013'),#}
+{#                format: 'image/png',#}
+{#                transparent: true,#}
+{#                styles: style#}
+{#            }).addTo(map);#}
+{#        } else {#}
+        console.log('caio');
         layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
             layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
             format: 'image/png',
             transparent: true,
             styles: style
         }).addTo(map);
-
+{#        }#}
         $("#legend").attr('src', legend_url);
         $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
         $("#legend-title").html(legend_title);

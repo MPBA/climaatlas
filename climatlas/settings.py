@@ -153,6 +153,7 @@ DATI_NAMES = ['pioggia.txt', 'tempmax.txt', 'tempmin.txt']
 LAYER_TYPE = (
     ('p', 'Precipitazione'),
     ('t', 'Temperatura'),
+    ('r', 'Radiazione'),
 )
 
 LAYER_TYPE_ANOMALIE = (
