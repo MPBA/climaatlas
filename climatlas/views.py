@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse, HttpResponseNotFound, Http404
-from .models import Station
+from .models import Station, StationView
 from analysis.models import Chart
 
 
@@ -33,6 +33,7 @@ class StazioniClimaticheView(TemplateView):
         context = super(StazioniClimaticheView, self).get_context_data()
         #context['meteo_stations'] = dictfetchall(cursor)
         station = Station.objects.all().order_by('stname')
+        station = StationView.objects.all().order_by('stname')
         context['meteo_stations'] = station
         return context
 

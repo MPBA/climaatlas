@@ -51,6 +51,9 @@
                 <i class="wi-thermometer" style="font-size: 20px!important"></i> Temperatura
             </li>
             <li>
+                <i class="wi-day-sunny" style="font-size: 20px!important"></i> Radiazione
+            </li>
+            <li>
                 <i class="fa fa-circle" style="color: #cb4437; font-size: 12px!important"></i> Non attiva
             </li>
             <li>
@@ -95,6 +98,7 @@
                                 <td>
                                     {% if 'temp_avg' in station.datasets %}<i class="wi-temp_avg" style="font-size: 20px!important"></i>{% endif %}
                                     {% if 'rain' in station.datasets %}<i class="wi-rain" style="font-size: 20px!important"></i>{% endif %}
+                                    {% if 'radiation' in station.datasets or 'clear_sky' in station.datasets %}<i class="wi-day-sunny" style="font-size: 20px!important"></i>{% endif %}
 
                                 </td>
                                 <td>{{ station.commence|date:"d/m/Y" }}</td>
