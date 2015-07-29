@@ -25,46 +25,66 @@
                 'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
         download_url_default = 'export/{0}/{1}/{2}/'
 
+        select_switch = function(type, opt2idx){
+            var myopt = $("#layerperiod option");
+            var myopt2 = $("#layermonth option");
+            var id = 0 || opt2idx;
+            console.log(opt2idx);
+            if (type == 'r') {
+                myopt.slice(0,3).each(function(index, value){
+                    value.hidden=true
+                });
+                myopt[3].hidden=false;
+                myopt[3].selected=true;
+                myopt2.slice(-4).each(function(index, value){
+                   value.hidden = true;
+                });
+            } else {
+                myopt.slice(0, 3).each(function (index, value) {
+                    value.hidden = false
+                });
+                myopt[3].hidden = true;
+                myopt[id].selected = true;
+                myopt2.slice(-4).each(function(index, value){
+                   value.hidden = false;
+                });
+            }
+        };
+
         $(document).ready(function() {
+            $('#layertype').on('change', function(){
+                var val1 = $(this, "option:selected").val();
+                var optidx = $("#layerperiod option:selected").index()
+                select_switch(val1, optidx);
+            });
             $('#mapselector select').on('change', function() {
                 var type = $("#layertype option:selected").val();
                 var period = $("#layerperiod option:selected").val();
                 var month = $("#layermonth option:selected").val();
                 if (type == 't'){
-                    style = 'Temperature'
+                    style = 'Temperature';
                     legend_url = String.format(legend_url_default, type, period, month, style);
                     legend_title = 'Temperatura [°C]';
                 } else if (type == 'p'){
                     var style = $("#layermonth option:selected").attr('layerstyle');
                     legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
                     legend_title = 'Precipitazione [mm]';
-                    console.log(String.format(legend_url_default, type, period, month, style+"Legend"));
                 } else if (type == 'r'){
-                    var style = 'atlante_mensile_gen';
+                    var style = String.format('{0}solare_{1}{2}', type, period, month);
                     tmplegend_url = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
-                                    '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}_{1}_{2}&STYLE={3}&' +
-                                    'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
-                    legend_url = String.format(tmplegend_url, 'atlante_solare', '01', '2013', 'atlante_mensile_2');
+                                    '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}{1}{2}&STYLE={0}solare_{1}{2}&' +
+                                    'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json';
+                    legend_url = String.format(tmplegend_url, type, period, month);
                     legend_title = 'Radiazioni [MJm-2]';
                 }
+                {#TODO disable hard coded choice of month and year for radiazione solare #}
 
-                if (type == 'r'){
-                    layer.setParams({
-                        layers: String.format('{0}_{1}_{2}:{0}_{1}_{2}', 'atlante_solare', '01', '2013'),
-                        format: 'image/png',
-                        transparent: true,
-                        styles: style
-                    });
-                    console.log('Ciao');
-                } else {
-                    console.log(type);
-                    layer.setParams({
-                        layers: String.format('{0}{1}{2}:{0}{1}{2}', type, period, month),
-                        format: 'image/png',
-                        transparent: true,
-                        styles: style
-                    });
-                }
+                layer.setParams({
+                    layers: String.format('{0}{1}{2}:{0}{1}{2}', type, period, month),
+                    format: 'image/png',
+                    transparent: true,
+                    styles: style
+                });
                 $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
                 $("#legend").attr('src', legend_url);
                 $("#legend-title").html(legend_title);
@@ -143,7 +163,12 @@
 
 
     <div id="map" style="width: 100%; height: 600px"></div>
+</div>
     <script>
+        // Hide the period does not exist for temperature and precipitations
+        $("#layerperiod option")[3].hidden=true;
+
+        // Load openstreetmap
         var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 osmAttrib = '{% settings_value "MAPS_ATTRIBUTION_OSM" %}',
                 osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
@@ -158,47 +183,30 @@
         var period = $("#layerperiod option:selected").val();
         var month = $("#layermonth option:selected").val();
         if (type == 't'){
+            // Temperatures Maps
             style = 'Temperature'
             legend_url = String.format(legend_url_default, type, period, month, style);
             legend_title = 'Temperatura [°C]';
         } else if (type == 'p'){
+            // Rain Maps
             var style = $("#layermonth option:selected").attr('layerstyle');
             legend_url = String.format(legend_url_default, type, period, month, style+"Legend");
             legend_title = 'Precipitazione [mm]';
-            console.log(String.format(legend_url_default, type, period, month, style+"Legend"));
         } else if (type == 'r'){
-            var style = 'atlante_mensile_gen';
+            // Radiation Maps
+            var style = String.format('{0}solare_{1}{2}', type, period, month);
             tmplegend_url = '{% settings_value "GEOSERVER_URL" %}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0' +
-                            '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}_{1}_{2}&STYLE={3}&' +
-                            'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json'
-            legend_url = String.format(tmplegend_url, ' ', '01', '2013', 'atlante_mensile_2');
+                                    '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}{1}{2}&STYLE={0}solare_{1}{2}&' +
+                                    'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json';
+            legend_url = String.format(tmplegend_url, type, period, month);
             legend_title = 'Radiazioni [MJm-2]';
         }
-
-{#        #}
-{#        {#}
-{#            var style = $("#layermonth option:selected").attr('layerstyle');#}
-{#            legend_url = String.format(legend_url_default, type, period, month, style+"Legend");#}
-{#            legend_title = 'Precipitazione [mm]';#}
-{#        }#}
-
-{#        if (type == 'r'){#}
-{#            console.log('culo');#}
-{#            layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {#}
-{#                layers: String.format('{0}_{1}_{2}:{0}_{1}_{2}','atlante_solare', '01', '2013'),#}
-{#                format: 'image/png',#}
-{#                transparent: true,#}
-{#                styles: style#}
-{#            }).addTo(map);#}
-{#        } else {#}
-        console.log('caio');
         layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
             layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
             format: 'image/png',
             transparent: true,
             styles: style
         }).addTo(map);
-{#        }#}
         $("#legend").attr('src', legend_url);
         $("#geotiff").attr('href',String.format(download_url_default,type, period, month));
         $("#legend-title").html(legend_title);
@@ -215,6 +223,3 @@
         },500);
     </script>
 {% endblock main %}
-
-
-

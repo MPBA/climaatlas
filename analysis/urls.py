@@ -31,7 +31,7 @@ urlpatterns = patterns('analysis.views',
        name='diagrammi_climatici_details'),
    url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\w+)/indici/$',
        view=DiagrammiClimaticiIndexDetailsViewExport.as_view(), name='diagrammi_climatici_indici_export'),
-url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\w+)/estremi/$',
+   url(regex='^diagrammi/details/(?P<pk>\d+)/(?P<periodo>[-\d_]+)/(?P<tipo_export>\w+)/estremi/$',
        view=DiagrammiClimaticiEstremiDetailsViewExport.as_view(), name='diagrammi_climatici_estremi_export'),
 
    ### Mappe climatiche ###

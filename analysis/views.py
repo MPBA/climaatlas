@@ -10,6 +10,8 @@ from climatlas.models import Station
 from export_xls.views import export_xlwt
 import json
 from genPng import GenerateImmage
+import locale
+from datetime import datetime
 from django.core import serializers
 
 
