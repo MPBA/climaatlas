@@ -11,11 +11,13 @@ class GenerateImmage(object):
     P_MONTH = "PrecipitazioniMensili"
     P_SEASON = "PrecipitazioniStagionali"
     T = "Temperature"
+    R = ""
     P_YEAR_L = "PrecipitazioniAnnualiLegend"
     P_MONTH_L = "PrecipitazioniMensiliLegend"
     P_SEASON_L = "PrecipitazioniStagionaliLegend"
     TEMP_PREFIX = "t"
     PREC_PREFIX = "p"
+    RAD_PREFIX = "r"
     STYLEA = "{D}A{P}{T}{L}"
 
     T_L = "TemperatureLegend"
@@ -66,9 +68,10 @@ class GenerateImmage(object):
         wms = WebMapService(GenerateImmage.GEOSERVER_WMS, version='1.1.1')
         #print "WMS end connect"
         #print mapName
-        print station, self.STATIONS
+        # print station, self.STATIONS
         #img = wms.getmap(layers=["mpba:dtm_alps_all", mapName, self.BORDO, station], styles=["fbk_digital_terrain_model_0_4000", style,self.BORDOS,self.STATIONS ], srs='EPSG:32632', bbox=(610167.0,5057545.0,750567.0,5159345.0),size=(1400, 1000),format='image/png',  transparent=False)
         #img = wms.getmap(layers=['mpba:aspect', mapName, self.BORDO, station], styles=["rasterA", style,self.BORDOS,self.STATIONS ], srs='EPSG:32632', bbox=(610167.0,5057545.0,750567.0,5159345.0),size=(1400, 1000),format='image/png',  transparent=False)
+        print mapName, station, self.STATIONS , style, self.BORDOS
         img = wms.getmap(layers=[ mapName, self.BORDO, station], styles=[ style,self.BORDOS,self.STATIONS ], srs='EPSG:32632', bbox=(610167.0,5057545.0,750567.0,5159345.0),size=(1400, 1000),format='image/png',  transparent=False)
         #img = wms.getmap(layers=[ self.BORDO, station], styles=[self.BORDOS,self.STATIONS ], srs='EPSG:32632', bbox=(610167.0,5057545.0,750567.0,5159345.0),size=(1400, 1000),format='image/png',  transparent=False)
         leggend = self.getLeggend(leggend, mapName)
@@ -164,7 +167,6 @@ class GenerateImmage(object):
 
 
     def generate_png(self, type_prefix, period, month=None, season=None, ):
-
         if type_prefix == GenerateImmage.TEMP_PREFIX:
             type = "Temperatura"
             style = self.T
@@ -176,6 +178,11 @@ class GenerateImmage(object):
             style = None
             leggend = None
             testol="Precipitazione [mm]"
+        elif type_prefix == GenerateImmage.RAD_PREFIX:
+            type = "Radiazione"
+            style = "{0}solare_{1}{2:0>2}".format(type_prefix, period, month)
+            leggend = "{0}solare_{1}{2:0>2}".format(type_prefix, period, month)
+            testol = "Radiazione [MJm-2]"
         else:
             raise Exception("Prefix not allow")
 
@@ -204,10 +211,10 @@ class GenerateImmage(object):
                 #testol="Precipitazione [mm]"
 
         input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
+        print leggend
 
         path, file_ext = os.path.split(input_file)
         f = os.path.splitext(file_ext)[0]
-
         mapName = GenerateImmage.MAP.format(work=GenerateImmage.GEOSERVER_WORKSPACE, name=f)
         #print "WMS start connect"
         #elf.TESTO1.format(type=type, s=symbol, annual=annual)
@@ -290,9 +297,9 @@ class GenerateImmage(object):
         out.write(data)
         out.close()
 
-    def getLeggend(self, style,layer):
-        #print "getLeggend"
-        print style
+    def getLeggend(self, style, layer):
+        print "getLeggend"
+        print "Style:", style
         print layer
         #legendUrl='http://geodata:50001/geoserver/wms?REQUEST=GetLegendGraphic&FORMAT=image/png&VERSION=1.1.0&&STYLE=PioggeMensili&WIDTH=30&HEIGHT=50&LEGEND_OPTIONS=forceRule:false;border:true;dx:2.2;dy:0.2;mx:2.2;my:0.2;&LAYER=test:PMediaMese_1961196205.tif'
         legendUrl=GenerateImmage.GEOSERVER_WMS+'?REQUEST=GetLegendGraphic&FORMAT=image/png&VERSION=1.1.0&&STYLE='+style+"&WIDTH=30&HEIGHT=30&LEGEND_OPTIONS=forceRule:false;border:true;dx:2.2;dy:0.2;mx:2.2;my:0.2;fontSize:20;fontAntiAliasing:true&LAYER="+layer
@@ -302,9 +309,11 @@ class GenerateImmage(object):
 
 def main():
     g = GenerateImmage()
-    PERIODS = ["1961-1990", "1971-2000", "1981-2010"]
-    #g.generate_png("t", PERIODS[0], month=None, season="1win" )#, season=genday.Mapgen.SEASONS[0])
-    g.generate_png_anomaly("p", "p", year=2009, month=None, season=None)#, season=genday.Mapgen.SEASONS[0])
+    PERIODS = ["1961-1990", "1971-2000", "1981-2010", "2004-2012"]
+    #g.generate_png("t", PERIODS[0], month=01, season=None)#, season=genday.Mapgen.SEASONS[0])
+    g.generate_png("r", PERIODS[3], month=01, season=None )#, season=genday.Mapgen.SEASONS[0])
+    #g.generate_png_anomaly("p", "p", year=2009, month=None, season=None)#, season=genday.Mapgen.SEASONS[0])
+
 
 if __name__ == "__main__":
     main()
