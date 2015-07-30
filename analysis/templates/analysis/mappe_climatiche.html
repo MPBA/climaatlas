@@ -53,7 +53,9 @@
         $(document).ready(function() {
             $('#layertype').on('change', function(){
                 var val1 = $(this, "option:selected").val();
-                var optidx = $("#layerperiod option:selected").index()
+                typeof b !== "undefined" ? b : (b = "Hello!");
+                var optidx = $("#layerperiod option:selected").index();
+                optidx = optidx !== 3 ? optidx : 0;
                 select_switch(val1, optidx);
             });
             $('#mapselector select').on('change', function() {
