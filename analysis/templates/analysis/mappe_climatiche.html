@@ -200,7 +200,7 @@
                                     '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}{1}{2}&STYLE={0}solare_{1}{2}&' +
                                     'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json';
             legend_url = String.format(tmplegend_url, type, period, month);
-            legend_title = 'Radiazioni [MJm-2]';
+            legend_title = 'Radiazioni [MJm<sup>-2</sup>]';
         }
         layer = L.tileLayer.wms("{% settings_value "GEOSERVER_URL" %}/mpba/wms/", {
             layers: String.format('{0}{1}{2}:{0}{1}{2}',type, period, month),
