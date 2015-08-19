@@ -109,11 +109,11 @@
                     <td>{{ d.ott|floatformat:fformat }}</td>
                     <td>{{ d.nov|floatformat:fformat }}</td>
                     <td>{{ d.dic|floatformat:fformat }}</td>
-                    <td style="border-left: 1px solid #e3e3e3">{{ d.annua|floatformat:"1" }}</td>
-                    <td>{{ d.inverno|floatformat:"1" }}</td>
-                    <td>{{ d.primavera|floatformat:"1" }}</td>
-                    <td>{{ d.estate|floatformat:"1" }}</td>
-                    <td>{{ d.autunno|floatformat:"1" }}</td>
+                    <td style="border-left: 1px solid #e3e3e3">{{ d.annua|floatformat:fformat }}</td>
+                    <td>{{ d.inverno|floatformat:fformat }}</td>
+                    <td>{{ d.primavera|floatformat:fformat }}</td>
+                    <td>{{ d.estate|floatformat:fformat }}</td>
+                    <td>{{ d.autunno|floatformat:fformat }}</td>
                 </tr>
             {% endfor %}
             </tbody>
