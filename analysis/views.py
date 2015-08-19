@@ -39,7 +39,9 @@ class ClimateIndexDetailsView(ListView):
 
         if self.kwargs['periodo'] not in self.index.get_climateindex_periodo_list:
             raise Http404('No %s matches the given query.')
-
+        self.fformat = "1"
+        if not self.index.name.find("Clear"):
+            self.fformat = "2"
         data = ClimateIndexData.objects.filter(periodo=self.kwargs['periodo'],
                                                climate_index=self.index).exclude(gen=None,
                                                                                  feb=None,
@@ -66,6 +68,7 @@ class ClimateIndexDetailsView(ListView):
         context = super(ClimateIndexDetailsView, self).get_context_data()
         context['indice'] = self.index
         context['periodo'] = self.kwargs['periodo']
+        context['fformat'] = self.fformat
         # print serializers.serialize('json', self.get_queryset())
         return context
 
