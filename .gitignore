@@ -5,3 +5,10 @@ local_settings.py
 uploads
 .svn
 celeryconfig.py
+*.png
+*.jpg
+__init__*
+*.csv
+*.pdf
+*.txt
+scripts/*.py
