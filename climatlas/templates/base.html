@@ -77,8 +77,8 @@
                     {% for item in menuitems %}
                         <li>
 {#                            <a href="{{ item.url }}" title="{{ item.title|escape }}">{{ item.title }}</a>#}
-                            <a {% ifequal item.title "Atlante solare" %}data-toggle="dropdown"{% endifequal %} href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
-                                    {{ item.title }} {% ifequal item.title "Atlante solare" %}<span class="caret"></span>{% endifequal %}
+                            <a {% if item.title == "Atlante solare" or item.title == "Atlante eolico" or item.title == "Analisi sinottica"%} data-toggle="dropdown"{% endif %} href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                    {{ item.title }} {% if item.title == "Atlante solare" or item.title == "Atlante eolico" or item.title == "Analisi sinottica" %}<span class="caret"></span>{% endif %}
                             </a>
 
                             {% ifequal item.title "Atlante solare" %}
@@ -92,6 +92,35 @@
                                                     </a>
                                                 </li>
                                             {% endfor %}cd
+                                        </ul>
+                            {% endifequal %}
+
+
+                            {% ifequal item.title "Atlante eolico" %}
+{#                                        <ul class="nav nav-list navlist-menu-level-1 dropdown-menu"> <!--style="z-index: 99999">-->#}
+                                        <ul class="nav nav-list navlist-menu-level-1 dropdown-menu"> <!--style="z-index: 99999">-->
+                                            {% menu atlante_eolico %}
+                                            {% for item2 in menuitems %}
+                                                <li>
+                                                    <a href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                                        {{ item2.title }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                            {% endifequal %}
+
+                            {% ifequal item.title "Analisi sinottica" %}
+{#                                        <ul class="nav nav-list navlist-menu-level-1 dropdown-menu"> <!--style="z-index: 99999">-->#}
+                                        <ul class="nav nav-list navlist-menu-zlevel-1 dropdown-menu"> <!--style="z-index: 99999">-->
+                                            {% menu analisi_sinottica %}
+                                            {% for item2 in menuitems %}
+                                                <li>
+                                                    <a href="{{ item2.url }}" title="{{ item2.title|escape }}"{% if item2.current %} class="dropdown-toggle active"{% else %}class="dropdown-toggle "{% endif %}>
+                                                        {{ item2.title }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
                                         </ul>
                             {% endifequal %}
                         </li>

@@ -7,10 +7,13 @@ import functools
 from datetime import datetime
 import psycopg2
 
-from celeryapp import app
+from dataupload.celeryapp import app
 from celery import group, chain, chord
-from local_settings import psycopg_conf, MAPGEN_BINS, MAPGEN_TIFFS
+from django.conf import settings
 
+psycopg_conf = settings.PSYCOPG_CONF
+MAPGEN_BINS = settings.MAPGEN_BINS
+MAPGEN_TIFFS = settings.MAPGEN_TIFFS
 # I TRULY HOPE NOBODY WILL HAVE TO WORK ON THIS CODE :)
 
 # import mapgen
@@ -19,7 +22,7 @@ currentdir = os.path.dirname(
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, os.path.join(parentdir, 'mapgen'))
 
-from genday import Mapgen
+from scripts.mapgen.genday import Mapgen
 
 
 def track_status(name):

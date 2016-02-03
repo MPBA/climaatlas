@@ -21,10 +21,19 @@
     <div class="well well-sm">
         <ul style="list-style: none">
             <li>
-                <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazioni
+                <i class="wi-rain" style="font-size: 20px!important"></i> Precipitazione
             </li>
             <li>
                 <i class="wi-thermometer" style="font-size: 20px!important"></i> Temperatura
+            </li>
+            <li>
+                <i class="wi-day-sunny" style="font-size: 20px!important"></i> Radiazione
+            </li>
+            <li>
+                <i class="fa fa-circle" style="color: #cb4437; font-size: 12px!important"></i> Non attiva
+            </li>
+            <li>
+                <i class="fa fa-circle" style="color: #79a038; font-size: 12px!important"></i> Attiva
             </li>
         </ul>
     </div>
@@ -43,7 +52,7 @@
                 </div>
                 <div class="panel-body">
                     {% ifequal graph_id "notfound" %}
-                        <h1>Grafico non presente!</h1>
+                        <h1>Non presente</h1>
                     {% else %}
                         <a href="{% url 'get_chart_by_id' graph_id %}" data-lightbox="image-1" title="Chart1">
                             <img src="{% url 'get_chart_by_id' graph_id %}" alt="{{ station1.stname }}" class="img-thumbnail img-responsive" />

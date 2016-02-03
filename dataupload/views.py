@@ -16,9 +16,9 @@ from .utils import handle_upload, valid_zip_file, call_command
 from .pgbackup import PGBackup
 from celeryapp import app
 from utils import get_tasks_progress
-from local_settings import psycopg_conf
-#as from django.conf import settings
+from django.conf import settings
 
+psycopg_conf = settings.PSYCOPG_CONF
 db_name = psycopg_conf['database']
 
 @require_http_methods(['GET', 'POST'])

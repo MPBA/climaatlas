@@ -92,7 +92,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 ROOT_URLCONF = 'climatlas.urls'
-
 WSGI_APPLICATION = 'climatlas.wsgi.application'
 
 
