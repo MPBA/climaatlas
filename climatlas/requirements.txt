@@ -6,7 +6,7 @@ django-hstore==1.2.1
 django-menu==0.1.7
 django-wysiwyg-redactor==0.3.8.2
 html5lib==0.999
-#psycopg2==2.5.2
+psycopg2==2.5.2
 pyPdf==1.13
 reportlab==2.7
 six==1.5.2
@@ -14,5 +14,4 @@ wsgiref==0.1.2
 xhtml2pdf==0.0.5
 xlwt==0.7.5
 OWSLib==0.8.6
-PIL==1.1.7
 image==1.2

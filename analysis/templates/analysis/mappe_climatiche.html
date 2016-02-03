@@ -76,7 +76,7 @@
                                     '&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER={0}{1}{2}&STYLE={0}solare_{1}{2}&' +
                                     'LEGEND_OPTIONS=bgColor:0xf5f5f5;&EXCEPTIONS=application/json';
                     legend_url = String.format(tmplegend_url, type, period, month);
-                    legend_title = 'Radiazioni [MJm<sup>-2</sup>]';
+                    legend_title = 'Radiazione [MJm<sup>-2</sup>]';
                 }
                 {#TODO disable hard coded choice of month and year for radiazione solare #}
 
@@ -121,13 +121,13 @@
     <div class="bs-callout bs-callout-info">
         <p>
             Le mappe mostrano la distribuzione media delle precipitazioni e della temperatura sul
-            Trentino per i <a href="/glossario#trentenni"><i>trentenni di riferimento</i></a> 1961-1990, 1971-2000 e 1981-2010,
-            e della radiazione solare globale per il periodo di riferimento 2004-2012.
-            Selezionare dal menu il parametro (temperatura, precipitazione o radiazione), il trentennio di riferimento e la base temporale (mese, stagione o anno).<br>
+            Trentino per i <a href="/glossario#trentenni"><i>trentenni di riferimento</i></a> 1961-1990, 1971-2000 e 1981-2010, della radiazione solare globale per il periodo di riferimento 2004-2012, e del vento per il decennio 2004-2013.
+            Selezionare dal menu il parametro (temperatura, precipitazione, radiazione o vento), il trentennio di riferimento e la base temporale (mese, stagione o anno).<br>
             Le mappe di temperatura sono elaborate con la tecnica di spazializzazione <a href="/glossario#optimalinterpolation/"><i>Optimal Interpolation</i></a> mentre le precipitazioni con la tecnica
             <a href="/glossario#kriging/"><i>Kriging</i></a>. Le mappe di radiazione solare sono ottenute grazie ad un
             modello di radiazione e alla tecnica di spazializzazione <a href="/glossario#kriging/"><i>Kriging</i></a>
             (vedi la <a href="{% static 'Relazione_Atlante_Solare_Trentino.pdf' %}"><i>Relazione finale</i></a> per ulteriori dettagli).
+            Le mappe di vento sono state realizzate grazie ad una catena di modelli numerici (vedi la <a href="{% static 'Relazione_Atlante_Eolico_Trentino.pdf' %}"><i>Relazione finale</i></a> per ulteriori dettagli).
         </p>
     </div>
     <div class="panel panel-default">
