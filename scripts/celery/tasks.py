@@ -348,10 +348,12 @@ def launch_celery_tasks():
             cur.execute("select * from import_changes();")
             res = cur.fetchone()
 
+    print "here"
     min_date = res[0] if res[0] < 1921 else 1921
     max_date = res[1] if res[1] > 2011 else 2011
     min_date, max_date = map(int, (min_date, max_date))
     dates = res[3]
+    print dates
 
     if dates is None:
         return None
