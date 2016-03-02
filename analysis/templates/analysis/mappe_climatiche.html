@@ -30,15 +30,23 @@
             var myopt2 = $("#layermonth option");
             var id = 0 || opt2idx;
             if (type == 'r') {
-                myopt.slice(0,3).hide();
-                myopt[3].show();
+                myopt.slice(0,3).each(function(index, value){
+                    value.hidden=true
+                });
+                myopt[3].hidden=false;
                 myopt[3].selected=true;
-                myopt2.slice(-4).hide();
+                myopt2.slice(-4).each(function(index, value){
+                   value.hidden = true;
+                });
             } else {
-                myopt.slice(0, 3).show();
-                myopt[3].hide();
+                myopt.slice(0, 3).each(function (index, value) {
+                    value.hidden = false
+                });
+                myopt[3].hidden = true;
                 myopt[id].selected = true;
-                myopt2.slice(-4).show();
+                myopt2.slice(-4).each(function(index, value){
+                   value.hidden = false;
+                });
             }
         };
 
@@ -159,8 +167,7 @@
 </div>
     <script>
         // Hide the period does not exist for temperature and precipitations
-        var bla = $("#layerperiod option");
-        bla.slice(3).hide();
+        $("#layerperiod option")[3].hidden=true;
 
         // Load openstreetmap
         var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
