@@ -1,0 +1,22 @@
+<layer>
+  <name>{0}</name>
+  <type>RASTER</type>
+  <defaultStyle>
+    <name>{1}</name>
+    <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="alternate" href="https://climatlas.fbk.eu/geoserver/rest/styles/{1}.xml" type="application/xml"/>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <name>{1}</name>
+      <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="alternate" href="https://climatlas.fbk.eu/geoserver/rest/styles/{1}.xml" type="application/xml"/>
+    </style>
+  </styles>
+  <resource class="coverage">
+    <name>{0}</name>
+    <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="alternate" href="https://climatlas.fbk.eu/geoserver/rest/workspaces/mpba/coveragestores/{0}/coverages/{0}.xml" type="application/xml"/>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

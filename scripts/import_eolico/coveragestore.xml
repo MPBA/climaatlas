@@ -1,0 +1,12 @@
+<coverageStore>
+    <name>{0}</name>
+    <type>GeoTIFF</type>
+    <enabled>true</enabled>
+    <workspace>
+        <name>mpba</name>
+        <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="alternate"
+                   href="https://climatlas.fbk.eu/geoserver/rest/workspaces/mpba.xml" type="application/xml"/>
+    </workspace>
+    <__default>false</__default>
+    <url>file:data/mpba/w2004-2013/{0}.tif</url>
+</coverageStore>
