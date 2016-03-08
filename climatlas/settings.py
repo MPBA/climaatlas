@@ -62,7 +62,7 @@ INSTALLED_APPS = (
     'django_hstore',
     'redactor',
     'export_xls',
-    'dataupload',
+    #'dataupload',
     'menu',
     'climatlas',
     'analysis',
