@@ -18,6 +18,7 @@ class GenerateImmage(object):
     TEMP_PREFIX = "t"
     PREC_PREFIX = "p"
     RAD_PREFIX = "r"
+    WIND_PREFIX = "w"
     STYLEA = "{D}A{P}{T}{L}"
 
     T_L = "TemperatureLegend"
@@ -34,6 +35,7 @@ class GenerateImmage(object):
     MAP="{work}:{name}"
 
     MAP_SEASONS = ["1win", "2spr", "3sum", "4aut"]
+    MAP_SEASONS_W = ["win", "spr", "sum", "aut"]
 
     SEASONS = ["inverno", "primavera", "estate", "autunno"]
     MONTHS = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno"," luglio", "agosto", "settembre", "ottobre",
@@ -42,6 +44,9 @@ class GenerateImmage(object):
     STATIONS="point"
     STAGIONE={(MAP_SEASONS[0]): SEASONS[0], (MAP_SEASONS[1]): SEASONS[1],
               (MAP_SEASONS[2]): SEASONS[2], (MAP_SEASONS[3]): SEASONS[3]}
+    STAGIONE_W={(MAP_SEASONS_W[0]): SEASONS[0], (MAP_SEASONS_W[1]): SEASONS[1],
+              (MAP_SEASONS_W[2]): SEASONS[2], (MAP_SEASONS_W[3]): SEASONS[3]}
+
     #def __init__(self, mapgen):
     GEOSERVER_HOST = "http://192.168.50.25:50001/geoserver/rest"
     GEOSERVER_WMS = "http://192.168.50.25:50001/geoserver/wms"
@@ -166,7 +171,7 @@ class GenerateImmage(object):
 
 
 
-    def generate_png(self, type_prefix, period, month=None, season=None, ):
+    def generate_png(self, type_prefix, period, month=None, season=None, vtype=None, wheight=None):
         if type_prefix == GenerateImmage.TEMP_PREFIX:
             type = "Temperatura"
             style = self.T
@@ -183,14 +188,31 @@ class GenerateImmage(object):
             style = "{0}solare_{1}{2:0>2}".format(type_prefix, period, month)
             leggend = "{0}solare_{1}{2:0>2}".format(type_prefix, period, month)
             testol = "Radiazione [MJm-2]"
+        elif type_prefix == GenerateImmage.WIND_PREFIX:
+            type = "Vento"
+
+            style = '{0}{1}{2}'.format(type_prefix, period, month)
+            leggend = '{0}{1}{2}'.format(type_prefix, period, month)
+            if vtype=='ave':
+                testol="Intensita\' del vento [m/s]"
+            elif vtype=='shape':
+                testol="Fattore di scala C [m/s]"
+            else:
+                testol="Fattore di forma K [adim.]"
+
+
         else:
             raise Exception("Prefix not allow")
 
         station = self.STATION.format(work=GenerateImmage.GEOSERVER_WORKSPACE, prefix=type_prefix)
 
         if season is not None:
+            print season
             symbol = " - "
-            annual = self.STAGIONE[season]#SEASONS[season - 1]
+            if type_prefix=="w":
+                annual = self.STAGIONE_W[season]#SEASONS[season - 1]
+            else:
+                annual = self.STAGIONE[season]#SEASONS[season - 1]
             if type_prefix == GenerateImmage.PREC_PREFIX:
                 style = self.P_SEASON
                 leggend = self.P_SEASON_L
@@ -219,7 +241,7 @@ class GenerateImmage(object):
         #print "WMS start connect"
         #elf.TESTO1.format(type=type, s=symbol, annual=annual)
         testo = self.TESTO1.format(type=type, s=symbol, annual=annual)
-        testoR = self.TESTO2.format(period = period)
+        testoR = self.TESTO2.format(period=period)
 
         return self.__generate_pngL(mapName, style, leggend, testo, testoR, testol,station)
 

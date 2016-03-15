@@ -467,6 +467,8 @@ class MappeClimaticheListView(TemplateView):
         context['type'] = settings.LAYER_TYPE
         context['period'] = settings.LAYER_PERIOD
         context['month'] = settings.LAYER_MONTH
+        context['wparam'] = settings.WIND_PARAM
+        context['wheight'] = settings.WIND_HEIGHT
         return context
 
 
@@ -532,6 +534,22 @@ def export_mappe_climatiche(request, ltype, periodo, month):
 
     if month in ('1win', '2spr', '3sum', '4aut'):
         map = g.generate_png(ltype, periodo, month=None, season="1win")
+    elif month:
+        map = g.generate_png(ltype, periodo, month=int(month), season=None)
+    else:
+        map = g.generate_png(ltype, periodo, month=None, season=None)
+
+    response = HttpResponse(mimetype="image/png")
+    map.save(response, "PNG")
+
+    return response
+
+
+def export_mappe_climatiche_only_wind(request, ltype, periodo, vtype, wheight, month):
+    g = GenerateImmage()
+
+    if month in ('win', 'spr', 'sum', 'aut'):
+        map = g.generate_png(ltype, periodo, month=None, season="win")
     elif month:
         map = g.generate_png(ltype, periodo, month=int(month), season=None)
     else:

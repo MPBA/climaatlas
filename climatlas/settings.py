@@ -153,6 +153,7 @@ LAYER_TYPE = (
     ('p', 'Precipitazione'),
     ('t', 'Temperatura'),
     ('r', 'Radiazione'),
+    ('w', 'Vento')
 )
 
 LAYER_TYPE_ANOMALIE = (
@@ -170,6 +171,20 @@ LAYER_PERIOD = (
     ('1971-2000'),
     ('1981-2010'),
     ('2004-2012'),
+    ('2004-2013'),
+)
+
+WIND_PARAM = (
+    ('ave', 'Intensità media'),
+    ('scale', 'Fattore di scala C'),
+    ('shape', 'Fattore di forma K'),
+)
+
+WIND_HEIGHT = (
+    ('10', '10m'),
+    ('25', '25m'),
+    ('50', '50m'),
+    ('75', '75m'),
 )
 
 LAYER_YEAR = range(1941, 2011, 1)
