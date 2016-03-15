@@ -154,6 +154,7 @@ class GenerateImmage(object):
             return GenerateImmage.FILE_ANOMALY_SEASON.format(type=type_prefix, period=period, y=year, season=season, suffix=suffix)
         else:
             return GenerateImmage.FILE_ANOMALY.format(type=type_prefix, period=period, y=year, suffix=suffix)
+
     @staticmethod
     def get_period_name( type_prefix, period, isoline=False, month=None, season=None):
         if not isoline:
@@ -191,8 +192,8 @@ class GenerateImmage(object):
         elif type_prefix == GenerateImmage.WIND_PREFIX:
             type = "Vento"
 
-            style = '{0}{1}{2}'.format(type_prefix, period, month)
-            leggend = '{0}{1}{2}'.format(type_prefix, period, month)
+            style = '{0}{1}{2}'.format(type_prefix, period, vtype)
+            leggend = '{0}{1}{2}'.format(type_prefix, period, vtype)
             if vtype=='ave':
                 testol="Intensita\' del vento [m/s]"
             elif vtype=='shape':
@@ -205,6 +206,11 @@ class GenerateImmage(object):
             raise Exception("Prefix not allow")
 
         station = self.STATION.format(work=GenerateImmage.GEOSERVER_WORKSPACE, prefix=type_prefix)
+
+        print "---------------------"
+        print station
+        print self.STATION
+        print "---------------------"
 
         if season is not None:
             print season
@@ -231,8 +237,10 @@ class GenerateImmage(object):
                 style = self.P_YEAR
                 leggend = self.P_YEAR_L
                 #testol="Precipitazione [mm]"
-
-        input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
+        if type_prefix=="w":
+            input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
+        else:
+            input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
         print leggend
 
         path, file_ext = os.path.split(input_file)
@@ -272,6 +280,7 @@ class GenerateImmage(object):
         else:
             raise Exception("Prefix not allow")
         station = self.STATION.format(work=GenerateImmage.GEOSERVER_WORKSPACE, prefix=type_prefix)
+
 
         y = str(year)
         if season is not None:
