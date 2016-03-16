@@ -24,6 +24,7 @@ class GenerateImmage(object):
     T_L = "TemperatureLegend"
     TESTO1="{type} media{s}{annual}"
     TESTO2="Periodo di riferimento {period}"
+    TESTOW="{vtype}"
 
     TESTO1A="{type} - {s}{sp}{year}"
 
@@ -55,8 +56,10 @@ class GenerateImmage(object):
     GEOSERVER_WORKSPACE = "mpba"
 
     FILE_PERIOD = "{type}{period}{suffix}"
+    FILE_PERIOD_WIND = "{type}{period}{vtype}{wheight}{suffix}"
     FILE_PERIOD_MONTH = "{type}{period}{m}{suffix}"
     FILE_PERIOD_SEASON = "{type}{period}{season}{suffix}"
+    FILE_PERIOD_SEASON_WIND = "{type}{period}{vtype}{wheight}{season}{suffix}"
 
     FILE_ANOMALY = "{type}{period}-{y}{suffix}.tif"
     FILE_ANOMALY_MONTH = "{type}{period}{m}-{y}{m}{suffix}.tif"
@@ -156,7 +159,7 @@ class GenerateImmage(object):
             return GenerateImmage.FILE_ANOMALY.format(type=type_prefix, period=period, y=year, suffix=suffix)
 
     @staticmethod
-    def get_period_name( type_prefix, period, isoline=False, month=None, season=None):
+    def get_period_name( type_prefix, period, isoline=False, month=None, season=None, vtype=None, wheight=None):
         if not isoline:
             suffix = ".tif"
         else:
@@ -166,9 +169,15 @@ class GenerateImmage(object):
             month = str(int(month)).zfill(2)
             return GenerateImmage.FILE_PERIOD_MONTH.format(type=type_prefix, period=period, m=month, suffix=suffix)
         elif season is not None and season != "":
-            return GenerateImmage.FILE_PERIOD_SEASON.format(type=type_prefix, period=period, season=season, suffix=suffix)
+            if type_prefix=="w":
+                return GenerateImmage.FILE_PERIOD_SEASON_WIND.format(type=type_prefix, period=period, season=season, suffix=suffix, vtype=vtype, wheight=wheight)
+            else:
+                return GenerateImmage.FILE_PERIOD_SEASON.format(type=type_prefix, period=period, season=season, suffix=suffix)
         else:
-            return GenerateImmage.FILE_PERIOD.format(type=type_prefix, period=period, suffix=suffix)
+            if type_prefix=="w":
+                return GenerateImmage.FILE_PERIOD_WIND.format(type=type_prefix, period=period, season=season, suffix=suffix, vtype=vtype, wheight=wheight)
+            else:
+                return GenerateImmage.FILE_PERIOD.format(type=type_prefix, period=period, season=season, suffix=suffix)
 
 
 
@@ -184,6 +193,7 @@ class GenerateImmage(object):
             style = None
             leggend = None
             testol="Precipitazione [mm]"
+
         elif type_prefix == GenerateImmage.RAD_PREFIX:
             type = "Radiazione"
             style = "{0}solare_{1}{2:0>2}".format(type_prefix, period, month)
@@ -196,7 +206,7 @@ class GenerateImmage(object):
             leggend = '{0}{1}{2}'.format(type_prefix, period, vtype)
             if vtype=='ave':
                 testol="Intensita\' del vento [m/s]"
-            elif vtype=='shape':
+            elif vtype=='scale':
                 testol="Fattore di scala C [m/s]"
             else:
                 testol="Fattore di forma K [adim.]"
@@ -206,11 +216,6 @@ class GenerateImmage(object):
             raise Exception("Prefix not allow")
 
         station = self.STATION.format(work=GenerateImmage.GEOSERVER_WORKSPACE, prefix=type_prefix)
-
-        print "---------------------"
-        print station
-        print self.STATION
-        print "---------------------"
 
         if season is not None:
             print season
@@ -238,7 +243,7 @@ class GenerateImmage(object):
                 leggend = self.P_YEAR_L
                 #testol="Precipitazione [mm]"
         if type_prefix=="w":
-            input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
+            input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season, vtype=vtype, wheight=wheight)
         else:
             input_file = GenerateImmage.get_period_name(type_prefix, period, month=month, season=season)
         print leggend
@@ -251,6 +256,14 @@ class GenerateImmage(object):
         testo = self.TESTO1.format(type=type, s=symbol, annual=annual)
         testoR = self.TESTO2.format(period=period)
 
+        if type_prefix=="w":
+            if vtype=='ave':
+                t="Intensita\' del vento"
+            elif vtype=='scale':
+                t="Fattore di scala C"
+            else:
+                t="Fattore di forma K"
+            testo = "{0} a {1}m{2}{3}".format(t,wheight,symbol,annual)
         return self.__generate_pngL(mapName, style, leggend, testo, testoR, testol,station)
 
 

@@ -37,7 +37,9 @@ urlpatterns = patterns('analysis.views',
    ### Mappe climatiche ###
    url(regex='^mappe/$', view=MappeClimaticheListView.as_view(), name='mappe_climatiche_view'),
    url(regex='^mappe/export/(?P<ltype>[-\w_.]+)/(?P<periodo>[-\w_.]+)/(?P<month>[-\w_.]+)/$', view='export_mappe_climatiche', name='export_mappe_climatiche'),
+   url(regex='^mappe/export/(?P<ltype>[-\w_.]+)/(?P<periodo>[-\w_.]+)/$', view='export_mappe_climatiche', name='export_mappe_climatiche'),
    url(regex='^mappe/export/(?P<ltype>[-\w_.]+)/(?P<periodo>[-\w_.]+)/(?P<vtype>\w*)/(?P<wheight>\w*)/(?P<month>[-\w_.]+)/$', view='export_mappe_climatiche_only_wind', name='export_mappe_climatiche_only_wind'),
+   url(regex='^mappe/export/(?P<ltype>[-\w_.]+)/(?P<periodo>[-\w_.]+)/(?P<vtype>\w*)/(?P<wheight>\w*)/', view='export_mappe_climatiche_only_wind', name='export_mappe_climatiche_only_wind'),
 
    ### Mappe di trend ###
    url(regex='^trend/mappe/$', view=MappeTrendListView.as_view(), name='mappe_trend_view'),

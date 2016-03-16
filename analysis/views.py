@@ -529,11 +529,11 @@ def popola_periodi_grandezze_select(request):
 ###############################EO AJAX FUNCTIONS##################################################
 
 
-def export_mappe_climatiche(request, ltype, periodo, month):
+def export_mappe_climatiche(request, ltype, periodo, month=None):
     g = GenerateImmage()
 
     if month in ('1win', '2spr', '3sum', '4aut'):
-        map = g.generate_png(ltype, periodo, month=None, season="1win")
+        map = g.generate_png(ltype, periodo, month=None, season=month)
     elif month:
         map = g.generate_png(ltype, periodo, month=int(month), season=None)
     else:
@@ -545,15 +545,13 @@ def export_mappe_climatiche(request, ltype, periodo, month):
     return response
 
 
-def export_mappe_climatiche_only_wind(request, ltype, periodo, vtype, wheight, month):
+def export_mappe_climatiche_only_wind(request, ltype, periodo, vtype, wheight, month=None):
     g = GenerateImmage()
 
     if month in ('win', 'spr', 'sum', 'aut'):
-        map = g.generate_png(ltype, periodo, month=None, season="win")
-    elif month:
-        map = g.generate_png(ltype, periodo, month=int(month), season=None)
+        map = g.generate_png(ltype, periodo, month=None, season=month, vtype=vtype, wheight=wheight)
     else:
-        map = g.generate_png(ltype, periodo, month=None, season=None)
+        map = g.generate_png(ltype, periodo, month=None, season=None, vtype=vtype, wheight=wheight)
 
     response = HttpResponse(mimetype="image/png")
     map.save(response, "PNG")
