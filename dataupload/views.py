@@ -85,7 +85,6 @@ def upload(request):
             elif a['tipo'] == 'dati':
                 #upload zip file for dati
                 tutto_ok = True
-
                 if settings.FILE_EXT.match(str(a['file'])).group('ext') in settings.VALID_EXTTENSIONS:
                     file_url = handle_upload(request, a['file'])
                     if valid_zip_file(request, os.path.join(settings.UPLOAD_DIR, file_url),
@@ -97,6 +96,7 @@ def upload(request):
                                                       os.path.join(settings.UPLOAD_DIR, file_url),
                                                       settings.DATI_NAMES,
                                                       str(a['tipo']))[1])
+                        print "unzip ok"
                         messages.add_message(request, messages.SUCCESS, 'Upload Completato!')
                         os.remove(os.path.join(settings.UPLOAD_DIR, file_url))
                         pg = PGBackup(host=settings.DATABASES['default']['HOST'],

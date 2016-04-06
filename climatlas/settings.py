@@ -30,7 +30,6 @@ STATICFILES_FINDERS = (
     #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -62,7 +61,7 @@ INSTALLED_APPS = (
     'django_hstore',
     'redactor',
     'export_xls',
-    #'dataupload',
+    'dataupload',
     'menu',
     'climatlas',
     'analysis',

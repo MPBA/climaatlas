@@ -25,6 +25,7 @@ def valid_zip_file(request, file, accepted_names, typeofvalidation):
         zip_content = map(lambda x: x.lower(), ZipFile(file).namelist())
         zip_content_2 = map(lambda x:x, ZipFile(file).namelist())
         compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
+        print zip_content_2
         if compare(zip_content, accepted_names):
             return True, zip_content_2
         else:
